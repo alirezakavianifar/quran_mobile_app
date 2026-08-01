@@ -16,7 +16,7 @@ class VerseDetailView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context);
     final isPersian = loc.isPersian;
-    final versesAsync = ref.watch(surahVersesProvider(surah.id));
+    final versesAsync = ref.watch(surahVersesProvider(surah.number));
 
     final surahTitle = isPersian ? surah.namePersian : surah.nameEnglish;
 
@@ -41,10 +41,10 @@ class VerseDetailView extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 20),
                   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                    color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Center(

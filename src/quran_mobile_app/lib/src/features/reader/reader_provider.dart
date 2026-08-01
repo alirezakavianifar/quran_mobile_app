@@ -24,20 +24,25 @@ class VerseWithTranslation {
 }
 
 final surahVersesProvider =
-    FutureProvider.family<List<VerseWithTranslation>, int>((ref, surahId) async {
+    FutureProvider.family<List<VerseWithTranslation>, int>((ref, surahNumber) async {
   final db = ref.watch(databaseProvider);
   final locale = ref.watch(localeProvider);
   final langCode = locale.languageCode;
 
   await db.seedInitialData();
-  await db.seedVersesForSurah(surahId);
+  await db.seedVersesForSurah(surahNumber);
 
   final verses = await (db.select(db.verses)
-        ..where((tbl) => tbl.surahId.equals(surahId))
+        ..where((tbl) => tbl.surahId.equals(surahNumber))
         ..orderBy([(t) => OrderingTerm.asc(t.verseNumber)]))
       .get();
 
-  final translations = await db.select(db.translations).get();
+  final verseIds = verses.map((v) => v.id).toList();
+  final translations = verseIds.isEmpty
+      ? <Translation>[]
+      : await (db.select(db.translations)
+            ..where((tbl) => tbl.verseId.isIn(verseIds)))
+          .get();
 
   return verses.map((v) {
     final t = translations.cast<Translation?>().firstWhere(

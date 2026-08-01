@@ -3,6 +3,7 @@ import 'app_database.dart';
 
 final List<SurahsCompanion> initialSurahsList = [
   SurahsCompanion.insert(
+    id: Value(1),
     number: 1,
     nameArabic: 'الفاتحة',
     namePersian: 'حمد (گشایش)',
@@ -11,6 +12,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 7,
   ),
   SurahsCompanion.insert(
+    id: Value(2),
     number: 2,
     nameArabic: 'البقرة',
     namePersian: 'بقره (گاو ماده)',
@@ -19,6 +21,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 286,
   ),
   SurahsCompanion.insert(
+    id: Value(3),
     number: 3,
     nameArabic: 'آل عمران',
     namePersian: 'آل عمران (خاندان عمران)',
@@ -27,6 +30,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 200,
   ),
   SurahsCompanion.insert(
+    id: Value(4),
     number: 4,
     nameArabic: 'النساء',
     namePersian: 'نساء (زنان)',
@@ -35,6 +39,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 176,
   ),
   SurahsCompanion.insert(
+    id: Value(5),
     number: 5,
     nameArabic: 'المائدة',
     namePersian: 'مائده (سفره غذا)',
@@ -43,6 +48,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 120,
   ),
   SurahsCompanion.insert(
+    id: Value(6),
     number: 6,
     nameArabic: 'الأنعام',
     namePersian: 'انعام (چهارپایان)',
@@ -51,6 +57,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 165,
   ),
   SurahsCompanion.insert(
+    id: Value(7),
     number: 7,
     nameArabic: 'الأعراف',
     namePersian: 'اعراف (بلندی‌ها)',
@@ -59,6 +66,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 206,
   ),
   SurahsCompanion.insert(
+    id: Value(8),
     number: 8,
     nameArabic: 'الأنفال',
     namePersian: 'انفال (غنایم)',
@@ -67,6 +75,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 75,
   ),
   SurahsCompanion.insert(
+    id: Value(9),
     number: 9,
     nameArabic: 'التوبة',
     namePersian: 'توبه (توبه‌پذیری)',
@@ -75,6 +84,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 129,
   ),
   SurahsCompanion.insert(
+    id: Value(10),
     number: 10,
     nameArabic: 'يونس',
     namePersian: 'یونس (حضرت یونس)',
@@ -83,6 +93,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 109,
   ),
   SurahsCompanion.insert(
+    id: Value(11),
     number: 11,
     nameArabic: 'هود',
     namePersian: 'هود (حضرت هود)',
@@ -91,6 +102,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 123,
   ),
   SurahsCompanion.insert(
+    id: Value(12),
     number: 12,
     nameArabic: 'يوسف',
     namePersian: 'یوسف (حضرت یوسف)',
@@ -99,6 +111,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 111,
   ),
   SurahsCompanion.insert(
+    id: Value(13),
     number: 13,
     nameArabic: 'الرعد',
     namePersian: 'رعد (رعد و برق)',
@@ -107,6 +120,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 43,
   ),
   SurahsCompanion.insert(
+    id: Value(14),
     number: 14,
     nameArabic: 'إبراهيم',
     namePersian: 'ابراهیم (حضرت ابراهیم)',
@@ -115,6 +129,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 52,
   ),
   SurahsCompanion.insert(
+    id: Value(15),
     number: 15,
     nameArabic: 'الحجر',
     namePersian: 'حجر (سرزمین حجر)',
@@ -123,6 +138,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 99,
   ),
   SurahsCompanion.insert(
+    id: Value(16),
     number: 16,
     nameArabic: 'النحل',
     namePersian: 'نحل (زنبور عسل)',
@@ -131,6 +147,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 128,
   ),
   SurahsCompanion.insert(
+    id: Value(17),
     number: 17,
     nameArabic: 'الإسراء',
     namePersian: 'اسراء (معراج/سیر شبانه)',
@@ -139,6 +156,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 111,
   ),
   SurahsCompanion.insert(
+    id: Value(18),
     number: 18,
     nameArabic: 'الكهف',
     namePersian: 'کهف (غار)',
@@ -147,6 +165,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 110,
   ),
   SurahsCompanion.insert(
+    id: Value(19),
     number: 19,
     nameArabic: 'مريم',
     namePersian: 'مریم (حضرت مریم)',
@@ -155,6 +174,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 98,
   ),
   SurahsCompanion.insert(
+    id: Value(20),
     number: 20,
     nameArabic: 'طه',
     namePersian: 'طه',
@@ -163,6 +183,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 135,
   ),
   SurahsCompanion.insert(
+    id: Value(21),
     number: 21,
     nameArabic: 'الأنبياء',
     namePersian: 'انبیاء (پیامبران)',
@@ -171,6 +192,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 112,
   ),
   SurahsCompanion.insert(
+    id: Value(22),
     number: 22,
     nameArabic: 'الحج',
     namePersian: 'حج (زیارت خانه خدا)',
@@ -179,6 +201,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 78,
   ),
   SurahsCompanion.insert(
+    id: Value(23),
     number: 23,
     nameArabic: 'المؤمنون',
     namePersian: 'مؤمنون (مؤمنان)',
@@ -187,6 +210,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 118,
   ),
   SurahsCompanion.insert(
+    id: Value(24),
     number: 24,
     nameArabic: 'النور',
     namePersian: 'نور',
@@ -195,6 +219,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 64,
   ),
   SurahsCompanion.insert(
+    id: Value(25),
     number: 25,
     nameArabic: 'الفرقان',
     namePersian: 'فرقان (جداسازنده حق از باطل)',
@@ -203,6 +228,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 77,
   ),
   SurahsCompanion.insert(
+    id: Value(26),
     number: 26,
     nameArabic: 'الشعراء',
     namePersian: 'شعراء (شاعران)',
@@ -211,6 +237,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 227,
   ),
   SurahsCompanion.insert(
+    id: Value(27),
     number: 27,
     nameArabic: 'النمل',
     namePersian: 'نمل (مورچه)',
@@ -219,6 +246,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 93,
   ),
   SurahsCompanion.insert(
+    id: Value(28),
     number: 28,
     nameArabic: 'القصص',
     namePersian: 'قصص (داستان‌ها)',
@@ -227,6 +255,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 88,
   ),
   SurahsCompanion.insert(
+    id: Value(29),
     number: 29,
     nameArabic: 'العنكبوت',
     namePersian: 'عنکبوت',
@@ -235,6 +264,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 69,
   ),
   SurahsCompanion.insert(
+    id: Value(30),
     number: 30,
     nameArabic: 'الروم',
     namePersian: 'روم (رومیان)',
@@ -243,6 +273,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 60,
   ),
   SurahsCompanion.insert(
+    id: Value(31),
     number: 31,
     nameArabic: 'لقمان',
     namePersian: 'لقمان (حضرت لقمان)',
@@ -251,6 +282,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 34,
   ),
   SurahsCompanion.insert(
+    id: Value(32),
     number: 32,
     nameArabic: 'السجدة',
     namePersian: 'سجده',
@@ -259,6 +291,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 30,
   ),
   SurahsCompanion.insert(
+    id: Value(33),
     number: 33,
     nameArabic: 'الأحزاب',
     namePersian: 'احزاب (گروه‌ها)',
@@ -267,6 +300,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 73,
   ),
   SurahsCompanion.insert(
+    id: Value(34),
     number: 34,
     nameArabic: 'سبإ',
     namePersian: 'سبأ (قوم سبأ)',
@@ -275,6 +309,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 54,
   ),
   SurahsCompanion.insert(
+    id: Value(35),
     number: 35,
     nameArabic: 'فاطر',
     namePersian: 'فاطر (آفریننده)',
@@ -283,6 +318,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 45,
   ),
   SurahsCompanion.insert(
+    id: Value(36),
     number: 36,
     nameArabic: 'يس',
     namePersian: 'یس',
@@ -291,6 +327,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 83,
   ),
   SurahsCompanion.insert(
+    id: Value(37),
     number: 37,
     nameArabic: 'الصافات',
     namePersian: 'صافات (صف‌کشیدگان)',
@@ -299,6 +336,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 182,
   ),
   SurahsCompanion.insert(
+    id: Value(38),
     number: 38,
     nameArabic: 'ص',
     namePersian: 'ص',
@@ -307,6 +345,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 88,
   ),
   SurahsCompanion.insert(
+    id: Value(39),
     number: 39,
     nameArabic: 'الزمر',
     namePersian: 'زمر (گروه‌ها/دسته‌ها)',
@@ -315,6 +354,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 75,
   ),
   SurahsCompanion.insert(
+    id: Value(40),
     number: 40,
     nameArabic: 'غافر',
     namePersian: 'غافر (آمرزنده)',
@@ -323,6 +363,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 85,
   ),
   SurahsCompanion.insert(
+    id: Value(41),
     number: 41,
     nameArabic: 'فصلت',
     namePersian: 'فصلت (بخش‌بندی شده)',
@@ -331,6 +372,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 54,
   ),
   SurahsCompanion.insert(
+    id: Value(42),
     number: 42,
     nameArabic: 'الشورى',
     namePersian: 'شوری (مشورت)',
@@ -339,6 +381,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 53,
   ),
   SurahsCompanion.insert(
+    id: Value(43),
     number: 43,
     nameArabic: 'الزخرف',
     namePersian: 'زخرف (طلا و زیور)',
@@ -347,6 +390,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 89,
   ),
   SurahsCompanion.insert(
+    id: Value(44),
     number: 44,
     nameArabic: 'الدخان',
     namePersian: 'دخان (دود)',
@@ -355,6 +399,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 59,
   ),
   SurahsCompanion.insert(
+    id: Value(45),
     number: 45,
     nameArabic: 'الجاثية',
     namePersian: 'جاثیه (به زانو درآمده)',
@@ -363,6 +408,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 37,
   ),
   SurahsCompanion.insert(
+    id: Value(46),
     number: 46,
     nameArabic: 'الأحقاف',
     namePersian: 'احقاف (شنزارها)',
@@ -371,6 +417,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 35,
   ),
   SurahsCompanion.insert(
+    id: Value(47),
     number: 47,
     nameArabic: 'محمد',
     namePersian: 'محمد (پیامبر اکرم ص)',
@@ -379,6 +426,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 38,
   ),
   SurahsCompanion.insert(
+    id: Value(48),
     number: 48,
     nameArabic: 'الفتح',
     namePersian: 'فتح (پیروزی)',
@@ -387,6 +435,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 29,
   ),
   SurahsCompanion.insert(
+    id: Value(49),
     number: 49,
     nameArabic: 'الحجرات',
     namePersian: 'حجرات (حجره‌ها)',
@@ -395,6 +444,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 18,
   ),
   SurahsCompanion.insert(
+    id: Value(50),
     number: 50,
     nameArabic: 'ق',
     namePersian: 'ق',
@@ -403,6 +453,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 45,
   ),
   SurahsCompanion.insert(
+    id: Value(51),
     number: 51,
     nameArabic: 'الذاريات',
     namePersian: 'ذاریات (بادهای پراکنده‌کننده)',
@@ -411,6 +462,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 60,
   ),
   SurahsCompanion.insert(
+    id: Value(52),
     number: 52,
     nameArabic: 'الطور',
     namePersian: 'طور (کوه طور)',
@@ -419,6 +471,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 49,
   ),
   SurahsCompanion.insert(
+    id: Value(53),
     number: 53,
     nameArabic: 'النجم',
     namePersian: 'نجم (ستاره)',
@@ -427,6 +480,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 62,
   ),
   SurahsCompanion.insert(
+    id: Value(54),
     number: 54,
     nameArabic: 'القمر',
     namePersian: 'قمر (ماه)',
@@ -435,6 +489,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 55,
   ),
   SurahsCompanion.insert(
+    id: Value(55),
     number: 55,
     nameArabic: 'الرحمن',
     namePersian: 'الرحمن (بخشنده)',
@@ -443,6 +498,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 78,
   ),
   SurahsCompanion.insert(
+    id: Value(56),
     number: 56,
     nameArabic: 'الواقعة',
     namePersian: 'واقعه (رویداد بزرگ)',
@@ -451,6 +507,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 96,
   ),
   SurahsCompanion.insert(
+    id: Value(57),
     number: 57,
     nameArabic: 'الحديد',
     namePersian: 'حديد (آهن)',
@@ -459,6 +516,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 29,
   ),
   SurahsCompanion.insert(
+    id: Value(58),
     number: 58,
     nameArabic: 'المجادلة',
     namePersian: 'مجادله (زن مجادله‌کننده)',
@@ -467,6 +525,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 22,
   ),
   SurahsCompanion.insert(
+    id: Value(59),
     number: 59,
     nameArabic: 'الحشر',
     namePersian: 'حشر (کوچ دادن/گردآوری)',
@@ -475,6 +534,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 24,
   ),
   SurahsCompanion.insert(
+    id: Value(60),
     number: 60,
     nameArabic: 'الممتحنة',
     namePersian: 'ممتحنه (زن آزموده‌شده)',
@@ -483,6 +543,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 13,
   ),
   SurahsCompanion.insert(
+    id: Value(61),
     number: 61,
     nameArabic: 'الصف',
     namePersian: 'صف (صف‌کشیدن)',
@@ -491,6 +552,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 14,
   ),
   SurahsCompanion.insert(
+    id: Value(62),
     number: 62,
     nameArabic: 'الجمعة',
     namePersian: 'جمعه (روز جمعه)',
@@ -499,6 +561,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 11,
   ),
   SurahsCompanion.insert(
+    id: Value(63),
     number: 63,
     nameArabic: 'المنافقون',
     namePersian: 'منافقون (منافقان)',
@@ -507,6 +570,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 11,
   ),
   SurahsCompanion.insert(
+    id: Value(64),
     number: 64,
     nameArabic: 'التغابن',
     namePersian: 'تغابن (مغابون شدن/حسرت)',
@@ -515,6 +579,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 18,
   ),
   SurahsCompanion.insert(
+    id: Value(65),
     number: 65,
     nameArabic: 'الطلاق',
     namePersian: 'طلاق',
@@ -523,6 +588,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 12,
   ),
   SurahsCompanion.insert(
+    id: Value(66),
     number: 66,
     nameArabic: 'التحريم',
     namePersian: 'تحریم (حرام ساختن)',
@@ -531,6 +597,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 12,
   ),
   SurahsCompanion.insert(
+    id: Value(67),
     number: 67,
     nameArabic: 'الملك',
     namePersian: 'ملک (فرمانروایی)',
@@ -539,6 +606,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 30,
   ),
   SurahsCompanion.insert(
+    id: Value(68),
     number: 68,
     nameArabic: 'القلم',
     namePersian: 'قلم',
@@ -547,6 +615,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 52,
   ),
   SurahsCompanion.insert(
+    id: Value(69),
     number: 69,
     nameArabic: 'الحاقة',
     namePersian: 'حاقه (روز تحقق/قیامت)',
@@ -555,6 +624,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 52,
   ),
   SurahsCompanion.insert(
+    id: Value(70),
     number: 70,
     nameArabic: 'المعارج',
     namePersian: 'معارج (درجات عروج)',
@@ -563,6 +633,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 44,
   ),
   SurahsCompanion.insert(
+    id: Value(71),
     number: 71,
     nameArabic: 'نوح',
     namePersian: 'نوح (حضرت نوح)',
@@ -571,6 +642,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 28,
   ),
   SurahsCompanion.insert(
+    id: Value(72),
     number: 72,
     nameArabic: 'الجن',
     namePersian: 'جن',
@@ -579,6 +651,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 28,
   ),
   SurahsCompanion.insert(
+    id: Value(73),
     number: 73,
     nameArabic: 'المزمل',
     namePersian: 'مزمل (جامه‌به‌خود‌پیچیده)',
@@ -587,6 +660,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 20,
   ),
   SurahsCompanion.insert(
+    id: Value(74),
     number: 74,
     nameArabic: 'المدثر',
     namePersian: 'مدثر (جامه جامه بپوشنده)',
@@ -595,6 +669,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 56,
   ),
   SurahsCompanion.insert(
+    id: Value(75),
     number: 75,
     nameArabic: 'القيامة',
     namePersian: 'قیامت',
@@ -603,6 +678,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 40,
   ),
   SurahsCompanion.insert(
+    id: Value(76),
     number: 76,
     nameArabic: 'الإنسان',
     namePersian: 'انسان (دهر)',
@@ -611,6 +687,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 31,
   ),
   SurahsCompanion.insert(
+    id: Value(77),
     number: 77,
     nameArabic: 'المرسلات',
     namePersian: 'مرسلات (فرستادگان)',
@@ -619,6 +696,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 50,
   ),
   SurahsCompanion.insert(
+    id: Value(78),
     number: 78,
     nameArabic: 'النبإ',
     namePersian: 'نبأ (خبر بزرگ)',
@@ -627,6 +705,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 40,
   ),
   SurahsCompanion.insert(
+    id: Value(79),
     number: 79,
     nameArabic: 'النازعات',
     namePersian: 'نازعات (فرشتگان جان‌ستان)',
@@ -635,6 +714,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 46,
   ),
   SurahsCompanion.insert(
+    id: Value(80),
     number: 80,
     nameArabic: 'عبس',
     namePersian: 'عبس (چهره درهم کشید)',
@@ -643,6 +723,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 42,
   ),
   SurahsCompanion.insert(
+    id: Value(81),
     number: 81,
     nameArabic: 'التكوير',
     namePersian: 'تکویر (درهم پیچیدن تاریکی)',
@@ -651,6 +732,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 29,
   ),
   SurahsCompanion.insert(
+    id: Value(82),
     number: 82,
     nameArabic: 'الإنفطار',
     namePersian: 'انفطار (شکافته شدن آسمان)',
@@ -659,6 +741,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 19,
   ),
   SurahsCompanion.insert(
+    id: Value(83),
     number: 83,
     nameArabic: 'المطففين',
     namePersian: 'مطففین (کم‌فروشان)',
@@ -667,6 +750,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 36,
   ),
   SurahsCompanion.insert(
+    id: Value(84),
     number: 84,
     nameArabic: 'الإنشقاق',
     namePersian: 'انشقاق (از هم شکافتن)',
@@ -675,6 +759,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 25,
   ),
   SurahsCompanion.insert(
+    id: Value(85),
     number: 85,
     nameArabic: 'البروج',
     namePersian: 'بروج (برج‌ها)',
@@ -683,6 +768,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 22,
   ),
   SurahsCompanion.insert(
+    id: Value(86),
     number: 86,
     nameArabic: 'الطارق',
     namePersian: 'طارق (ستاره شبانگاه)',
@@ -691,6 +777,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 17,
   ),
   SurahsCompanion.insert(
+    id: Value(87),
     number: 87,
     nameArabic: 'الأعلى',
     namePersian: 'اعلی (والاترین)',
@@ -699,6 +786,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 19,
   ),
   SurahsCompanion.insert(
+    id: Value(88),
     number: 88,
     nameArabic: 'الغاشية',
     namePersian: 'غاشیه (حادثه فراگیر/قیامت)',
@@ -707,6 +795,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 26,
   ),
   SurahsCompanion.insert(
+    id: Value(89),
     number: 89,
     nameArabic: 'الفجر',
     namePersian: 'فجر (سپیده‌دم)',
@@ -715,6 +804,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 30,
   ),
   SurahsCompanion.insert(
+    id: Value(90),
     number: 90,
     nameArabic: 'البلد',
     namePersian: 'بلد (شهر)',
@@ -723,6 +813,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 20,
   ),
   SurahsCompanion.insert(
+    id: Value(91),
     number: 91,
     nameArabic: 'الشمس',
     namePersian: 'شمس (خورشید)',
@@ -731,6 +822,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 15,
   ),
   SurahsCompanion.insert(
+    id: Value(92),
     number: 92,
     nameArabic: 'الليل',
     namePersian: 'لیل (شب)',
@@ -739,6 +831,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 21,
   ),
   SurahsCompanion.insert(
+    id: Value(93),
     number: 93,
     nameArabic: 'الضحى',
     namePersian: 'ضحی (چاشتگاه/روشنایی روز)',
@@ -747,6 +840,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 11,
   ),
   SurahsCompanion.insert(
+    id: Value(94),
     number: 94,
     nameArabic: 'الشرح',
     namePersian: 'شرح (گشایش سینه)',
@@ -755,6 +849,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 8,
   ),
   SurahsCompanion.insert(
+    id: Value(95),
     number: 95,
     nameArabic: 'التين',
     namePersian: 'تین (انجیر)',
@@ -763,6 +858,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 8,
   ),
   SurahsCompanion.insert(
+    id: Value(96),
     number: 96,
     nameArabic: 'العلق',
     namePersian: 'علق (خون بسته)',
@@ -771,6 +867,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 19,
   ),
   SurahsCompanion.insert(
+    id: Value(97),
     number: 97,
     nameArabic: 'القدر',
     namePersian: 'قدر (شب قدر)',
@@ -779,6 +876,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 5,
   ),
   SurahsCompanion.insert(
+    id: Value(98),
     number: 98,
     nameArabic: 'البينة',
     namePersian: 'بینه (دلیل آشکار)',
@@ -787,6 +885,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 8,
   ),
   SurahsCompanion.insert(
+    id: Value(99),
     number: 99,
     nameArabic: 'الزلزلة',
     namePersian: 'زلزله (زمین‌لرزه)',
@@ -795,6 +894,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 8,
   ),
   SurahsCompanion.insert(
+    id: Value(100),
     number: 100,
     nameArabic: 'العاديات',
     namePersian: 'عادیات (اسبان تاخت‌پیشه)',
@@ -803,6 +903,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 11,
   ),
   SurahsCompanion.insert(
+    id: Value(101),
     number: 101,
     nameArabic: 'القارعة',
     namePersian: 'قارعه (حادثه کوبنده/قیامت)',
@@ -811,6 +912,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 11,
   ),
   SurahsCompanion.insert(
+    id: Value(102),
     number: 102,
     nameArabic: 'التكاثر',
     namePersian: 'تکاثر (افزون‌طلبی)',
@@ -819,6 +921,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 8,
   ),
   SurahsCompanion.insert(
+    id: Value(103),
     number: 103,
     nameArabic: 'العصر',
     namePersian: 'عصر (زمانه)',
@@ -827,6 +930,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 3,
   ),
   SurahsCompanion.insert(
+    id: Value(104),
     number: 104,
     nameArabic: 'الهمزة',
     namePersian: 'همزه (عیب‌جو)',
@@ -835,6 +939,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 9,
   ),
   SurahsCompanion.insert(
+    id: Value(105),
     number: 105,
     nameArabic: 'الفيل',
     namePersian: 'فیل (سپاه فیل)',
@@ -843,6 +948,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 5,
   ),
   SurahsCompanion.insert(
+    id: Value(106),
     number: 106,
     nameArabic: 'قريش',
     namePersian: 'قریش (قبیله قریش)',
@@ -851,6 +957,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 4,
   ),
   SurahsCompanion.insert(
+    id: Value(107),
     number: 107,
     nameArabic: 'الماعون',
     namePersian: 'ماعون (وسایل احتیاج/کمک)',
@@ -859,6 +966,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 7,
   ),
   SurahsCompanion.insert(
+    id: Value(108),
     number: 108,
     nameArabic: 'الكوثر',
     namePersian: 'کوثر (خیر فراوان)',
@@ -867,6 +975,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 3,
   ),
   SurahsCompanion.insert(
+    id: Value(109),
     number: 109,
     nameArabic: 'الكافرون',
     namePersian: 'کافرون (کافران)',
@@ -875,6 +984,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 6,
   ),
   SurahsCompanion.insert(
+    id: Value(110),
     number: 110,
     nameArabic: 'النصر',
     namePersian: 'نصر (یاری و پیروزی)',
@@ -883,6 +993,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 3,
   ),
   SurahsCompanion.insert(
+    id: Value(111),
     number: 111,
     nameArabic: 'المسد',
     namePersian: 'مسد (ریف/ریسمان خرمابن)',
@@ -891,6 +1002,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 5,
   ),
   SurahsCompanion.insert(
+    id: Value(112),
     number: 112,
     nameArabic: 'الإخلاص',
     namePersian: 'اخلاص (توحید)',
@@ -899,6 +1011,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 4,
   ),
   SurahsCompanion.insert(
+    id: Value(113),
     number: 113,
     nameArabic: 'الفلق',
     namePersian: 'فلق (سپیده‌دم)',
@@ -907,6 +1020,7 @@ final List<SurahsCompanion> initialSurahsList = [
     verseCount: 5,
   ),
   SurahsCompanion.insert(
+    id: Value(114),
     number: 114,
     nameArabic: 'الناس',
     namePersian: 'ناس (مردم)',

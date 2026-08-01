@@ -51,5 +51,19 @@ void main() {
       final afterDelete = await db.select(db.bookmarks).get();
       expect(afterDelete.isEmpty, isTrue);
     });
+
+    test('seedVersesForSurah loads correct verses for Surah 2 (Al-Baqarah)', () async {
+      await db.seedInitialData();
+      await db.seedVersesForSurah(2);
+
+      final baqarahVerses = await (db.select(db.verses)
+            ..where((tbl) => tbl.surahId.equals(2))
+            ..orderBy([(t) => OrderingTerm.asc(t.verseNumber)]))
+          .get();
+
+      expect(baqarahVerses.length, equals(286));
+      expect(baqarahVerses.first.textUthmani, equals('الٓمٓ'));
+      expect(baqarahVerses[1].textUthmani, contains('ذَٰلِكَ ٱلْكِتَٰبُ'));
+    });
   });
 }

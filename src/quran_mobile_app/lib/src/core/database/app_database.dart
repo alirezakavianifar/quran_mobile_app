@@ -69,12 +69,19 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // Seed verses and translations for any Surah on demand
-  Future<void> seedVersesForSurah(int surahId) async {
-    final existing = await (select(verses)..where((tbl) => tbl.surahId.equals(surahId))).get();
-    if (existing.isNotEmpty) return;
-
-    final seedItems = allQuranVersesMap[surahId];
+  Future<void> seedVersesForSurah(int surahNumber) async {
+    final seedItems = allQuranVersesMap[surahNumber];
     if (seedItems == null || seedItems.isEmpty) return;
+
+    final existing = await (select(verses)..where((tbl) => tbl.surahId.equals(surahNumber))).get();
+    if (existing.length >= seedItems.length) return;
+
+    // Clear partial or stale data if any
+    if (existing.isNotEmpty) {
+      final existingIds = existing.map((v) => v.id).toList();
+      await (delete(translations)..where((tbl) => tbl.verseId.isIn(existingIds))).go();
+      await (delete(verses)..where((tbl) => tbl.surahId.equals(surahNumber))).go();
+    }
 
     for (final item in seedItems) {
       final verseId = await into(verses).insert(
