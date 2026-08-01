@@ -105,11 +105,22 @@ class AppTheme {
   }
 
   static TextStyle getArabicQuranTextStyle({double fontSize = 24}) {
-    return GoogleFonts.scheherazadeNew(
-      fontSize: fontSize,
-      fontWeight: FontWeight.w600,
-      height: 1.8,
-      color: primaryGreen,
-    );
+    try {
+      return GoogleFonts.scheherazadeNew(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w600,
+        height: 1.8,
+        color: primaryGreen,
+      );
+    } catch (_) {
+      return TextStyle(
+        fontFamily: 'Scheherazade New',
+        fontFamilyFallback: const ['Amiri', 'Traditional Arabic', 'Naskh', 'serif'],
+        fontSize: fontSize,
+        fontWeight: FontWeight.w600,
+        height: 1.8,
+        color: primaryGreen,
+      );
+    }
   }
 }

@@ -70,12 +70,7 @@ if (-not [string]::IsNullOrWhiteSpace($TargetUrl)) {
     }
 
     if (-not $backendRunning) {
-        Write-Host "  Please ensure your backend is running before proceeding." -ForegroundColor Yellow
-        $ans = Read-Host "  Do you want to continue anyway? (y/n)"
-        if ($ans.Trim().ToLower() -ne "y") {
-            Write-Host "  Build cancelled." -ForegroundColor Red
-            exit 0
-        }
+        Write-Info "Backend not detected on port 5153. Building standalone offline APK with full Drift SQLite dataset..."
     }
 
     # 2. Check/Start Ngrok

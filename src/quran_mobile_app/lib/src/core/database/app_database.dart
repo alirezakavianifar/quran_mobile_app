@@ -61,11 +61,11 @@ class AppDatabase extends _$AppDatabase {
   // Seed sample Quran Surahs for offline reading
   Future<void> seedInitialData() async {
     final count = await select(surahs).get();
-    if (count.isNotEmpty) return;
-
-    await batch((b) {
-      b.insertAll(surahs, initialSurahsList);
-    });
+    if (count.length < 114) {
+      await batch((b) {
+        b.insertAll(surahs, initialSurahsList, mode: InsertMode.insertOrReplace);
+      });
+    }
   }
 
   // Seed verses and translations for any Surah on demand
