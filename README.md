@@ -232,24 +232,101 @@ quran_mobile_app/
 232: dotnet test tests/QuranPlatform.UnitTests/QuranPlatform.UnitTests.csproj
 233: 
 234: # 3. Launch Backend Web API Server
-235: dotnet run --project src/QuranPlatform.API/QuranPlatform.API.csproj
-236: ```
-237: 
-238: ---
-239: 
-240: ## 🔮 Future Roadmap Phases
-241: 
-242: | Phase | Description | Status |
-243: | :--- | :--- | :--- |
-244: | **Phase 0 — Data Preparation** | Curated Persian & English datasets, NLP normalizers, SQLite generator. | ✅ Completed |
-245: | **Phase 1 — Database & Entity Architecture** | PostgreSQL schema with pgvector, DDL migrations, seeding engine & tests. | ✅ Completed |
-246: | **Phase 2 — Backend Architecture** | ASP.NET Core Clean Architecture API with `fa-IR` default localization. | ✅ Completed |
-247: | **Phase 3 — Search Engine** | Persian & English hybrid lexical (OpenSearch BM25) + vector search (RRF). | ✅ Completed |
-248: | **Phase 4 — AI & Grounded RAG Engine** | Persian-default prompt builder, Tafsir Nemoneh grounding, SignalR stream. | ⏳ Planned |
-249: | **Phase 5 — Flutter Mobile App** | Feature-First RTL Persian UI with dynamic English switching & Drift SQLite. | ⏳ Planned |
-250: 
-251: ---
-252: 
-253: ## 📄 Remote Repository
-254: 
+---
+
+## 🛠 Phase 2 — Backend Architecture (ASP.NET Core)
+
+Phase 2 establishes an enterprise Clean Architecture solution in **ASP.NET Core** featuring CQRS via MediatR and native Request Localization defaulting to **Persian (`fa-IR`)** with English (`en-US`) support.
+
+For detailed step-by-step instructions on creating projects, dependencies, EF Core persistence, request culture pipeline behaviors, and unit/architecture testing, see the manual guide:
+👉 **[phase_2_backend_architecture_manual_guide.md](docs/phase_2_backend_architecture_manual_guide.md)**
+
+### Quick Commands to Build & Test Phase 2:
+```powershell
+# 1. Build ASP.NET Core Solution
+dotnet build
+
+# 2. Run Architecture & Unit Tests
+dotnet test tests/QuranPlatform.UnitTests/QuranPlatform.UnitTests.csproj
+
+# 3. Launch Backend Web API Server
+dotnet run --project src/QuranPlatform.API/QuranPlatform.API.csproj
+```
+
+---
+
+## 🤖 Phase 4 — AI & Grounded RAG Engine Architecture
+
+Phase 4 implements a vendor-agnostic Retrieval-Augmented Generation (RAG) engine that generates answers strictly grounded in authentic Quran verses and Persian Tafsir (**Tafsir Nemoneh** & **Al-Mizan**) or English Tafsir (**Ibn Kathir**).
+
+- **Vendor-Agnostic Abstractions**: `IRagEngine`, `ILLMProvider`, `IEmbeddingService`, and `IVectorSearchService`.
+- **Supported Providers**: Google Gemini API, xAI Grok API, and built-in Mock token streaming for development/testing without external API keys.
+- **Real-Time Token Streaming**: Real-time token streaming over SignalR (`/hubs/aichat`) and REST API (`POST /api/v1/ai/ask`).
+- **Guardrails**: Automated detection and fallback (`در منابع موجود اطلاعات کافی برای پاسخ دقیق یافت نشد.`) when retrieved context is insufficient.
+
+### Configuration (`appsettings.Development.json`):
+```json
+"AI": {
+  "Provider": "Gemini", // Options: "Gemini", "Grok", "Mock"
+  "Gemini": {
+    "ApiKey": "YOUR_GEMINI_API_KEY",
+    "Model": "gemini-1.5-flash"
+  },
+  "Grok": {
+    "ApiKey": "YOUR_GROK_API_KEY",
+    "Model": "grok-beta",
+    "BaseUrl": "https://api.x.ai/v1"
+  }
+}
+```
+
+---
+
+## 📱 Phase 5 — Flutter Mobile App Architecture
+
+Phase 5 implements a native cross-platform mobile app in **Flutter** (`src/quran_mobile_app`) using **Feature-First Clean Architecture** and **Riverpod** state management.
+
+- **Persian RTL Primary Layout**: Default `fa_IR` locale with native Right-To-Left directionality, **Vazirmatn** typography, and Persian digit converter (`۱۲۳`).
+- **English LTR Secondary Layout**: Dynamic language switching to `en_US` with Left-To-Right directionality and **Inter** typography without app reboot.
+- **Offline-First Drift (SQLite) Database**: Complete offline Surahs, Verses, Translations (Makarem Shirazi / Khattab), and local Bookmarks CRUD operations.
+- **Dio HTTP Networking**: Configured with automatic `Accept-Language` request header injection (`fa-IR` or `en-US`).
+- **Feature Modules**:
+  - `reader`: Surah browsing & verse details with Uthmanic Arabic text and translations.
+  - `search`: Local SQLite search with hybrid backend API integration.
+  - `ai_chat`: Interactive grounded RAG AI study assistant with citation chips (`[سوره البقرة ۲:۲۵۵]`).
+  - `bookmarks`: Saved verses and personal notes.
+
+### Quick Commands to Build & Test Phase 5 (Flutter App):
+```powershell
+# 1. Navigate to Flutter app directory
+cd src/quran_mobile_app
+
+# 2. Get packages & dependencies
+flutter pub get
+
+# 3. Run full automated test suite (Unit, Drift DB, & RTL/LTR Widget tests)
+flutter test
+
+# 4. Launch Flutter App
+flutter run
+```
+
+---
+
+## 🔮 Roadmap & Milestone Status
+
+| Phase | Description | Status |
+| :--- | :--- | :--- |
+| **Phase 0 — Data Preparation** | Curated Persian & English datasets, NLP normalizers, SQLite generator. | ✅ Completed |
+| **Phase 1 — Database & Entity Architecture** | PostgreSQL schema with pgvector, DDL migrations, seeding engine & tests. | ✅ Completed |
+| **Phase 2 — Backend Architecture** | ASP.NET Core Clean Architecture API with `fa-IR` default localization. | ✅ Completed |
+| **Phase 3 — Search Engine** | Persian & English hybrid lexical (OpenSearch BM25) + vector search (RRF). | ✅ Completed |
+| **Phase 4 — AI & Grounded RAG Engine** | Persian-default prompt builder, Tafsir Nemoneh grounding, SignalR stream. | ✅ Completed |
+| **Phase 5 — Flutter Mobile App** | Feature-First RTL Persian UI with dynamic English switching & Drift SQLite. | ✅ Completed |
+
+---
+
+## 📄 Remote Repository
+
+Changes are pushed to: [github.com/alirezakavianifar/quran_mobile_app.git](https://github.com/alirezakavianifar/quran_mobile_app.git)
 

@@ -1,5 +1,7 @@
 using FluentAssertions;
-using QuranPlatform.Domain.ValueObjects;
+using Microsoft.Extensions.Configuration;
+using Moq;
+using QuranPlatform.Application.Common.Interfaces;
 using QuranPlatform.Infrastructure.AI;
 using Xunit;
 
@@ -11,25 +13,33 @@ public class InfrastructureUnitTests
     public async Task LLMProviderAdapter_PersianCulture_ReturnsPersianPromptResponse()
     {
         // Arrange
-        var adapter = new LLMProviderAdapter();
+        var configMock = new Mock<IConfiguration>();
+        configMock.Setup(c => c["AI:Provider"]).Returns("Mock");
+
+        var adapter = new LLMProviderAdapter(configMock.Object, new HttpClient());
+        var instruction = new SystemInstruction("دستورالعمل سیستم", "fa-IR");
 
         // Act
-        var result = await adapter.GenerateGroundedAnswerAsync("صبر", PreferredCulture.Persian);
+        var result = await adapter.GenerateGroundedAnswerAsync("صبر", instruction);
 
         // Assert
-        result.Should().Contain("[پاسخ هوشمند با منبع تفسیر نمونه]");
+        result.Should().Contain("[پاسخ مستند بر اساس تفسیر نمونه و المیزان]");
     }
 
     [Fact]
     public async Task LLMProviderAdapter_EnglishCulture_ReturnsEnglishPromptResponse()
     {
         // Arrange
-        var adapter = new LLMProviderAdapter();
+        var configMock = new Mock<IConfiguration>();
+        configMock.Setup(c => c["AI:Provider"]).Returns("Mock");
+
+        var adapter = new LLMProviderAdapter(configMock.Object, new HttpClient());
+        var instruction = new SystemInstruction("System instruction", "en-US");
 
         // Act
-        var result = await adapter.GenerateGroundedAnswerAsync("Patience", PreferredCulture.English);
+        var result = await adapter.GenerateGroundedAnswerAsync("Patience", instruction);
 
         // Assert
-        result.Should().Contain("[Grounded AI Response with Tafsir Citation]");
+        result.Should().Contain("[Grounded Answer based on Ibn Kathir Commentary]");
     }
 }

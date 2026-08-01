@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using QuranPlatform.API.Hubs;
 using QuranPlatform.API.Services;
+using QuranPlatform.Application.AI;
 using QuranPlatform.Application.Behaviors;
 using QuranPlatform.Application.Common.Interfaces;
 using QuranPlatform.Domain.Repositories;
@@ -64,8 +65,10 @@ builder.Services.AddScoped<ITafsirRepository, TafsirRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISearchIndexRepository, OpenSearchIndexRepository>();
 builder.Services.AddScoped<IVectorSearchService, VectorSearchService>();
-builder.Services.AddScoped<ISearchOrchestrator, SearchOrchestrator>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IEmbeddingService, EmbeddingServiceAdapter>();
 builder.Services.AddScoped<ILLMProvider, LLMProviderAdapter>();
+builder.Services.AddScoped<IRagEngine, RagEngine>();
 
 // 5. Distributed Cache & Redis Fallback
 var redisConn = builder.Configuration.GetConnectionString("Redis");

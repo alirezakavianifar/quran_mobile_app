@@ -1,3 +1,4 @@
+using QuranPlatform.Application.Common.Interfaces;
 using QuranPlatform.Application.Search;
 using QuranPlatform.Domain.Repositories;
 using QuranPlatform.Domain.Search;

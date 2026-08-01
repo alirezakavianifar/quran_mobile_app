@@ -1,13 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using QuranPlatform.Application.Common.Interfaces;
 using QuranPlatform.Domain.ValueObjects;
 using QuranPlatform.Infrastructure.Persistence;
 
 namespace QuranPlatform.Infrastructure.Search;
-
-public interface IVectorSearchService
-{
-    Task<IEnumerable<AyahKey>> SearchVectorAsync(string queryText, PreferredCulture culture, int limit = 50, CancellationToken ct = default);
-}
 
 public class VectorSearchService : IVectorSearchService
 {
@@ -18,7 +14,11 @@ public class VectorSearchService : IVectorSearchService
         _db = db;
     }
 
-    public async Task<IEnumerable<AyahKey>> SearchVectorAsync(string queryText, PreferredCulture culture, int limit = 50, CancellationToken ct = default)
+    public async Task<IEnumerable<AyahKey>> SearchVectorAsync(
+        string queryText,
+        PreferredCulture culture,
+        int limit = 50,
+        CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(queryText))
         {
