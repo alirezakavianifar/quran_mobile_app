@@ -36,3 +36,6 @@ build/
 # Operating System
 .DS_Store
 Thumbs.db
+
+# Binaries / Generated Packages
+*.apk

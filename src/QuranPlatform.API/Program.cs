@@ -65,6 +65,7 @@ builder.Services.AddScoped<ITafsirRepository, TafsirRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISearchIndexRepository, OpenSearchIndexRepository>();
 builder.Services.AddScoped<IVectorSearchService, VectorSearchService>();
+builder.Services.AddScoped<ISearchOrchestrator, SearchOrchestrator>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IEmbeddingService, EmbeddingServiceAdapter>();
 builder.Services.AddScoped<ILLMProvider, LLMProviderAdapter>();
@@ -83,12 +84,18 @@ else
 builder.Services.AddScoped<RedisCacheService>();
 
 // 6. Controllers, SignalR & OpenAPI/Swagger
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // Enable Localization Middleware FIRST before controllers
 app.UseRequestLocalization();

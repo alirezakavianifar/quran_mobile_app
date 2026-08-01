@@ -9,6 +9,7 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 
 final surahListProvider = FutureProvider<List<Surah>>((ref) async {
   final db = ref.watch(databaseProvider);
+  await db.seedInitialData();
   final surahs = await db.select(db.surahs).get();
   return surahs;
 });
@@ -23,6 +24,7 @@ class VerseWithTranslation {
 final surahVersesProvider =
     FutureProvider.family<List<VerseWithTranslation>, int>((ref, surahId) async {
   final db = ref.watch(databaseProvider);
+  await db.seedInitialData();
   final verses = await (db.select(db.verses)
         ..where((tbl) => tbl.surahId.equals(surahId)))
       .get();

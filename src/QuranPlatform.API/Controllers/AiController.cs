@@ -31,7 +31,16 @@ public class AiController : ControllerBase
 
         var cultureCode = _cultureContext.CurrentCultureName;
         var answer = await _ragEngine.AnswerQuestionAsync(request.Question, cultureCode, ct);
+        var textDirection = cultureCode.StartsWith("fa", StringComparison.OrdinalIgnoreCase) ? "rtl" : "ltr";
 
-        return Ok(answer);
+        return Ok(new
+        {
+            Question = answer.Question,
+            Answer = answer.AnswerText,
+            Culture = answer.CultureCode,
+            TextDirection = textDirection,
+            Citations = answer.Citations,
+            HasSufficientContext = answer.HasSufficientContext
+        });
     }
 }

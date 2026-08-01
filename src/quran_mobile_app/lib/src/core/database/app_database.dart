@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
+import 'connection/connection.dart';
 
 part 'app_database.g.dart';
 
@@ -50,7 +50,7 @@ class Bookmarks extends Table {
 @DriftDatabase(tables: [Surahs, Verses, Translations, Tafsirs, Bookmarks])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e])
-      : super(e ?? driftDatabase(name: 'quran_platform_mobile'));
+      : super(e ?? createDatabaseConnection());
 
   @override
   int get schemaVersion => 1;

@@ -313,6 +313,38 @@ flutter run
 
 ---
 
+## ⚡ Development & Tunnel Helper Scripts (`scripts/`)
+
+The repository includes convenient PowerShell launcher and builder scripts located in the `scripts/` directory:
+
+### 1. Development Launcher (`scripts/start-dev.ps1`)
+Automatically checks and frees port `5153`, launches the `.NET` backend (`QuranPlatform.API`) in a new terminal window, waits until backend health check passes, detects available Flutter devices, and interactively launches the mobile app on your chosen target (Windows desktop, Chrome, Android emulator, or iOS simulator).
+
+```powershell
+.\scripts\start-dev.ps1
+```
+
+### 2. Ngrok Tunnel Launcher (`scripts/start-tunnel.ps1`)
+Starts an Ngrok HTTP tunnel forwarding port `5153` to the public internet so remote devices or mobile emulators can connect directly to your local backend API. Automatically launches the `.NET` backend if it is not already running.
+
+```powershell
+.\scripts\start-tunnel.ps1
+```
+
+### 3. Release APK Builder (`scripts/build-apk.ps1`)
+Automates building a release Android APK for the Flutter app (`src/quran_mobile_app`). Automatically detects active Ngrok tunnel or custom backend URL (passed via `-TargetUrl`), passes it to Flutter via `--dart-define=API_BASE_URL=...`, builds the release APK, and places the final `app-release.apk` at the workspace root directory.
+
+```powershell
+# Build APK using active Ngrok tunnel or default emulator loopback (10.0.2.2:5153):
+.\scripts\build-apk.ps1
+
+# Build APK targeting a specific remote backend URL:
+.\scripts\build-apk.ps1 -TargetUrl "http://45.94.215.188"
+```
+
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
