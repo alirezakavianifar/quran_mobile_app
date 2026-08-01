@@ -57,16 +57,18 @@ if (-not [string]::IsNullOrWhiteSpace($TargetUrl)) {
     }
     Write-Info "Targeting custom specified backend endpoint: $apiBaseUrl"
 } else {
-    # 1. Verify / Launch Backend on Port 5153
-    Write-Step "Checking backend status on port 5153..."
-    $backendRunning = netstat -ano | Select-String ":5153\s.*LISTENING"
-    if (-not $backendRunning) {
+    # 1. Verify / Launch Backend on Port 5153 / 5000
+    Write-Step "Checking backend process and port status..."
+    $apiProc = Get-Process QuranPlatform.API -ErrorAction SilentlyContinue
+    $backendListening = netstat -ano | Select-String ":5153\s.*LISTENING|:5000\s.*LISTENING"
+
+    if ($apiProc -or $backendListening) {
+        Write-Ok "Backend API process is already running and online."
+    } else {
         Write-Step "Launching .NET backend API in background..."
         $backendArgs = "dotnet run --project `"$BACKEND_PROJ`" --urls `"$BACKEND_URL`""
-        Start-Process powershell -ArgumentList "-NoExit", "-Command", $backendArgs -WindowStyle Normal
+        Start-Process powershell -ArgumentList "-NoExit", "-Command", $backendArgs -WindowStyle Minimized
         Start-Sleep -Seconds 3
-    } else {
-        Write-Ok "Backend is online and listening on port 5153."
     }
 
     # 2. Check / Start Ngrok Tunnel
