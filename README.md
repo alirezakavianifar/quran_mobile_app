@@ -214,21 +214,42 @@ quran_mobile_app/
    tests/test_phase1_postgres.py::test_performance_benchmark PASSED         [100%]
    ```
 
----
+217: ---
+218: 
+219: ## 🛠 Phase 2 — Backend Architecture (ASP.NET Core)
+220: 
+221: Phase 2 establishes an enterprise Clean Architecture solution in **ASP.NET Core** featuring CQRS via MediatR and native Request Localization defaulting to **Persian (`fa-IR`)** with English (`en-US`) support.
+222: 
+223: For detailed step-by-step instructions on creating projects, dependencies, EF Core persistence, request culture pipeline behaviors, and unit/architecture testing, see the manual guide:
+224: 👉 **[phase_2_backend_architecture_manual_guide.md](docs/phase_2_backend_architecture_manual_guide.md)**
+225: 
+226: ### Quick Commands to Build & Test Phase 2:
+227: ```powershell
+228: # 1. Build ASP.NET Core Solution
+229: dotnet build
+230: 
+231: # 2. Run Architecture & Unit Tests
+232: dotnet test tests/QuranPlatform.UnitTests/QuranPlatform.UnitTests.csproj
+233: 
+234: # 3. Launch Backend Web API Server
+235: dotnet run --project src/QuranPlatform.API/QuranPlatform.API.csproj
+236: ```
+237: 
+238: ---
+239: 
+240: ## 🔮 Future Roadmap Phases
+241: 
+242: | Phase | Description | Status |
+243: | :--- | :--- | :--- |
+244: | **Phase 0 — Data Preparation** | Curated Persian & English datasets, NLP normalizers, SQLite generator. | ✅ Completed |
+245: | **Phase 1 — Database & Entity Architecture** | PostgreSQL schema with pgvector, DDL migrations, seeding engine & tests. | ✅ Completed |
+246: | **Phase 2 — Backend Architecture** | ASP.NET Core Clean Architecture API with `fa-IR` default localization. | ✅ Completed |
+247: | **Phase 3 — Search Engine** | Persian & English hybrid lexical (OpenSearch BM25) + vector search (RRF). | ✅ Completed |
+248: | **Phase 4 — AI & Grounded RAG Engine** | Persian-default prompt builder, Tafsir Nemoneh grounding, SignalR stream. | ⏳ Planned |
+249: | **Phase 5 — Flutter Mobile App** | Feature-First RTL Persian UI with dynamic English switching & Drift SQLite. | ⏳ Planned |
+250: 
+251: ---
+252: 
+253: ## 📄 Remote Repository
+254: 
 
-## 🔮 Future Roadmap Phases
-
-| Phase | Description | Status |
-| :--- | :--- | :--- |
-| **Phase 0 — Data Preparation** | Curated Persian & English datasets, NLP normalizers, SQLite generator. | ✅ Completed |
-| **Phase 1 — Database & Entity Architecture** | PostgreSQL schema with pgvector, DDL migrations, seeding engine & tests. | ✅ Completed |
-| **Phase 2 — Backend Architecture** | ASP.NET Core Clean Architecture API with `fa-IR` default localization. | ⏳ Planned |
-| **Phase 3 — Search Engine** | Persian & English hybrid lexical (OpenSearch BM25) + vector search (RRF). | ⏳ Planned |
-| **Phase 4 — AI & Grounded RAG Engine** | Persian-default prompt builder, Tafsir Nemoneh grounding, SignalR stream. | ⏳ Planned |
-| **Phase 5 — Flutter Mobile App** | Feature-First RTL Persian UI with dynamic English switching & Drift SQLite. | ⏳ Planned |
-
----
-
-## 📄 Remote Repository
-
-* **GitHub Repository**: [github.com/alirezakavianifar/quran_mobile_app.git](https://github.com/alirezakavianifar/quran_mobile_app.git)

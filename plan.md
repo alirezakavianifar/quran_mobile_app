@@ -13,7 +13,9 @@ Based on your experience with **ASP.NET Core**, AI engineering, and your prefere
 Instead of competing with Quran.com or Tarteel on recitation or memorization alone, compete on **knowledge retrieval, semantic understanding, AI-assisted study, and research**.
 
 ### 🌐 Dual-Language Core (Persian Primary / English Secondary)
+
 The platform is designed **bilingually from the ground up**, with **Persian (Farsi)** as the default primary language for UI, Quran translations, Tafsir commentaries, search, and AI assistant responses, and **English** as a fully supported secondary language:
+
 * **Default Locale**: Persian (`fa` / `fa-IR`) with native **Right-To-Left (RTL)** layout orientation.
 * **Secondary Locale**: English (`en` / `en-US`) with Left-To-Right (LTR) support.
 * **Seamless Switching**: Dynamic language toggling without requiring application restarts.
@@ -91,6 +93,7 @@ This phase determines the quality of everything that follows. Special emphasis i
 ## Collect Quran Sources
 
 ### Persian Translations (Default Primary)
+
 * **Ayatollah Makarem Shirazi** (Default Persian translation)
 * **Mohammad Mahdi Fouladvand**
 * **Hortasha / Hossein Ansarian**
@@ -98,17 +101,20 @@ This phase determines the quality of everything that follows. Special emphasis i
 * **Baha'oddin Khorramshahi**
 
 ### English Translations (Secondary)
+
 * **Dr. Mustafa Khattab (The Clear Quran)** (Default English translation)
 * **Sahih International**
 * **Abdullah Yusuf Ali**
 * **Marmaduke Pickthall**
 
 ### Additional Datasets
+
 * Uthmani Quran text (KFGQPC Complex) & Simple Arabic text
 * Word-by-word translations (Persian & English)
 * Transliteration (Persian script transliteration & Latin IPA/English transliteration)
 
 Each verse receives a permanent internal ID:
+
 ```
 SurahID | VerseNumber | GlobalVerseID
 ```
@@ -118,11 +124,13 @@ SurahID | VerseNumber | GlobalVerseID
 ## Collect Tafsir
 
 ### Persian Tafsir (Default Primary)
+
 * **Tafsir Nemoneh** (Ayatollah Makarem Shirazi) — *Primary default Persian commentary*
 * **Al-Mizan** (Persian translation of Allameh Tabataba'i's commentary)
 * **Tafsir Noor** (Dr. Mohsen Qara'ati)
 
 ### English Tafsir (Secondary)
+
 * **Tafsir Ibn Kathir** (English edition) — *Primary default English commentary*
 * **Tafsir Al-Jalalayn** (English translation)
 * **Ma'ariful Qur'an** (Mufti Shafi Usmani)
@@ -134,6 +142,7 @@ Each explanation links directly to its target verse ID and locale tag.
 ## Multilingual Text Normalization & NLP Engine
 
 To handle search and AI accurately in both Persian and English:
+
 * **Persian Text Normalization**:
   * Standardize character variants: `ی` vs `ي` (Arabic vs Persian Yeh), `ک` vs `ك` (Arabic vs Persian Kaf).
   * Handle ZWNJ (Zero-Width Non-Joiner / نیم‌فاصله) correctly during tokenization.
@@ -146,6 +155,7 @@ To handle search and AI accurately in both Persian and English:
 ## Collect Audio Metadata
 
 Store metadata for reciters with support for Persian and English UI labels:
+
 ```
 Reciter | Bitrate | Duration | File URL | ReciterName_FA | ReciterName_EN
 ```
@@ -155,6 +165,7 @@ Reciter | Bitrate | Duration | File URL | ReciterName_FA | ReciterName_EN
 ## Metadata Tagging
 
 Each verse includes rich structured metadata translated and queryable in both Persian and English:
+
 ```
 Topics (موضوعات) | Keywords (کلیدواژه‌ها) | Prophets (پیامبران) | Stories (داستان‌ها) | Commands (اوامر) | Warnings (نواهی) | Makki/Madani | Revelation Order | Juz | Hizb | Page
 ```
@@ -275,9 +286,11 @@ UserSettings
 ## Core & Localized Tables
 
 ### User Tables
+
 `Users`, `Bookmarks`, `Highlights`, `Notes`, `Collections`, `ReadingHistory`, `SearchHistory`, `UserSettings`, `Devices`, `Notifications`
 
 ### Quran Tables
+
 ```
 Surah (Id, Number, NameArabic, NamePersian, NameEnglish, RevelationType, VerseCount)
 Verse (Id, SurahId, VerseNumber, PageNumber, JuzNumber, TextUthmani, TextSimple)
@@ -286,12 +299,14 @@ Transliteration (Id, VerseId, LanguageCode, TransliterationText)
 ```
 
 ### Tafsir Tables
+
 ```
 TafsirEdition (Id, Name, Author, LanguageCode, IsDefault) -- e.g. ('Tafsir Nemoneh', 'fa', True)
 TafsirContent (Id, TafsirEditionId, VerseId, VolumeNumber, ContentText)
 ```
 
 ### Search & Taxonomy Tables
+
 ```
 Topic (Id, NamePersian, NameEnglish, Category)
 Keyword (Id, WordPersian, WordEnglish, RootArabic)
@@ -299,6 +314,7 @@ Embedding (Id, VerseId, LanguageCode, VectorData)
 ```
 
 ### AI Tables
+
 ```
 Conversation (Id, UserId, Title, LanguageCode, CreatedAt)
 ConversationMessage (Id, ConversationId, SenderRole, ContentText, LanguageCode)
@@ -363,6 +379,7 @@ graph TD
 ---
 
 ## 1. Domain Layer (`QuranPlatform.Domain`)
+
 * **Entities**: `Surah`, `Verse`, `Translation`, `Tafsir`, `User`, `UserSettings` (Persian default).
 * **Value Objects**: `AyahKey`, `PreferredCulture` (`fa-IR` / `en-US`), `TextSnippet`.
 * **Repository Contracts**: `IQuranRepository`, `ITafsirRepository`, `IUserRepository`, `ISearchIndexRepository`.
@@ -370,6 +387,7 @@ graph TD
 ---
 
 ## 2. Application Layer (`QuranPlatform.Application`)
+
 * **CQRS Queries & Commands**: Handle culture-aware queries (`GetSurahByIdQuery`, `SearchVersesQuery`, `GetTafsirForVerseQuery`).
 * **Pipeline Behaviors**:
   * `CultureContextBehavior`: Automatically extracts `Accept-Language` header (defaulting to `fa-IR`) and injects current user culture into MediatR pipeline.
@@ -379,6 +397,7 @@ graph TD
 ---
 
 ## 3. Infrastructure Layer (`QuranPlatform.Infrastructure`)
+
 * **ASP.NET Core Localization**: `RequestLocalizationOptions` configured with `DefaultRequestCulture = new RequestCulture("fa-IR")` and supported cultures `fa-IR` and `en-US`.
 * **OpenSearch Multilingual Configuration**:
   * **Persian Analyzer**: Customized with Persian ZWNJ filter, Persian lowercase/char mapper (`ی`/`ک`), and Persian stemmer.
@@ -388,6 +407,7 @@ graph TD
 ---
 
 ## 4. Presentation / API Layer (`QuranPlatform.API`)
+
 * **Localization Middleware**: Automatically sets `CultureInfo.CurrentCulture` and `CultureInfo.CurrentUICulture` to `fa-IR` if unspecified by request headers.
 * **Endpoints**: `/api/v1/quran`, `/api/v1/search`, `/api/v1/ai`, `/api/v1/user`.
 
@@ -418,19 +438,24 @@ The search architecture provides comprehensive **Multilingual Hybrid Search** op
 ## Multilingual Search Pipeline
 
 ### 1. Keyword & Stemmed Search
+
 * **Persian**: Handles ZWNJ (نیم‌فاصله), prefix stripping (e.g. `می‌` , `بی‌` , `است`), Persian character variations (`ی`/`ک`), and Persian stemmers.
 * **English**: Handles standard English stemming (e.g., `forgive` -> `forgiveness`, `forgiven`).
 
 ### 2. Phrase & Exact Search
+
 * Supports exact phrase matching across Persian translations (e.g., `"بنی اسرائیل"` , `"روز قیامت"`) and English translations (`"Children of Israel"`, `"Day of Judgment"`).
 
 ### 3. Fuzzy Search
+
 * Handles spelling mistakes and character variations in both Persian (e.g., `ابراهیم` vs `إبراهيم`) and English (e.g., `Moses` vs `Mosa`).
 
 ### 4. Semantic Search
+
 * Queries in **Persian** (e.g., "چگونه دیگران را ببخشم؟") or **English** ("How should I forgive someone?") are embedded using a cross-lingual embedding model into the vector space, retrieving semantically matching verses regardless of exact word matches.
 
 ### 5. Multilingual Hybrid Search (RRF)
+
 Combines BM25 lexical search (Persian/English OpenSearch) and Cosine Similarity vector search (`pgvector`) using Reciprocal Rank Fusion (RRF).
 
 ---
@@ -452,7 +477,7 @@ sequenceDiagram
 
     Client->>Gateway: GET /api/v1/search?q="چگونه دیگران را ببخشم؟"&lang=fa
     Gateway->>Orchestrator: ExecuteHybridSearch(query="چگونه...", culture="fa-IR")
-    
+  
     par Parallel Search Execution
         alt Client Culture is Persian (fa-IR)
             Orchestrator->>LexicalFA: SearchPersianKeywords(query)
@@ -522,10 +547,13 @@ public interface IRagEngine {
 The RAG prompt builder injects localized system instructions:
 
 * **Persian Instruction (Default)**:
-  > "شما یک دستیار هوشمند مطالعه قرآن هستید. پاسخ‌های شما باید صرفاً بر اساس آیات مستخرج و تفاسیر معتبر ارائه شده (مانند تفسیر نمونه و المیزان) باشد. پاسخ‌ها باید به زبان فارسی روان، محترمانه و دقیق همراه با ارجاع دقیق به سوره و آیه (مانند [سوره البقرة ۲:۲۵۵]) و منبع تفسیر باشد. اگر اطلاعات کافی در متن موجود نیست، صریحاً اعلام کنید: 'در منابع موجود اطلاعات کافی برای پاسخ دقیق یافت نشد.'"
 
+  > "شما یک دستیار هوشمند مطالعه قرآن هستید. پاسخ‌های شما باید صرفاً بر اساس آیات مستخرج و تفاسیر معتبر ارائه شده (مانند تفسیر نمونه و المیزان) باشد. پاسخ‌ها باید به زبان فارسی روان، محترمانه و دقیق همراه با ارجاع دقیق به سوره و آیه (مانند [سوره البقرة ۲:۲۵۵]) و منبع تفسیر باشد. اگر اطلاعات کافی در متن موجود نیست، صریحاً اعلام کنید: 'در منابع موجود اطلاعات کافی برای پاسخ دقیق یافت نشد.'"
+  >
 * **English Instruction (Secondary)**:
+
   > "You are an intelligent Quran study assistant. Your answers must strictly rely on the provided retrieved verses and authentic tafsir extracts (such as Ibn Kathir). Provide accurate, respectful answers in English with explicit citations (e.g., [Surah Al-Baqarah 2:255]). If information is insufficient, respond: 'The available sources do not contain enough information to answer this question accurately.'"
+  >
 
 ---
 
@@ -648,13 +676,16 @@ To ensure offline reliability, UI performance, and seamless RTL/LTR localization
 All AI study features operate natively in Persian (Default) and English:
 
 ## 1. Smart Search (جستجوی هوشمند)
+
 * **Persian Query**: "دیدگاه قرآن درباره صبر و شکیبایی چیست؟"
 * **English Query**: "What is the Quranic view on patience?"
 
 ## 2. Related Verses (آیات مرتبط)
+
 * Recommends verses with similar thematic meaning across Persian and English commentary indexes.
 
 ## 3. AI Study & Tafsir Comparison (مطالعه و مقایسه تفاسیر)
+
 * Compares explanations across **Tafsir Nemoneh**, **Al-Mizan**, and **Tafsir Noor** in Persian, or **Ibn Kathir** and **Jalalayn** in English.
 
 ```
@@ -674,6 +705,7 @@ All AI study features operate natively in Persian (Default) and English:
 # Admin Portal
 
 Built with Blazor or React, localized in Persian & English:
+
 * Manage Persian and English translations and Tafsir datasets.
 * Moderate AI content and prompts in Persian and English.
 * Review search statistics for Persian vs English queries.
@@ -683,9 +715,9 @@ Built with Blazor or React, localized in Persian & English:
 # Suggested Development Timeline
 
 | Milestone | Duration | Key Deliverables |
-| :--- | :---: | :--- |
+| :---------------------------------------- | :---------: | :---------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Phase 0 — Data Preparation** | 3–4 weeks | Curated Persian (Makarem, Fouladvand, Nemoneh) & English datasets, NLP normalizers, dataset schema & normalization unit tests. |
-| **Phase 1 & 2 — Backend & DB** | 6–8 weeks | ASP.NET Core API with `fa-IR` default localization, OpenSearch Persian/English analyzers, PostgreSQL schema, integration & NetArchTest suites. |
+| **Phase 1 & 2 — Backend & DB** | 6–8 weeks | ASP.NET Core API with`fa-IR` default localization, OpenSearch Persian/English analyzers, PostgreSQL schema, integration & NetArchTest suites. |
 | **Phase 3 — Hybrid Search Engine** | 4–5 weeks | Persian & English lexical + cross-lingual vector search with RRF re-ranking, precision/recall benchmarks & k6 load testing. |
 | **Phase 4 — Grounded RAG AI** | 4–5 weeks | Persian-default prompt builder, Tafsir Nemoneh grounding, SignalR Persian streaming, RAG hallucination eval suite. |
 | **Phase 5 — Flutter Mobile App** | 8–10 weeks | RTL Persian UI (Vazirmatn), dynamic language switcher, offline Drift DB, widget & RTL/LTR visual golden tests. |
