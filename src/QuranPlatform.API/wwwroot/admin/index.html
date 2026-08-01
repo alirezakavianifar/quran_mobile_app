@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پورتال مدیریت پلتفرم قرآن | Quran Platform Admin Portal</title> <!-- SEO Title -->
+    <meta name="description" content="پورتال مدیریت و نظارت بر داده‌ها، جستجو و سیستم هوش مصنوعی پلتفرم جامع قرآن کریم">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">📖</div>
+                <div class="logo-text">
+                    <h2 id="app-title">مدیریت پلتفرم قرآن</h2>
+                    <span id="app-subtitle">Admin Dashboard</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="stats" id="nav-stats">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">آمار سیستم</span>
+                </button>
+                <button class="nav-item" data-tab="search" id="nav-search">
+                    <span class="nav-icon">🔍</span>
+                    <span class="nav-label">تحلیل جستجو</span>
+                </button>
+                <button class="nav-item" data-tab="ai" id="nav-ai">
+                    <span class="nav-icon">🤖</span>
+                    <span class="nav-label">لوگ‌های هوش مصنوعی</span>
+                </button>
+                <button class="nav-item" data-tab="content" id="nav-content">
+                    <span class="nav-icon">📚</span>
+                    <span class="nav-label">مدیریت محتوا</span>
+                </button>
+            </nav>
+
+            <div class="lang-switch-container">
+                <span class="lang-label">زبان / Language:</span>
+                <div class="lang-toggle-buttons">
+                    <button id="btn-lang-fa" class="lang-btn active">فارسی</button>
+                    <button id="btn-lang-en" class="lang-btn">English</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-header">
+                    <h1 id="page-title">آمار و عملکرد سیستم</h1>
+                    <p id="page-description">بررسی وضعیت لحظه‌ای پایگاه‌داده، موتور جستجو و سرویس هوش مصنوعی</p>
+                </div>
+                <div class="status-badge" id="system-status-badge">
+                    <span class="status-dot"></span>
+                    <span id="status-text">سیستم فعال (Healthy)</span>
+                </div>
+            </header>
+
+            <!-- Tab 1: System Stats -->
+            <section id="tab-stats" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📖</div>
+                        <div class="stat-info">
+                            <span class="stat-label" id="lbl-total-verses">کل آیات قرآن</span>
+                            <span class="stat-value" id="val-total-verses">۶,۲۳۶</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <span class="stat-label" id="lbl-total-users">کاربران فعال</span>
+                            <span class="stat-value" id="val-total-users">۱,۲۵۰</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-info">
+                            <span class="stat-label" id="lbl-pgvector">بردارهای pgvector</span>
+                            <span class="stat-value" id="val-pgvector">۶,۲۳۶</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🔎</div>
+                        <div class="stat-info">
+                            <span class="stat-label" id="lbl-opensearch">اندیس OpenSearch</span>
+                            <span class="stat-value" id="val-opensearch">۱۲,۴۷۲</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsystems-container">
+                    <h3 id="subsystems-title">وضعیت زیرسیستم‌ها</h3>
+                    <div class="subsystems-grid">
+                        <div class="subsystem-card">
+                            <span class="sub-name">PostgreSQL & pgvector</span>
+                            <span class="sub-status status-healthy" id="sub-db">Healthy (4ms)</span>
+                        </div>
+                        <div class="subsystem-card">
+                            <span class="sub-name">OpenSearch BM25</span>
+                            <span class="sub-status status-healthy" id="sub-search">Healthy (8ms)</span>
+                        </div>
+                        <div class="subsystem-card">
+                            <span class="sub-name">Redis Cache</span>
+                            <span class="sub-status status-healthy" id="sub-redis">Healthy (1ms)</span>
+                        </div>
+                        <div class="subsystem-card">
+                            <span class="sub-name">Grounded RAG AI Engine</span>
+                            <span class="sub-status status-healthy" id="sub-ai">Healthy (120ms)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: Search Analytics -->
+            <section id="tab-search" class="tab-content">
+                <div class="analytics-card">
+                    <h3 id="search-trends-title">کلیدواژه‌های پرجستجو (Persian & English)</h3>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th id="th-rank">رتبه</th>
+                                    <th id="th-query">عبارت جستجو شده</th>
+                                    <th id="th-count">تعداد جستجو</th>
+                                    <th id="th-lang">زبان</th>
+                                </tr>
+                            </thead>
+                            <tbody id="search-analytics-tbody">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 3: AI Logs -->
+            <section id="tab-ai" class="tab-content">
+                <div class="analytics-card">
+                    <h3 id="ai-logs-title">آخرین تعاملات دستیار هوش مصنوعی</h3>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th id="th-time">زمان</th>
+                                    <th id="th-prompt">پرسش کاربر</th>
+                                    <th id="th-citations">ارجاعات (Citations)</th>
+                                    <th id="th-moderation">وضعیت پایش (Guardrail)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ai-logs-tbody">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 4: Content Moderation -->
+            <section id="tab-content" class="tab-content">
+                <div class="analytics-card">
+                    <h3 id="content-mgmt-title">مدیریت ترجمه‌ها و تفاسیر</h3>
+                    <div class="content-sources-grid">
+                        <div class="source-item">
+                            <span class="source-title">ترجمه آیت‌الله مکارم شیرازی (فارسی)</span>
+                            <span class="source-badge badge-active">فعال پیش‌فرض</span>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-title">تفسیر نمونه (۱۰ جلد - فارسی)</span>
+                            <span class="source-badge badge-active">فعال پیش‌فرض</span>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-title">Dr. Mustafa Khattab - The Clear Quran (English)</span>
+                            <span class="source-badge badge-secondary">English Default</span>
+                        </div>
+                        <div class="source-item">
+                            <span class="source-title">Tafsir Ibn Kathir (English)</span>
+                            <span class="source-badge badge-secondary">English Default</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

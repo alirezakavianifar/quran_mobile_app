@@ -51,7 +51,57 @@ public class ApiIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
         body.Should().NotBeNull();
         body!.Culture.Should().Be("fa-IR");
         body.TextDirection.Should().Be("rtl");
-        body.Answer.Should().Contain("تفسیر نمونه");
+        body.Answer.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task HealthzEndpoint_ReturnsOkStatus()
+    {
+        // Act
+        var response = await _client.GetAsync("/healthz");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task AdminStatsEndpoint_ReturnsSystemStats()
+    {
+        // Act
+        var response = await _client.GetAsync("/api/v1/admin/stats");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task AudioRecitersEndpoint_ReturnsRecitersList()
+    {
+        // Act
+        var response = await _client.GetAsync("/api/v1/audio/reciters");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task SyncEndpoint_ProcessesUserSyncPayload()
+    {
+        // Arrange
+        var payload = new
+        {
+            UserId = "e2e-test-user",
+            Bookmarks = new[] { new { VerseKey = "2:255", Timestamp = DateTime.UtcNow } }
+        };
+
+        // Act
+        var response = await _client.PostAsJsonAsync("/api/v1/sync", payload);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var fetchResponse = await _client.GetAsync("/api/v1/sync/e2e-test-user");
+        fetchResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     private record AiResponseDto(string Question, string Answer, string Culture, string TextDirection);

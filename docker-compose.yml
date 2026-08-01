@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # 1. ASP.NET Core API Gateway & Web Admin Dashboard
+  api:
+    build:
+      context: .
+      dockerfile: src/QuranPlatform.API/Dockerfile
+    container_name: quran_api
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=quran_db;Username=quran_admin;Password=${POSTGRES_PASSWORD:-quran_pass}
+      - ConnectionStrings__Redis=redis:6379
+      - OpenSearch__Url=http://opensearch:9200
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: always
+
+  # 2. PostgreSQL 16 with pgvector Extension
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: quran_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: quran_db
+      POSTGRES_USER: quran_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-quran_pass}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quran_admin -d quran_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 3. Redis Multilingual Cache
+  redis:
+    image: redis:7-alpine
+    container_name: quran_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # 4. OpenSearch 2.x BM25 Lexical Search Engine
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: quran_opensearch
+    environment:
+      - cluster.name=quran-cluster
+      - node.name=quran-node1
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_INSTALL_DEMO_CONFIGS=true
+      - DISABLE_SECURITY_PLUGIN=true
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearchdata:/usr/share/opensearch/data
+
+volumes:
+  pgdata:
+  opensearchdata:

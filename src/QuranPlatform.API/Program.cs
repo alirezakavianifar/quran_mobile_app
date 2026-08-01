@@ -63,6 +63,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddScoped<IQuranRepository, QuranRepository>();
 builder.Services.AddScoped<ITafsirRepository, TafsirRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ISearchIndexRepository, OpenSearchIndexRepository>();
 builder.Services.AddScoped<IVectorSearchService, VectorSearchService>();
 builder.Services.AddScoped<ISearchOrchestrator, SearchOrchestrator>();
@@ -83,11 +84,12 @@ else
 }
 builder.Services.AddScoped<RedisCacheService>();
 
-// 6. Controllers, SignalR & OpenAPI/Swagger
+// 6. Controllers, SignalR, HealthChecks & OpenAPI/Swagger
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
+builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -107,7 +109,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseAuthorization();
+app.MapHealthChecks("/healthz");
 app.MapControllers();
 app.MapHub<AiChatHub>("/hubs/aichat");
 

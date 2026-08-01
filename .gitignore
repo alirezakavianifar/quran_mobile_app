@@ -39,3 +39,5 @@ Thumbs.db
 
 # Binaries / Generated Packages
 *.apk
+*.rar
+*.zip

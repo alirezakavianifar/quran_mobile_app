@@ -29,13 +29,60 @@ class VerseDetailView extends ConsumerWidget {
           if (verses.isEmpty) {
             return const Center(child: Text('No Verses found.'));
           }
+          final showBismillahHeader = surah.number != 1 && surah.number != 9;
+          final totalCount = showBismillahHeader ? verses.length + 1 : verses.length;
+
           return ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: verses.length,
+            itemCount: totalCount,
             itemBuilder: (context, index) {
-              final item = verses[index];
+              if (showBismillahHeader && index == 0) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
+                      style: AppTheme.getArabicQuranTextStyle(fontSize: 26).copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              final verseIndex = showBismillahHeader ? index - 1 : index;
+              final item = verses[verseIndex];
               final verse = item.verse;
               final trans = item.translation;
+
+              var arabicText = verse.textUthmani;
+              if (surah.number != 1 && surah.number != 9 && verse.verseNumber == 1) {
+                const bismillahPatterns = [
+                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ',
+                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ',
+                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                  'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ',
+                  'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ',
+                ];
+                for (final pat in bismillahPatterns) {
+                  if (arabicText.startsWith(pat)) {
+                    arabicText = arabicText.substring(pat.length).trim();
+                    break;
+                  }
+                }
+              }
 
               final ayahKey = PersianDigitConverter.formatAyahKey(
                 surah.number,
@@ -91,7 +138,7 @@ class VerseDetailView extends ConsumerWidget {
                       const SizedBox(height: 12),
                       // Arabic Uthmani Text
                       Text(
-                        verse.textUthmani,
+                        arabicText,
                         textAlign: TextAlign.right,
                         textDirection: TextDirection.rtl,
                         style: AppTheme.getArabicQuranTextStyle(fontSize: 22),

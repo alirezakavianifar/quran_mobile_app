@@ -1,6 +1,9 @@
 import 'package:drift/drift.dart';
 import 'connection/connection.dart';
 
+import 'surah_seed_data.dart';
+import 'verse_seed_data.dart';
+
 part 'app_database.g.dart';
 
 class Surahs extends Table {
@@ -61,94 +64,47 @@ class AppDatabase extends _$AppDatabase {
     if (count.isNotEmpty) return;
 
     await batch((b) {
-      b.insertAll(surahs, [
-        SurahsCompanion.insert(
-          number: 1,
-          nameArabic: 'الفاتحة',
-          namePersian: 'حمد (سرآغاز)',
-          nameEnglish: 'Al-Fatihah',
-          revelationType: 'Makki',
-          verseCount: 7,
-        ),
-        SurahsCompanion.insert(
-          number: 2,
-          nameArabic: 'البقرة',
-          namePersian: 'بقره (گاو ماده)',
-          nameEnglish: 'Al-Baqarah',
-          revelationType: 'Madani',
-          verseCount: 286,
-        ),
-        SurahsCompanion.insert(
-          number: 3,
-          nameArabic: 'آل عمران',
-          namePersian: 'آل عمران (خاندان عمران)',
-          nameEnglish: 'Ali \'Imran',
-          revelationType: 'Madani',
-          verseCount: 200,
-        ),
-        SurahsCompanion.insert(
-          number: 112,
-          nameArabic: 'الإخلاص',
-          namePersian: 'توحید (اخلاص)',
-          nameEnglish: 'Al-Ikhlas',
-          revelationType: 'Makki',
-          verseCount: 4,
-        ),
-      ]);
-
-      b.insertAll(verses, [
-        VersesCompanion.insert(
-          surahId: 1,
-          verseNumber: 1,
-          textUthmani: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-          textSimple: 'بسم الله الرحمن الرحيم',
-          pageNumber: 1,
-          juzNumber: 1,
-        ),
-        VersesCompanion.insert(
-          surahId: 1,
-          verseNumber: 2,
-          textUthmani: 'ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ',
-          textSimple: 'الحمد لله رب العالمين',
-          pageNumber: 1,
-          juzNumber: 1,
-        ),
-        VersesCompanion.insert(
-          surahId: 2,
-          verseNumber: 255,
-          textUthmani: 'ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَيُّ ٱلْقَيُّومُ...',
-          textSimple: 'الله لا اله الا هو الحي القيوم',
-          pageNumber: 42,
-          juzNumber: 3,
-        ),
-      ]);
-
-      b.insertAll(translations, [
-        TranslationsCompanion.insert(
-          verseId: 1,
-          languageCode: 'fa',
-          authorName: 'آیت‌الله مکارم شیرازی',
-          translationText: 'به نام خداوند بخشنده بخشایشگر',
-        ),
-        TranslationsCompanion.insert(
-          verseId: 1,
-          languageCode: 'en',
-          authorName: 'Dr. Mustafa Khattab',
-          translationText: 'In the name of Allah—the Most Compassionate, Most Merciful.',
-        ),
-        TranslationsCompanion.insert(
-          verseId: 2,
-          languageCode: 'fa',
-          authorName: 'آیت‌الله مکارم شیرازی',
-          translationText: 'ستایش مخصوص خداوندی است که پروردگار جهانیان است.',
-        ),
-        TranslationsCompanion.insert(
-          verseId: 2,
-          languageCode: 'en',
-          authorName: 'Dr. Mustafa Khattab',
-          translationText: 'All praise is for Allah—Lord of all worlds.',
-        ),
-      ]);
+      b.insertAll(surahs, initialSurahsList);
     });
+  }
+
+  // Seed verses and translations for any Surah on demand
+  Future<void> seedVersesForSurah(int surahId) async {
+    final existing = await (select(verses)..where((tbl) => tbl.surahId.equals(surahId))).get();
+    if (existing.isNotEmpty) return;
+
+    final seedItems = allQuranVersesMap[surahId];
+    if (seedItems == null || seedItems.isEmpty) return;
+
+    for (final item in seedItems) {
+      final verseId = await into(verses).insert(
+        VersesCompanion.insert(
+          surahId: item.surahId,
+          verseNumber: item.verseNumber,
+          textUthmani: item.textUthmani,
+          textSimple: item.textSimple,
+          pageNumber: item.pageNumber,
+          juzNumber: item.juzNumber,
+        ),
+      );
+
+      await into(translations).insert(
+        TranslationsCompanion.insert(
+          verseId: verseId,
+          languageCode: 'fa',
+          authorName: 'آیت‌الله مکارم شیرازی',
+          translationText: item.translationFa,
+        ),
+      );
+
+      await into(translations).insert(
+        TranslationsCompanion.insert(
+          verseId: verseId,
+          languageCode: 'en',
+          authorName: 'Dr. Mustafa Khattab',
+          translationText: item.translationEn,
+        ),
+      );
+    }
   }
 }

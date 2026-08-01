@@ -1,0 +1,72 @@
+name: Quran Platform CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-test:
+    name: Build & Test ASP.NET Core Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK (8.0)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore QuaranPlatform.slnx
+
+      - name: Build Solution
+        run: dotnet build QuaranPlatform.slnx --configuration Release --no-restore
+
+      - name: Execute .NET Test Suites
+        run: dotnet test QuaranPlatform.slnx --configuration Release --no-build --verbosity normal
+
+  data-nlp-test:
+    name: Test Data Ingestion & NLP Engine
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python (3.11)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Execute Python Tests
+        run: pytest tests/test_phase0_data.py tests/test_phase1_postgres.py
+
+  flutter-app-test:
+    name: Build & Test Flutter Mobile & Web App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+        working-directory: src/quran_mobile_app
+
+      - name: Run Flutter Tests
+        run: flutter test
+        working-directory: src/quran_mobile_app

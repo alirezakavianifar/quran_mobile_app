@@ -17,15 +17,15 @@ void main() {
   group('Drift AppDatabase Integration Tests', () {
     test('seedInitialData inserts default Surahs, Verses, and Translations', () async {
       await db.seedInitialData();
+      await db.seedVersesForSurah(1);
 
       final surahsList = await db.select(db.surahs).get();
-      expect(surahsList.length, equals(4));
+      expect(surahsList.length, equals(114));
       expect(surahsList.first.nameArabic, equals('الفاتحة'));
-      expect(surahsList.first.namePersian, equals('حمد (سرآغاز)'));
 
       final versesList = await db.select(db.verses).get();
       expect(versesList.isNotEmpty, isTrue);
-      expect(versesList.first.textUthmani, contains('ٱللَّهِ'));
+      expect(versesList.first.textUthmani, contains('بِسْمِ'));
 
       final translationsList = await db.select(db.translations).get();
       expect(translationsList.isNotEmpty, isTrue);

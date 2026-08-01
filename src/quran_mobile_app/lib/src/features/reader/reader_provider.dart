@@ -1,16 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart';
 import '../../core/database/app_database.dart';
+import '../../core/localization/app_localizations.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
-  final db = AppDatabase();
-  db.seedInitialData();
-  return db;
+  return AppDatabase();
 });
 
 final surahListProvider = FutureProvider<List<Surah>>((ref) async {
   final db = ref.watch(databaseProvider);
   await db.seedInitialData();
-  final surahs = await db.select(db.surahs).get();
+  final surahs = await (db.select(db.surahs)
+        ..orderBy([(t) => OrderingTerm.asc(t.number)]))
+      .get();
   return surahs;
 });
 
@@ -24,17 +26,26 @@ class VerseWithTranslation {
 final surahVersesProvider =
     FutureProvider.family<List<VerseWithTranslation>, int>((ref, surahId) async {
   final db = ref.watch(databaseProvider);
+  final locale = ref.watch(localeProvider);
+  final langCode = locale.languageCode;
+
   await db.seedInitialData();
+  await db.seedVersesForSurah(surahId);
+
   final verses = await (db.select(db.verses)
-        ..where((tbl) => tbl.surahId.equals(surahId)))
+        ..where((tbl) => tbl.surahId.equals(surahId))
+        ..orderBy([(t) => OrderingTerm.asc(t.verseNumber)]))
       .get();
 
   final translations = await db.select(db.translations).get();
 
   return verses.map((v) {
     final t = translations.cast<Translation?>().firstWhere(
-          (trans) => trans?.verseId == v.id,
-          orElse: () => null,
+          (trans) => trans?.verseId == v.id && trans?.languageCode == langCode,
+          orElse: () => translations.cast<Translation?>().firstWhere(
+            (trans) => trans?.verseId == v.id,
+            orElse: () => null,
+          ),
         );
     return VerseWithTranslation(verse: v, translation: t);
   }).toList();
