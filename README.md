@@ -256,10 +256,7 @@ The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
 # 1. Dev Launcher (Backend + App):
 .\scripts\start-dev.ps1
 
-# 2. Public Ngrok Tunnel Launcher:
-.\scripts\start-tunnel.ps1
-
-# 3. Build Release Android APK:
+# 2. Master 1-Click Ngrok Tunnel & Release Android APK Builder:
 .\scripts\build-apk.ps1
 ```
 
