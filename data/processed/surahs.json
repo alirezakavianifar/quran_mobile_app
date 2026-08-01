@@ -1,0 +1,1142 @@
+[
+  {
+    "id": 1,
+    "number": 1,
+    "name_arabic": "الفاتحة",
+    "name_persian": "حمد (گشایش)",
+    "name_english": "Al-Fatihah",
+    "revelation_type": "Makki",
+    "revelation_order": 5,
+    "verse_count": 7
+  },
+  {
+    "id": 2,
+    "number": 2,
+    "name_arabic": "البقرة",
+    "name_persian": "بقره (گاو ماده)",
+    "name_english": "Al-Baqarah",
+    "revelation_type": "Madani",
+    "revelation_order": 87,
+    "verse_count": 286
+  },
+  {
+    "id": 3,
+    "number": 3,
+    "name_arabic": "آل عمران",
+    "name_persian": "آل عمران (خاندان عمران)",
+    "name_english": "Ali 'Imran",
+    "revelation_type": "Madani",
+    "revelation_order": 89,
+    "verse_count": 200
+  },
+  {
+    "id": 4,
+    "number": 4,
+    "name_arabic": "النساء",
+    "name_persian": "نساء (زنان)",
+    "name_english": "An-Nisa",
+    "revelation_type": "Madani",
+    "revelation_order": 92,
+    "verse_count": 176
+  },
+  {
+    "id": 5,
+    "number": 5,
+    "name_arabic": "المائدة",
+    "name_persian": "مائده (سفره غذا)",
+    "name_english": "Al-Ma'idah",
+    "revelation_type": "Madani",
+    "revelation_order": 112,
+    "verse_count": 120
+  },
+  {
+    "id": 6,
+    "number": 6,
+    "name_arabic": "الأنعام",
+    "name_persian": "انعام (چهارپایان)",
+    "name_english": "Al-An'am",
+    "revelation_type": "Makki",
+    "revelation_order": 55,
+    "verse_count": 165
+  },
+  {
+    "id": 7,
+    "number": 7,
+    "name_arabic": "الأعراف",
+    "name_persian": "اعراف (بلندی‌ها)",
+    "name_english": "Al-A'raf",
+    "revelation_type": "Makki",
+    "revelation_order": 39,
+    "verse_count": 206
+  },
+  {
+    "id": 8,
+    "number": 8,
+    "name_arabic": "الأنفال",
+    "name_persian": "انفال (غنایم)",
+    "name_english": "Al-Anfal",
+    "revelation_type": "Madani",
+    "revelation_order": 88,
+    "verse_count": 75
+  },
+  {
+    "id": 9,
+    "number": 9,
+    "name_arabic": "التوبة",
+    "name_persian": "توبه (توبه‌پذیری)",
+    "name_english": "At-Tawbah",
+    "revelation_type": "Madani",
+    "revelation_order": 113,
+    "verse_count": 129
+  },
+  {
+    "id": 10,
+    "number": 10,
+    "name_arabic": "يونس",
+    "name_persian": "یونس (حضرت یونس)",
+    "name_english": "Yunus",
+    "revelation_type": "Makki",
+    "revelation_order": 51,
+    "verse_count": 109
+  },
+  {
+    "id": 11,
+    "number": 11,
+    "name_arabic": "هود",
+    "name_persian": "هود (حضرت هود)",
+    "name_english": "Hud",
+    "revelation_type": "Makki",
+    "revelation_order": 52,
+    "verse_count": 123
+  },
+  {
+    "id": 12,
+    "number": 12,
+    "name_arabic": "يوسف",
+    "name_persian": "یوسف (حضرت یوسف)",
+    "name_english": "Yusuf",
+    "revelation_type": "Makki",
+    "revelation_order": 53,
+    "verse_count": 111
+  },
+  {
+    "id": 13,
+    "number": 13,
+    "name_arabic": "الرعد",
+    "name_persian": "رعد (رعد و برق)",
+    "name_english": "Ar-Ra'd",
+    "revelation_type": "Madani",
+    "revelation_order": 96,
+    "verse_count": 43
+  },
+  {
+    "id": 14,
+    "number": 14,
+    "name_arabic": "إبراهيم",
+    "name_persian": "ابراهیم (حضرت ابراهیم)",
+    "name_english": "Ibrahim",
+    "revelation_type": "Makki",
+    "revelation_order": 72,
+    "verse_count": 52
+  },
+  {
+    "id": 15,
+    "number": 15,
+    "name_arabic": "الحجر",
+    "name_persian": "حجر (سرزمین حجر)",
+    "name_english": "Al-Hijr",
+    "revelation_type": "Makki",
+    "revelation_order": 54,
+    "verse_count": 99
+  },
+  {
+    "id": 16,
+    "number": 16,
+    "name_arabic": "النحل",
+    "name_persian": "نحل (زنبور عسل)",
+    "name_english": "An-Nahl",
+    "revelation_type": "Makki",
+    "revelation_order": 70,
+    "verse_count": 128
+  },
+  {
+    "id": 17,
+    "number": 17,
+    "name_arabic": "الإسراء",
+    "name_persian": "اسراء (معراج/سیر شبانه)",
+    "name_english": "Al-Isra",
+    "revelation_type": "Makki",
+    "revelation_order": 50,
+    "verse_count": 111
+  },
+  {
+    "id": 18,
+    "number": 18,
+    "name_arabic": "الكهف",
+    "name_persian": "کهف (غار)",
+    "name_english": "Al-Kahf",
+    "revelation_type": "Makki",
+    "revelation_order": 69,
+    "verse_count": 110
+  },
+  {
+    "id": 19,
+    "number": 19,
+    "name_arabic": "مريم",
+    "name_persian": "مریم (حضرت مریم)",
+    "name_english": "Maryam",
+    "revelation_type": "Makki",
+    "revelation_order": 44,
+    "verse_count": 98
+  },
+  {
+    "id": 20,
+    "number": 20,
+    "name_arabic": "طه",
+    "name_persian": "طه",
+    "name_english": "Taha",
+    "revelation_type": "Makki",
+    "revelation_order": 45,
+    "verse_count": 135
+  },
+  {
+    "id": 21,
+    "number": 21,
+    "name_arabic": "الأنبياء",
+    "name_persian": "انبیاء (پیامبران)",
+    "name_english": "Al-Anbiya",
+    "revelation_type": "Makki",
+    "revelation_order": 73,
+    "verse_count": 112
+  },
+  {
+    "id": 22,
+    "number": 22,
+    "name_arabic": "الحج",
+    "name_persian": "حج (زیارت خانه خدا)",
+    "name_english": "Al-Hajj",
+    "revelation_type": "Madani",
+    "revelation_order": 103,
+    "verse_count": 78
+  },
+  {
+    "id": 23,
+    "number": 23,
+    "name_arabic": "المؤمنون",
+    "name_persian": "مؤمنون (مؤمنان)",
+    "name_english": "Al-Mu'minun",
+    "revelation_type": "Makki",
+    "revelation_order": 74,
+    "verse_count": 118
+  },
+  {
+    "id": 24,
+    "number": 24,
+    "name_arabic": "النور",
+    "name_persian": "نور",
+    "name_english": "An-Nur",
+    "revelation_type": "Madani",
+    "revelation_order": 102,
+    "verse_count": 64
+  },
+  {
+    "id": 25,
+    "number": 25,
+    "name_arabic": "الفرقان",
+    "name_persian": "فرقان (جداسازنده حق از باطل)",
+    "name_english": "Al-Furqan",
+    "revelation_type": "Makki",
+    "revelation_order": 42,
+    "verse_count": 77
+  },
+  {
+    "id": 26,
+    "number": 26,
+    "name_arabic": "الشعراء",
+    "name_persian": "شعراء (شاعران)",
+    "name_english": "Ash-Shu'ara",
+    "revelation_type": "Makki",
+    "revelation_order": 47,
+    "verse_count": 227
+  },
+  {
+    "id": 27,
+    "number": 27,
+    "name_arabic": "النمل",
+    "name_persian": "نمل (مورچه)",
+    "name_english": "An-Naml",
+    "revelation_type": "Makki",
+    "revelation_order": 48,
+    "verse_count": 93
+  },
+  {
+    "id": 28,
+    "number": 28,
+    "name_arabic": "القصص",
+    "name_persian": "قصص (داستان‌ها)",
+    "name_english": "Al-Qasas",
+    "revelation_type": "Makki",
+    "revelation_order": 49,
+    "verse_count": 88
+  },
+  {
+    "id": 29,
+    "number": 29,
+    "name_arabic": "العنكبوت",
+    "name_persian": "عنکبوت",
+    "name_english": "Al-'Ankabut",
+    "revelation_type": "Makki",
+    "revelation_order": 85,
+    "verse_count": 69
+  },
+  {
+    "id": 30,
+    "number": 30,
+    "name_arabic": "الروم",
+    "name_persian": "روم (رومیان)",
+    "name_english": "Ar-Rum",
+    "revelation_type": "Makki",
+    "revelation_order": 84,
+    "verse_count": 60
+  },
+  {
+    "id": 31,
+    "number": 31,
+    "name_arabic": "لقمان",
+    "name_persian": "لقمان (حضرت لقمان)",
+    "name_english": "Luqman",
+    "revelation_type": "Makki",
+    "revelation_order": 57,
+    "verse_count": 34
+  },
+  {
+    "id": 32,
+    "number": 32,
+    "name_arabic": "السجدة",
+    "name_persian": "سجده",
+    "name_english": "As-Sajdah",
+    "revelation_type": "Makki",
+    "revelation_order": 75,
+    "verse_count": 30
+  },
+  {
+    "id": 33,
+    "number": 33,
+    "name_arabic": "الأحزاب",
+    "name_persian": "احزاب (گروه‌ها)",
+    "name_english": "Al-Ahzab",
+    "revelation_type": "Madani",
+    "revelation_order": 90,
+    "verse_count": 73
+  },
+  {
+    "id": 34,
+    "number": 34,
+    "name_arabic": "سبإ",
+    "name_persian": "سبأ (قوم سبأ)",
+    "name_english": "Saba",
+    "revelation_type": "Makki",
+    "revelation_order": 58,
+    "verse_count": 54
+  },
+  {
+    "id": 35,
+    "number": 35,
+    "name_arabic": "فاطر",
+    "name_persian": "فاطر (آفریننده)",
+    "name_english": "Fatir",
+    "revelation_type": "Makki",
+    "revelation_order": 43,
+    "verse_count": 45
+  },
+  {
+    "id": 36,
+    "number": 36,
+    "name_arabic": "يس",
+    "name_persian": "یس",
+    "name_english": "Ya-Sin",
+    "revelation_type": "Makki",
+    "revelation_order": 41,
+    "verse_count": 83
+  },
+  {
+    "id": 37,
+    "number": 37,
+    "name_arabic": "الصافات",
+    "name_persian": "صافات (صف‌کشیدگان)",
+    "name_english": "As-Saffat",
+    "revelation_type": "Makki",
+    "revelation_order": 56,
+    "verse_count": 182
+  },
+  {
+    "id": 38,
+    "number": 38,
+    "name_arabic": "ص",
+    "name_persian": "ص",
+    "name_english": "Sad",
+    "revelation_type": "Makki",
+    "revelation_order": 38,
+    "verse_count": 88
+  },
+  {
+    "id": 39,
+    "number": 39,
+    "name_arabic": "الزمر",
+    "name_persian": "زمر (گروه‌ها/دسته‌ها)",
+    "name_english": "Az-Zumar",
+    "revelation_type": "Makki",
+    "revelation_order": 59,
+    "verse_count": 75
+  },
+  {
+    "id": 40,
+    "number": 40,
+    "name_arabic": "غافر",
+    "name_persian": "غافر (آمرزنده)",
+    "name_english": "Ghafir",
+    "revelation_type": "Makki",
+    "revelation_order": 60,
+    "verse_count": 85
+  },
+  {
+    "id": 41,
+    "number": 41,
+    "name_arabic": "فصلت",
+    "name_persian": "فصلت (بخش‌بندی شده)",
+    "name_english": "Fussilat",
+    "revelation_type": "Makki",
+    "revelation_order": 61,
+    "verse_count": 54
+  },
+  {
+    "id": 42,
+    "number": 42,
+    "name_arabic": "الشورى",
+    "name_persian": "شوری (مشورت)",
+    "name_english": "Ash-Shura",
+    "revelation_type": "Makki",
+    "revelation_order": 62,
+    "verse_count": 53
+  },
+  {
+    "id": 43,
+    "number": 43,
+    "name_arabic": "الزخرف",
+    "name_persian": "زخرف (طلا و زیور)",
+    "name_english": "Az-Zukhruf",
+    "revelation_type": "Makki",
+    "revelation_order": 63,
+    "verse_count": 89
+  },
+  {
+    "id": 44,
+    "number": 44,
+    "name_arabic": "الدخان",
+    "name_persian": "دخان (دود)",
+    "name_english": "Ad-Dukhan",
+    "revelation_type": "Makki",
+    "revelation_order": 64,
+    "verse_count": 59
+  },
+  {
+    "id": 45,
+    "number": 45,
+    "name_arabic": "الجاثية",
+    "name_persian": "جاثیه (به زانو درآمده)",
+    "name_english": "Al-Jathiyah",
+    "revelation_type": "Makki",
+    "revelation_order": 65,
+    "verse_count": 37
+  },
+  {
+    "id": 46,
+    "number": 46,
+    "name_arabic": "الأحقاف",
+    "name_persian": "احقاف (شنزارها)",
+    "name_english": "Al-Ahqaf",
+    "revelation_type": "Makki",
+    "revelation_order": 66,
+    "verse_count": 35
+  },
+  {
+    "id": 47,
+    "number": 47,
+    "name_arabic": "محمد",
+    "name_persian": "محمد (پیامبر اکرم ص)",
+    "name_english": "Muhammad",
+    "revelation_type": "Madani",
+    "revelation_order": 95,
+    "verse_count": 38
+  },
+  {
+    "id": 48,
+    "number": 48,
+    "name_arabic": "الفتح",
+    "name_persian": "فتح (پیروزی)",
+    "name_english": "Al-Fath",
+    "revelation_type": "Madani",
+    "revelation_order": 111,
+    "verse_count": 29
+  },
+  {
+    "id": 49,
+    "number": 49,
+    "name_arabic": "الحجرات",
+    "name_persian": "حجرات (حجره‌ها)",
+    "name_english": "Al-Hujurat",
+    "revelation_type": "Madani",
+    "revelation_order": 106,
+    "verse_count": 18
+  },
+  {
+    "id": 50,
+    "number": 50,
+    "name_arabic": "ق",
+    "name_persian": "ق",
+    "name_english": "Qaf",
+    "revelation_type": "Makki",
+    "revelation_order": 34,
+    "verse_count": 45
+  },
+  {
+    "id": 51,
+    "number": 51,
+    "name_arabic": "الذاريات",
+    "name_persian": "ذاریات (بادهای پراکنده‌کننده)",
+    "name_english": "Adh-Dhariyat",
+    "revelation_type": "Makki",
+    "revelation_order": 67,
+    "verse_count": 60
+  },
+  {
+    "id": 52,
+    "number": 52,
+    "name_arabic": "الطور",
+    "name_persian": "طور (کوه طور)",
+    "name_english": "At-Tur",
+    "revelation_type": "Makki",
+    "revelation_order": 76,
+    "verse_count": 49
+  },
+  {
+    "id": 53,
+    "number": 53,
+    "name_arabic": "النجم",
+    "name_persian": "نجم (ستاره)",
+    "name_english": "An-Najm",
+    "revelation_type": "Makki",
+    "revelation_order": 23,
+    "verse_count": 62
+  },
+  {
+    "id": 54,
+    "number": 54,
+    "name_arabic": "القمر",
+    "name_persian": "قمر (ماه)",
+    "name_english": "Al-Qamar",
+    "revelation_type": "Makki",
+    "revelation_order": 37,
+    "verse_count": 55
+  },
+  {
+    "id": 55,
+    "number": 55,
+    "name_arabic": "الرحمن",
+    "name_persian": "الرحمن (بخشنده)",
+    "name_english": "Ar-Rahman",
+    "revelation_type": "Madani",
+    "revelation_order": 97,
+    "verse_count": 78
+  },
+  {
+    "id": 56,
+    "number": 56,
+    "name_arabic": "الواقعة",
+    "name_persian": "واقعه (رویداد بزرگ)",
+    "name_english": "Al-Waqi'ah",
+    "revelation_type": "Makki",
+    "revelation_order": 46,
+    "verse_count": 96
+  },
+  {
+    "id": 57,
+    "number": 57,
+    "name_arabic": "الحديد",
+    "name_persian": "حديد (آهن)",
+    "name_english": "Al-Hadid",
+    "revelation_type": "Madani",
+    "revelation_order": 94,
+    "verse_count": 29
+  },
+  {
+    "id": 58,
+    "number": 58,
+    "name_arabic": "المجادلة",
+    "name_persian": "مجادله (زن مجادله‌کننده)",
+    "name_english": "Al-Mujadila",
+    "revelation_type": "Madani",
+    "revelation_order": 105,
+    "verse_count": 22
+  },
+  {
+    "id": 59,
+    "number": 59,
+    "name_arabic": "الحشر",
+    "name_persian": "حشر (کوچ دادن/گردآوری)",
+    "name_english": "Al-Hashr",
+    "revelation_type": "Madani",
+    "revelation_order": 101,
+    "verse_count": 24
+  },
+  {
+    "id": 60,
+    "number": 60,
+    "name_arabic": "الممتحنة",
+    "name_persian": "ممتحنه (زن آزموده‌شده)",
+    "name_english": "Al-Mumtahanah",
+    "revelation_type": "Madani",
+    "revelation_order": 91,
+    "verse_count": 13
+  },
+  {
+    "id": 61,
+    "number": 61,
+    "name_arabic": "الصف",
+    "name_persian": "صف (صف‌کشیدن)",
+    "name_english": "As-Saff",
+    "revelation_type": "Madani",
+    "revelation_order": 109,
+    "verse_count": 14
+  },
+  {
+    "id": 62,
+    "number": 62,
+    "name_arabic": "الجمعة",
+    "name_persian": "جمعه (روز جمعه)",
+    "name_english": "Al-Jumu'ah",
+    "revelation_type": "Madani",
+    "revelation_order": 110,
+    "verse_count": 11
+  },
+  {
+    "id": 63,
+    "number": 63,
+    "name_arabic": "المنافقون",
+    "name_persian": "منافقون (منافقان)",
+    "name_english": "Al-Munafiqun",
+    "revelation_type": "Madani",
+    "revelation_order": 104,
+    "verse_count": 11
+  },
+  {
+    "id": 64,
+    "number": 64,
+    "name_arabic": "التغابن",
+    "name_persian": "تغابن (مغابون شدن/حسرت)",
+    "name_english": "At-Taghabun",
+    "revelation_type": "Madani",
+    "revelation_order": 108,
+    "verse_count": 18
+  },
+  {
+    "id": 65,
+    "number": 65,
+    "name_arabic": "الطلاق",
+    "name_persian": "طلاق",
+    "name_english": "At-Talaq",
+    "revelation_type": "Madani",
+    "revelation_order": 99,
+    "verse_count": 12
+  },
+  {
+    "id": 66,
+    "number": 66,
+    "name_arabic": "التحريم",
+    "name_persian": "تحریم (حرام ساختن)",
+    "name_english": "At-Tahrim",
+    "revelation_type": "Madani",
+    "revelation_order": 107,
+    "verse_count": 12
+  },
+  {
+    "id": 67,
+    "number": 67,
+    "name_arabic": "الملك",
+    "name_persian": "ملک (فرمانروایی)",
+    "name_english": "Al-Mulk",
+    "revelation_type": "Makki",
+    "revelation_order": 77,
+    "verse_count": 30
+  },
+  {
+    "id": 68,
+    "number": 68,
+    "name_arabic": "القلم",
+    "name_persian": "قلم",
+    "name_english": "Al-Qalam",
+    "revelation_type": "Makki",
+    "revelation_order": 2,
+    "verse_count": 52
+  },
+  {
+    "id": 69,
+    "number": 69,
+    "name_arabic": "الحاقة",
+    "name_persian": "حاقه (روز تحقق/قیامت)",
+    "name_english": "Al-Haqqah",
+    "revelation_type": "Makki",
+    "revelation_order": 78,
+    "verse_count": 52
+  },
+  {
+    "id": 70,
+    "number": 70,
+    "name_arabic": "المعارج",
+    "name_persian": "معارج (درجات عروج)",
+    "name_english": "Al-Ma'arij",
+    "revelation_type": "Makki",
+    "revelation_order": 79,
+    "verse_count": 44
+  },
+  {
+    "id": 71,
+    "number": 71,
+    "name_arabic": "نوح",
+    "name_persian": "نوح (حضرت نوح)",
+    "name_english": "Nuh",
+    "revelation_type": "Makki",
+    "revelation_order": 71,
+    "verse_count": 28
+  },
+  {
+    "id": 72,
+    "number": 72,
+    "name_arabic": "الجن",
+    "name_persian": "جن",
+    "name_english": "Al-Jinn",
+    "revelation_type": "Makki",
+    "revelation_order": 40,
+    "verse_count": 28
+  },
+  {
+    "id": 73,
+    "number": 73,
+    "name_arabic": "المزمل",
+    "name_persian": "مزمل (جامه‌به‌خود‌پیچیده)",
+    "name_english": "Al-Muzzammil",
+    "revelation_type": "Makki",
+    "revelation_order": 3,
+    "verse_count": 20
+  },
+  {
+    "id": 74,
+    "number": 74,
+    "name_arabic": "المدثر",
+    "name_persian": "مدثر (جامه جامه بپوشنده)",
+    "name_english": "Al-Muddaththir",
+    "revelation_type": "Makki",
+    "revelation_order": 4,
+    "verse_count": 56
+  },
+  {
+    "id": 75,
+    "number": 75,
+    "name_arabic": "القيامة",
+    "name_persian": "قیامت",
+    "name_english": "Al-Qiyamah",
+    "revelation_type": "Makki",
+    "revelation_order": 31,
+    "verse_count": 40
+  },
+  {
+    "id": 76,
+    "number": 76,
+    "name_arabic": "الإنسان",
+    "name_persian": "انسان (دهر)",
+    "name_english": "Al-Insan",
+    "revelation_type": "Madani",
+    "revelation_order": 98,
+    "verse_count": 31
+  },
+  {
+    "id": 77,
+    "number": 77,
+    "name_arabic": "المرسلات",
+    "name_persian": "مرسلات (فرستادگان)",
+    "name_english": "Al-Mursalat",
+    "revelation_type": "Makki",
+    "revelation_order": 33,
+    "verse_count": 50
+  },
+  {
+    "id": 78,
+    "number": 78,
+    "name_arabic": "النبإ",
+    "name_persian": "نبأ (خبر بزرگ)",
+    "name_english": "An-Naba",
+    "revelation_type": "Makki",
+    "revelation_order": 80,
+    "verse_count": 40
+  },
+  {
+    "id": 79,
+    "number": 79,
+    "name_arabic": "النازعات",
+    "name_persian": "نازعات (فرشتگان جان‌ستان)",
+    "name_english": "An-Nazi'at",
+    "revelation_type": "Makki",
+    "revelation_order": 81,
+    "verse_count": 46
+  },
+  {
+    "id": 80,
+    "number": 80,
+    "name_arabic": "عبس",
+    "name_persian": "عبس (چهره درهم کشید)",
+    "name_english": "'Abasa",
+    "revelation_type": "Makki",
+    "revelation_order": 24,
+    "verse_count": 42
+  },
+  {
+    "id": 81,
+    "number": 81,
+    "name_arabic": "التكوير",
+    "name_persian": "تکویر (درهم پیچیدن تاریکی)",
+    "name_english": "At-Takwir",
+    "revelation_type": "Makki",
+    "revelation_order": 7,
+    "verse_count": 29
+  },
+  {
+    "id": 82,
+    "number": 82,
+    "name_arabic": "الإنفطار",
+    "name_persian": "انفطار (شکافته شدن آسمان)",
+    "name_english": "Al-Infitar",
+    "revelation_type": "Makki",
+    "revelation_order": 82,
+    "verse_count": 19
+  },
+  {
+    "id": 83,
+    "number": 83,
+    "name_arabic": "المطففين",
+    "name_persian": "مطففین (کم‌فروشان)",
+    "name_english": "Al-Mutaffifin",
+    "revelation_type": "Makki",
+    "revelation_order": 86,
+    "verse_count": 36
+  },
+  {
+    "id": 84,
+    "number": 84,
+    "name_arabic": "الإنشقاق",
+    "name_persian": "انشقاق (از هم شکافتن)",
+    "name_english": "Al-Inshiqaq",
+    "revelation_type": "Makki",
+    "revelation_order": 83,
+    "verse_count": 25
+  },
+  {
+    "id": 85,
+    "number": 85,
+    "name_arabic": "البروج",
+    "name_persian": "بروج (برج‌ها)",
+    "name_english": "Al-Buruj",
+    "revelation_type": "Makki",
+    "revelation_order": 27,
+    "verse_count": 22
+  },
+  {
+    "id": 86,
+    "number": 86,
+    "name_arabic": "الطارق",
+    "name_persian": "طارق (ستاره شبانگاه)",
+    "name_english": "At-Tariq",
+    "revelation_type": "Makki",
+    "revelation_order": 36,
+    "verse_count": 17
+  },
+  {
+    "id": 87,
+    "number": 87,
+    "name_arabic": "الأعلى",
+    "name_persian": "اعلی (والاترین)",
+    "name_english": "Al-A'la",
+    "revelation_type": "Makki",
+    "revelation_order": 8,
+    "verse_count": 19
+  },
+  {
+    "id": 88,
+    "number": 88,
+    "name_arabic": "الغاشية",
+    "name_persian": "غاشیه (حادثه فراگیر/قیامت)",
+    "name_english": "Al-Ghashiyah",
+    "revelation_type": "Makki",
+    "revelation_order": 68,
+    "verse_count": 26
+  },
+  {
+    "id": 89,
+    "number": 89,
+    "name_arabic": "الفجر",
+    "name_persian": "فجر (سپیده‌دم)",
+    "name_english": "Al-Fajr",
+    "revelation_type": "Makki",
+    "revelation_order": 10,
+    "verse_count": 30
+  },
+  {
+    "id": 90,
+    "number": 90,
+    "name_arabic": "البلد",
+    "name_persian": "بلد (شهر)",
+    "name_english": "Al-Balad",
+    "revelation_type": "Makki",
+    "revelation_order": 35,
+    "verse_count": 20
+  },
+  {
+    "id": 91,
+    "number": 91,
+    "name_arabic": "الشمس",
+    "name_persian": "شمس (خورشید)",
+    "name_english": "Ash-Shams",
+    "revelation_type": "Makki",
+    "revelation_order": 26,
+    "verse_count": 15
+  },
+  {
+    "id": 92,
+    "number": 92,
+    "name_arabic": "الليل",
+    "name_persian": "لیل (شب)",
+    "name_english": "Al-Layl",
+    "revelation_type": "Makki",
+    "revelation_order": 9,
+    "verse_count": 21
+  },
+  {
+    "id": 93,
+    "number": 93,
+    "name_arabic": "الضحى",
+    "name_persian": "ضحی (چاشتگاه/روشنایی روز)",
+    "name_english": "Ad-Duha",
+    "revelation_type": "Makki",
+    "revelation_order": 11,
+    "verse_count": 11
+  },
+  {
+    "id": 94,
+    "number": 94,
+    "name_arabic": "الشرح",
+    "name_persian": "شرح (گشایش سینه)",
+    "name_english": "Ash-Sharh",
+    "revelation_type": "Makki",
+    "revelation_order": 12,
+    "verse_count": 8
+  },
+  {
+    "id": 95,
+    "number": 95,
+    "name_arabic": "التين",
+    "name_persian": "تین (انجیر)",
+    "name_english": "At-Tin",
+    "revelation_type": "Makki",
+    "revelation_order": 28,
+    "verse_count": 8
+  },
+  {
+    "id": 96,
+    "number": 96,
+    "name_arabic": "العلق",
+    "name_persian": "علق (خون بسته)",
+    "name_english": "Al-'Alaq",
+    "revelation_type": "Makki",
+    "revelation_order": 1,
+    "verse_count": 19
+  },
+  {
+    "id": 97,
+    "number": 97,
+    "name_arabic": "القدر",
+    "name_persian": "قدر (شب قدر)",
+    "name_english": "Al-Qadr",
+    "revelation_type": "Makki",
+    "revelation_order": 25,
+    "verse_count": 5
+  },
+  {
+    "id": 98,
+    "number": 98,
+    "name_arabic": "البينة",
+    "name_persian": "بینه (دلیل آشکار)",
+    "name_english": "Al-Bayyinah",
+    "revelation_type": "Madani",
+    "revelation_order": 100,
+    "verse_count": 8
+  },
+  {
+    "id": 99,
+    "number": 99,
+    "name_arabic": "الزلزلة",
+    "name_persian": "زلزله (زمین‌لرزه)",
+    "name_english": "Az-Zalzalah",
+    "revelation_type": "Madani",
+    "revelation_order": 93,
+    "verse_count": 8
+  },
+  {
+    "id": 100,
+    "number": 100,
+    "name_arabic": "العاديات",
+    "name_persian": "عادیات (اسبان تاخت‌پیشه)",
+    "name_english": "Al-'Adiyat",
+    "revelation_type": "Makki",
+    "revelation_order": 14,
+    "verse_count": 11
+  },
+  {
+    "id": 101,
+    "number": 101,
+    "name_arabic": "القارعة",
+    "name_persian": "قارعه (حادثه کوبنده/قیامت)",
+    "name_english": "Al-Qari'ah",
+    "revelation_type": "Makki",
+    "revelation_order": 30,
+    "verse_count": 11
+  },
+  {
+    "id": 102,
+    "number": 102,
+    "name_arabic": "التكاثر",
+    "name_persian": "تکاثر (افزون‌طلبی)",
+    "name_english": "At-Takathur",
+    "revelation_type": "Makki",
+    "revelation_order": 16,
+    "verse_count": 8
+  },
+  {
+    "id": 103,
+    "number": 103,
+    "name_arabic": "العصر",
+    "name_persian": "عصر (زمانه)",
+    "name_english": "Al-'Asr",
+    "revelation_type": "Makki",
+    "revelation_order": 13,
+    "verse_count": 3
+  },
+  {
+    "id": 104,
+    "number": 104,
+    "name_arabic": "الهمزة",
+    "name_persian": "همزه (عیب‌جو)",
+    "name_english": "Al-Humazah",
+    "revelation_type": "Makki",
+    "revelation_order": 32,
+    "verse_count": 9
+  },
+  {
+    "id": 105,
+    "number": 105,
+    "name_arabic": "الفيل",
+    "name_persian": "فیل (سپاه فیل)",
+    "name_english": "Al-Fil",
+    "revelation_type": "Makki",
+    "revelation_order": 19,
+    "verse_count": 5
+  },
+  {
+    "id": 106,
+    "number": 106,
+    "name_arabic": "قريش",
+    "name_persian": "قریش (قبیله قریش)",
+    "name_english": "Quraysh",
+    "revelation_type": "Makki",
+    "revelation_order": 29,
+    "verse_count": 4
+  },
+  {
+    "id": 107,
+    "number": 107,
+    "name_arabic": "الماعون",
+    "name_persian": "ماعون (وسایل احتیاج/کمک)",
+    "name_english": "Al-Ma'un",
+    "revelation_type": "Makki",
+    "revelation_order": 17,
+    "verse_count": 7
+  },
+  {
+    "id": 108,
+    "number": 108,
+    "name_arabic": "الكوثر",
+    "name_persian": "کوثر (خیر فراوان)",
+    "name_english": "Al-Kawthar",
+    "revelation_type": "Makki",
+    "revelation_order": 15,
+    "verse_count": 3
+  },
+  {
+    "id": 109,
+    "number": 109,
+    "name_arabic": "الكافرون",
+    "name_persian": "کافرون (کافران)",
+    "name_english": "Al-Kafirun",
+    "revelation_type": "Makki",
+    "revelation_order": 18,
+    "verse_count": 6
+  },
+  {
+    "id": 110,
+    "number": 110,
+    "name_arabic": "النصر",
+    "name_persian": "نصر (یاری و پیروزی)",
+    "name_english": "An-Nasr",
+    "revelation_type": "Madani",
+    "revelation_order": 114,
+    "verse_count": 3
+  },
+  {
+    "id": 111,
+    "number": 111,
+    "name_arabic": "المسد",
+    "name_persian": "مسد (ریف/ریسمان خرمابن)",
+    "name_english": "Al-Masad",
+    "revelation_type": "Makki",
+    "revelation_order": 6,
+    "verse_count": 5
+  },
+  {
+    "id": 112,
+    "number": 112,
+    "name_arabic": "الإخلاص",
+    "name_persian": "اخلاص (توحید)",
+    "name_english": "Al-Ikhlas",
+    "revelation_type": "Makki",
+    "revelation_order": 22,
+    "verse_count": 4
+  },
+  {
+    "id": 113,
+    "number": 113,
+    "name_arabic": "الفلق",
+    "name_persian": "فلق (سپیده‌دم)",
+    "name_english": "Al-Falaq",
+    "revelation_type": "Makki",
+    "revelation_order": 20,
+    "verse_count": 5
+  },
+  {
+    "id": 114,
+    "number": 114,
+    "name_arabic": "الناس",
+    "name_persian": "ناس (مردم)",
+    "name_english": "An-Nas",
+    "revelation_type": "Makki",
+    "revelation_order": 21,
+    "verse_count": 6
+  }
+]

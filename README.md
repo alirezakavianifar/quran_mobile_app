@@ -1,0 +1,234 @@
+# Quran Knowledge Platform & Mobile App (قرآن مجید)
+
+> **The World's Most Intelligent Quran Exploration Platform**
+> Built with ASP.NET Core, Flutter, PostgreSQL, OpenSearch, pgvector, and LLM-powered RAG.
+
+---
+
+## 🌐 Vision & Dual-Language Architecture
+
+The Quran Knowledge Platform is a multi-client AI platform designed **bilingually from the ground up**, prioritizing **Persian (Farsi)** as the default primary language and **English** as a fully supported secondary language:
+
+* **Default Locale**: Persian (`fa` / `fa-IR`) with native **Right-To-Left (RTL)** layout and typography (**Vazirmatn**).
+* **Secondary Locale**: English (`en` / `en-US`) with **Left-To-Right (LTR)** layout and typography (**Inter**).
+* **Persian Default Content**:
+  * Default Translation: **Ayatollah Makarem Shirazi**
+  * Default Tafsir Commentary: **Tafsir Nemoneh (تفسیر نمونه)**
+  * Additional Persian Translations: Mohammad Mahdi Fouladvand, Hossein Ansarian, Elahi Ghomshei, Baha'oddin Khorramshahi.
+  * Additional Persian Tafsirs: Al-Mizan (علامه طباطبایی), Tafsir Noor (دکتر محسن قرائتی).
+* **English Content**:
+  * Default Translation: **Dr. Mustafa Khattab (The Clear Quran)**
+  * Default Tafsir Commentary: **Tafsir Ibn Kathir**
+  * Additional English Translations: Sahih International, Abdullah Yusuf Ali, Marmaduke Pickthall.
+  * Additional English Tafsirs: Tafsir Al-Jalalayn, Ma'ariful Qur'an.
+
+---
+
+## 🏗 System Architecture Overview
+
+```
+                    Flutter Mobile App
+              Android / iOS / Desktop / Web
+             [Persian (Default RTL) / English]
+                            │
+                            ▼
+                   ASP.NET Core Gateway
+             Request Localization (fa-IR / en-US)
+                            │
+        ┌───────────────────┴───────────────────┐
+        │          Backend Micro-Services        │
+        │  Search | Quran | Tafsir | RAG AI     │
+        └───────────────────┬───────────────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        │              Data Layer               │
+        │  PostgreSQL | pgvector | OpenSearch   │
+        └───────────────────────────────────────┘
+```
+
+---
+
+## 🚀 Repository Structure
+
+```
+quran_mobile_app/
+├── README.md                           # Master Project Documentation
+├── AGENTS.md                           # Agent instructions & repository rules
+├── plan.md                             # Multi-phase master architectural plan
+├── docs/                               # Phase implementation design plans
+│   ├── phase_0_research_and_data_curation_plan.md
+│   └── phase_1_database_design_manual_guide.md
+├── scripts/                            # Data ingestion, ETL, & NLP pipelines
+│   ├── build_datasets.py               # Master dataset build & SQLite generator script
+│   ├── nlp/
+│   │   ├── __init__.py
+│   │   └── normalizer.py               # Persian/English/Arabic NLP text normalizers
+│   └── ingestion/
+│       ├── __init__.py
+│       ├── quran_ingest.py             # 114 Surahs & 6236 Verses text engine
+│       ├── tafsir_ingest.py            # Persian (Nemoneh) & English (Ibn Kathir) Tafsir
+│       ├── audio_meta_ingest.py        # Audio reciters metadata catalog
+│       └── metadata_ingest.py          # Topics, Prophets, Stories & Taxonomy metadata
+├── tests/                              # Automated test suite
+│   ├── __init__.py
+│   └── test_phase0_data.py             # Unit & integration tests for Phase 0
+└── data/                               # Generated datasets
+    └── processed/
+        ├── surahs.json                 # Master Surah catalog
+        ├── verses.json                 # Verses dataset
+        ├── translations.json           # Localized translations dataset
+        ├── tafsir.json                 # Localized Tafsirs dataset
+        ├── audio_reciters.json         # Reciter profiles & streaming metadata
+        ├── metadata_taxonomy.json      # Structured Quranic taxonomy
+        └── quran_platform.db           # Bundled SQLite Database for Flutter & Seeders
+```
+
+---
+
+## 🛠 Phase 0 — Data Curation & Setup Guide
+
+### Prerequisites
+* Python 3.10+
+* Git
+
+### Step-by-Step Instructions
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/alirezakavianifar/quran_mobile_app.git
+   cd quran_mobile_app
+   ```
+
+2. **Run Dataset Ingestion & Build Pipeline**:
+   The ETL pipeline processes all 114 Surahs, 6,236 Ayahs, Persian and English translations, Tafsir commentaries, reciter metadata, and generates both JSON files and a complete SQLite database (`quran_platform.db`).
+
+   ```bash
+   # Run dataset builder
+   python scripts/build_datasets.py
+   ```
+
+   **Expected Output**:
+   ```text
+   Building Quran datasets...
+   Building Tafsir datasets...
+   Building Audio Metadata datasets...
+   Building Taxonomy & Verse Metadata datasets...
+   JSON datasets written successfully to data/processed/
+   Building SQLite database at data/processed/quran_platform.db...
+   SQLite database successfully created and indexed.
+   Verifying built datasets...
+   Dataset Verification Passed 100%! All 114 Surahs, 6,236 Ayahs, Persian & English translations, Tafsirs, and indexes are intact.
+   ```
+
+3. **Run Unit & Integration Test Suite**:
+   Verify Persian character unification, ZWNJ normalization, diacritics stripping, digit conversions, and SQLite database integrity:
+
+   ```bash
+   python -m unittest discover tests
+   ```
+
+   **Expected Output**:
+   ```text
+   ..........
+   ----------------------------------------------------------------------
+   Ran 10 tests in 0.023s
+
+   OK
+   ```
+
+---
+
+## 📖 Key Features & NLP Capabilities
+
+### 1. Persian Text Normalization (`scripts/nlp/normalizer.py`)
+* **Character Unification**: Automatically standardizes Arabic Yeh (`ي`) to Persian Yeh (`ی`), Arabic Kaf (`ك`) to Persian Kaf (`ک`), and Alef variants.
+* **ZWNJ (نیم‌فاصله) Handling**: Normalizes Half-Spaces (`\u200c`) cleanly for compound words (`می‌خواهم`, `درخت‌ها`).
+* **Diacritics Removal**: Strips Tashkeel/Harakat for accurate keyword and semantic indexing.
+* **Digit Normalization**: Seamlessly converts between Persian numerals (`۰-۹`) and English numerals (`0-9`).
+
+### 2. Multi-Tiered Data Storage
+* **JSON Datasets (`data/processed/*.json`)**: Formatted for direct seeding into ASP.NET Core PostgreSQL/EF Core.
+* **SQLite Database (`data/processed/quran_platform.db`)**: Pre-compiled database optimized for offline mobile experience with Flutter (Drift SQLite).
+
+---
+
+---
+
+## 🗄 Phase 1 — Database Setup & Seeding Guide (PostgreSQL + pgvector)
+
+### Prerequisites
+* Docker Desktop installed and running
+* Python 3.10+ with `psycopg2-binary` and `pytest` (`pip install psycopg2-binary pytest`)
+
+### Step-by-Step Execution
+
+1. **Launch PostgreSQL + pgvector Docker Container**:
+   ```powershell
+   docker run -d `
+     --name quran_postgres `
+     -e POSTGRES_DB=quran_db `
+     -e POSTGRES_USER=quran_admin `
+     -e POSTGRES_PASSWORD=quran_pass `
+     -p 5432:5432 `
+     ankane/pgvector:latest
+   ```
+
+2. **Apply Database Schema & Indexing (Step 1 - 3)**:
+   Apply the complete relational DDL and vector similarity indexes (`sql/schema_phase1.sql`):
+   ```powershell
+   Get-Content sql\schema_phase1.sql | docker exec -i quran_postgres psql -U quran_admin -d quran_db
+   ```
+
+3. **Run Data Ingestion & Seeding (Step 4)**:
+   Seed all 114 Surahs, 6,236 Verses, 12,472 Translations, 6 Tafsir Editions, 12,472 Tafsir Content entries, and Taxonomy metadata into PostgreSQL:
+   ```bash
+   python -m scripts.ingestion.seed_postgres
+   ```
+
+   **Expected Output**:
+   ```text
+   INFO - Connecting to PostgreSQL...
+   INFO - Seeding 114 Surahs...
+   INFO - Seeding 6236 Verses...
+   INFO - Seeding 12472 Translations...
+   INFO - Seeding 6 Tafsir Editions...
+   INFO - Seeding 12472 Tafsir Content entries...
+   INFO - Seeding 8 Topics...
+   INFO - Analyzing tables for optimizer statistics...
+   INFO - PostgreSQL Database seeding completed successfully!
+   ```
+
+4. **Run Phase 1 Automated Test Suite**:
+   Verify record counts, foreign key relationships, and query performance benchmarks:
+   ```bash
+   python -m pytest tests/test_phase1_postgres.py -v
+   ```
+
+   **Expected Output**:
+   ```text
+   tests/test_phase1_postgres.py::test_surah_count PASSED                   [ 16%]
+   tests/test_phase1_postgres.py::test_verse_count PASSED                   [ 33%]
+   tests/test_phase1_postgres.py::test_translation_count PASSED             [ 50%]
+   tests/test_phase1_postgres.py::test_tafsir_count PASSED                  [ 66%]
+   tests/test_phase1_postgres.py::test_topic_count PASSED                   [ 83%]
+   tests/test_phase1_postgres.py::test_performance_benchmark PASSED         [100%]
+   ```
+
+---
+
+## 🔮 Future Roadmap Phases
+
+| Phase | Description | Status |
+| :--- | :--- | :--- |
+| **Phase 0 — Data Preparation** | Curated Persian & English datasets, NLP normalizers, SQLite generator. | ✅ Completed |
+| **Phase 1 — Database & Entity Architecture** | PostgreSQL schema with pgvector, DDL migrations, seeding engine & tests. | ✅ Completed |
+| **Phase 2 — Backend Architecture** | ASP.NET Core Clean Architecture API with `fa-IR` default localization. | ⏳ Planned |
+| **Phase 3 — Search Engine** | Persian & English hybrid lexical (OpenSearch BM25) + vector search (RRF). | ⏳ Planned |
+| **Phase 4 — AI & Grounded RAG Engine** | Persian-default prompt builder, Tafsir Nemoneh grounding, SignalR stream. | ⏳ Planned |
+| **Phase 5 — Flutter Mobile App** | Feature-First RTL Persian UI with dynamic English switching & Drift SQLite. | ⏳ Planned |
+
+---
+
+## 📄 Remote Repository
+
+* **GitHub Repository**: [github.com/alirezakavianifar/quran_mobile_app.git](https://github.com/alirezakavianifar/quran_mobile_app.git)

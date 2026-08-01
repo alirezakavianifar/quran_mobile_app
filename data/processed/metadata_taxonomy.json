@@ -1,0 +1,1848 @@
+{
+  "topics": [
+    {
+      "id": 1,
+      "name_fa": "توحید و خداشناسی",
+      "name_en": "Monotheism & Theology",
+      "category": "Aqidah"
+    },
+    {
+      "id": 2,
+      "name_fa": "صبر و شکیبایی",
+      "name_en": "Patience & Perseverance",
+      "category": "Ethics"
+    },
+    {
+      "id": 3,
+      "name_fa": "عدالت و دادگری",
+      "name_en": "Justice & Equity",
+      "category": "Society"
+    },
+    {
+      "id": 4,
+      "name_fa": "داستان پیامبران",
+      "name_en": "Stories of Prophets",
+      "category": "History"
+    },
+    {
+      "id": 5,
+      "name_fa": "نماز و عبادت",
+      "name_en": "Prayer & Worship",
+      "category": "Ibadaat"
+    },
+    {
+      "id": 6,
+      "name_fa": "انفاق و صدقه",
+      "name_en": "Charity & Spending",
+      "category": "Ethics"
+    },
+    {
+      "id": 7,
+      "name_fa": "معاد و رستاخیز",
+      "name_en": "Hereafter & Resurrection",
+      "category": "Aqidah"
+    },
+    {
+      "id": 8,
+      "name_fa": "اخلاق و رفتار شایسته",
+      "name_en": "Morality & Good Conduct",
+      "category": "Ethics"
+    }
+  ],
+  "prophets": [
+    {
+      "id": 1,
+      "name_fa": "حضرت محمد (ص)",
+      "name_en": "Prophet Muhammad (PBUH)",
+      "arabic_name": "محمد"
+    },
+    {
+      "id": 2,
+      "name_fa": "حضرت ابراهیم (ع)",
+      "name_en": "Prophet Abraham (pbuh)",
+      "arabic_name": "إبراهيم"
+    },
+    {
+      "id": 3,
+      "name_fa": "حضرت موسی (ع)",
+      "name_en": "Prophet Moses (pbuh)",
+      "arabic_name": "موسى"
+    },
+    {
+      "id": 4,
+      "name_fa": "حضرت عیسی (ع)",
+      "name_en": "Prophet Jesus (pbuh)",
+      "arabic_name": "عيسى"
+    },
+    {
+      "id": 5,
+      "name_fa": "حضرت نوح (ع)",
+      "name_en": "Prophet Noah (pbuh)",
+      "arabic_name": "نوح"
+    },
+    {
+      "id": 6,
+      "name_fa": "حضرت یوسف (ع)",
+      "name_en": "Prophet Joseph (pbuh)",
+      "arabic_name": "يوسف"
+    },
+    {
+      "id": 7,
+      "name_fa": "حضرت یونس (ع)",
+      "name_en": "Prophet Jonah (pbuh)",
+      "arabic_name": "يونس"
+    }
+  ],
+  "verse_topics": [
+    {
+      "global_verse_id": 1,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 1,
+      "topic_id": 5
+    },
+    {
+      "global_verse_id": 2,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 2,
+      "topic_id": 5
+    },
+    {
+      "global_verse_id": 3,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 3,
+      "topic_id": 5
+    },
+    {
+      "global_verse_id": 4,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 4,
+      "topic_id": 5
+    },
+    {
+      "global_verse_id": 5,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 5,
+      "topic_id": 5
+    },
+    {
+      "global_verse_id": 6,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 6,
+      "topic_id": 5
+    },
+    {
+      "global_verse_id": 7,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 7,
+      "topic_id": 5
+    },
+    {
+      "global_verse_id": 262,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 1597,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1598,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1599,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1600,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1601,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1602,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1603,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1604,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1605,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1606,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1607,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1608,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1609,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1610,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1611,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1612,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1613,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1614,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1615,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1616,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1617,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1618,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1619,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1620,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1621,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1622,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1623,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1624,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1625,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1626,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1627,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1628,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1629,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1630,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1631,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1632,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1633,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1634,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1635,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1636,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1637,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1638,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1639,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1640,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1641,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1642,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1643,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1644,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1645,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1646,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1647,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1648,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1649,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1650,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1651,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1652,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1653,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1654,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1655,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1656,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1657,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1658,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1659,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1660,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1661,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1662,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1663,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1664,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1665,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1666,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1667,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1668,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1669,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1670,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1671,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1672,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1673,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1674,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1675,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1676,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1677,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1678,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1679,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1680,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1681,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1682,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1683,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1684,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1685,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1686,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1687,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1688,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1689,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1690,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1691,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1692,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1693,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1694,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1695,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1696,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1697,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1698,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1699,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1700,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1701,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1702,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1703,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1704,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1705,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1706,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 1707,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2251,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2252,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2253,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2254,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2255,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2256,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2257,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2258,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2259,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2260,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2261,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2262,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2263,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2264,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2265,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2266,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2267,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2268,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2269,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2270,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2271,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2272,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2273,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2274,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2275,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2276,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2277,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2278,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2279,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2280,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2281,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2282,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2283,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2284,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2285,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2286,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2287,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2288,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2289,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2290,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2291,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2292,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2293,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2294,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2295,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2296,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2297,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2298,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2299,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2300,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2301,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2302,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2303,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2304,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2305,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2306,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2307,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2308,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2309,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2310,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2311,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2312,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2313,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2314,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2315,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2316,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2317,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2318,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2319,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2320,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2321,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2322,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2323,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2324,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2325,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2326,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2327,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2328,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2329,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2330,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2331,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2332,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2333,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2334,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2335,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2336,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2337,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2338,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2339,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2340,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2341,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2342,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2343,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2344,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2345,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2346,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2347,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 2348,
+      "topic_id": 4
+    },
+    {
+      "global_verse_id": 6222,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 6223,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 6224,
+      "topic_id": 1
+    },
+    {
+      "global_verse_id": 6225,
+      "topic_id": 1
+    }
+  ],
+  "verse_prophets": [
+    {
+      "global_verse_id": 1597,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1598,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1599,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1600,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1601,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1602,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1603,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1604,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1605,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1606,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1607,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1608,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1609,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1610,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1611,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1612,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1613,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1614,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1615,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1616,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1617,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1618,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1619,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1620,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1621,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1622,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1623,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1624,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1625,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1626,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1627,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1628,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1629,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1630,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1631,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1632,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1633,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1634,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1635,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1636,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1637,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1638,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1639,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1640,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1641,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1642,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1643,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1644,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1645,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1646,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1647,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1648,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1649,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1650,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1651,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1652,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1653,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1654,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1655,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1656,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1657,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1658,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1659,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1660,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1661,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1662,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1663,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1664,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1665,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1666,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1667,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1668,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1669,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1670,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1671,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1672,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1673,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1674,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1675,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1676,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1677,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1678,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1679,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1680,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1681,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1682,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1683,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1684,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1685,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1686,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1687,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1688,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1689,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1690,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1691,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1692,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1693,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1694,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1695,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1696,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1697,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1698,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1699,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1700,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1701,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1702,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1703,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1704,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1705,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1706,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 1707,
+      "prophet_id": 6
+    },
+    {
+      "global_verse_id": 2251,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2252,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2253,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2254,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2255,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2256,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2257,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2258,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2259,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2260,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2261,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2262,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2263,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2264,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2265,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2266,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2267,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2268,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2269,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2270,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2271,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2272,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2273,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2274,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2275,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2276,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2277,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2278,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2279,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2280,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2281,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2282,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2283,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2284,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2285,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2286,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2287,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2288,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2289,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2290,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2291,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2292,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2293,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2294,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2295,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2296,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2297,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2298,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2299,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2300,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2301,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2302,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2303,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2304,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2305,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2306,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2307,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2308,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2309,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2310,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2311,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2312,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2313,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2314,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2315,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2316,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2317,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2318,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2319,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2320,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2321,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2322,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2323,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2324,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2325,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2326,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2327,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2328,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2329,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2330,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2331,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2332,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2333,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2334,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2335,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2336,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2337,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2338,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2339,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2340,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2341,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2342,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2343,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2344,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2345,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2346,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2347,
+      "prophet_id": 4
+    },
+    {
+      "global_verse_id": 2348,
+      "prophet_id": 4
+    }
+  ]
+}

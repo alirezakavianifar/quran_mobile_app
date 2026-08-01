@@ -1,0 +1,62 @@
+"""
+Audio Recitation Metadata Ingestion Engine.
+Curates audio reciter profiles, bitrates, audio file URL templates, and localized names.
+"""
+
+from typing import List, Dict, Any
+
+RECITERS_CATALOG: List[Dict[str, Any]] = [
+    {
+        "id": "ar.alafasy",
+        "reciter_name_fa": "مشاری راشد العفاسی",
+        "reciter_name_en": "Mishary Rashid Alafasy",
+        "reciter_name_ar": "مشاري راشد العفاسي",
+        "bitrate": 128,
+        "audio_format": "mp3",
+        "server_url_template": "https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/{surah_pad3}{verse_pad3}.mp3"
+    },
+    {
+        "id": "ar.abdulbasitmurattal",
+        "reciter_name_fa": "عبدالباسط عبدالصمد (ترتیل)",
+        "reciter_name_en": "AbdulBaset AbdulSamad (Murattal)",
+        "reciter_name_ar": "عبد الباسط عبد الصمد (مرتل)",
+        "bitrate": 128,
+        "audio_format": "mp3",
+        "server_url_template": "https://download.quranicaudio.com/qdc/abdul_baset/murattal/{surah_pad3}{verse_pad3}.mp3"
+    },
+    {
+        "id": "ar.minshawimurattal",
+        "reciter_name_fa": "محمد صدیق منشاوی (ترتیل)",
+        "reciter_name_en": "Mohamed Siddiq El-Minshawi (Murattal)",
+        "reciter_name_ar": "محمد صديق المنشاوي (مرتل)",
+        "bitrate": 128,
+        "audio_format": "mp3",
+        "server_url_template": "https://download.quranicaudio.com/qdc/minshawi/murattal/{surah_pad3}{verse_pad3}.mp3"
+    },
+    {
+        "id": "ar.parhizgar",
+        "reciter_name_fa": "شهریار پرهیزگار",
+        "reciter_name_en": "Shahriar Parhizgar",
+        "reciter_name_ar": "شهریار پرهیزگار",
+        "bitrate": 64,
+        "audio_format": "mp3",
+        "server_url_template": "https://everyayah.com/data/Parhizgar_48kbps/{surah_pad3}{verse_pad3}.mp3"
+    },
+    {
+        "id": "ar.husary",
+        "reciter_name_fa": "محمود خلیل الحصری",
+        "reciter_name_en": "Mahmoud Khalil Al-Husary",
+        "reciter_name_ar": "محمود خليل الحصري",
+        "bitrate": 128,
+        "audio_format": "mp3",
+        "server_url_template": "https://download.quranicaudio.com/qdc/hussary/murattal/{surah_pad3}{verse_pad3}.mp3"
+    }
+]
+
+def generate_audio_metadata_dataset() -> Dict[str, Any]:
+    """
+    Returns complete reciters audio metadata catalog.
+    """
+    return {
+        "reciters": RECITERS_CATALOG
+    }

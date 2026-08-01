@@ -1,0 +1,65 @@
+[
+  {
+    "id": "fa.makarem",
+    "name": "آیت‌الله ناصر مکارم شیرازی",
+    "author": "Ayatollah Makarem Shirazi",
+    "language": "fa",
+    "is_default": true
+  },
+  {
+    "id": "fa.fouladvand",
+    "name": "محمدمهدی فولادوند",
+    "author": "Mohammad Mahdi Fouladvand",
+    "language": "fa",
+    "is_default": false
+  },
+  {
+    "id": "fa.ansarian",
+    "name": "حسین انصاریان",
+    "author": "Hossein Ansarian",
+    "language": "fa",
+    "is_default": false
+  },
+  {
+    "id": "fa.ghomshei",
+    "name": "الهی قمشه‌ای",
+    "author": "Elahi Ghomshei",
+    "language": "fa",
+    "is_default": false
+  },
+  {
+    "id": "fa.khorramshahi",
+    "name": "بهاءالدین خرمشاهی",
+    "author": "Baha'oddin Khorramshahi",
+    "language": "fa",
+    "is_default": false
+  },
+  {
+    "id": "en.khattab",
+    "name": "The Clear Quran (Dr. Mustafa Khattab)",
+    "author": "Dr. Mustafa Khattab",
+    "language": "en",
+    "is_default": true
+  },
+  {
+    "id": "en.sahih",
+    "name": "Saheeh International",
+    "author": "Sahih International",
+    "language": "en",
+    "is_default": false
+  },
+  {
+    "id": "en.yusufali",
+    "name": "Abdullah Yusuf Ali",
+    "author": "Abdullah Yusuf Ali",
+    "language": "en",
+    "is_default": false
+  },
+  {
+    "id": "en.pickthall",
+    "name": "Marmaduke Pickthall",
+    "author": "Marmaduke Pickthall",
+    "language": "en",
+    "is_default": false
+  }
+]
