@@ -62,6 +62,14 @@ class AudioRepository {
   List<Reciter> _getFallbackReciters() {
     return [
       Reciter(
+        id: 'parhizgar',
+        nameArabic: 'شهريار پرهيزكار',
+        namePersian: 'شهریار پرهیزگار',
+        nameEnglish: 'Shahriar Parhizgar',
+        style: 'Tartil',
+        baseUrl: 'https://everyayah.com/data/Parhizgar_48kbps/',
+      ),
+      Reciter(
         id: 'alafasy',
         nameArabic: 'مشاري راشد العفاسي',
         namePersian: 'مشاری راشد العفاسی',
@@ -76,7 +84,7 @@ class AudioRepository {
         nameEnglish: 'Mahmoud Khalil Al-Husary',
         style: 'Murattal',
         baseUrl: 'https://everyayah.com/data/Husary_128kbps/',
-      )
+      ),
     ];
   }
 
@@ -84,10 +92,10 @@ class AudioRepository {
     final s = surahId.toString().padLeft(3, '0');
     final v = verseId.toString().padLeft(3, '0');
     final folderName = switch (reciterId.toLowerCase()) {
+      'alafasy' => 'Alafasy_128kbps',
       'husary' => 'Husary_128kbps',
       'abdulbasit' => 'Abdul_Basit_Mujawwad_128kbps',
-      'parhizgar' => 'Parhizgar_48kbps',
-      _ => 'Alafasy_128kbps',
+      _ => 'Parhizgar_48kbps',
     };
     return 'https://everyayah.com/data/$folderName/$s$v.mp3';
   }

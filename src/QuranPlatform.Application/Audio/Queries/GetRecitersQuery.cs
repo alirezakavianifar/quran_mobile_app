@@ -10,6 +10,15 @@ public class GetRecitersQueryHandler : IRequestHandler<GetRecitersQuery, List<Re
     private static readonly List<ReciterDto> Reciters = new()
     {
         new ReciterDto(
+            Id: "parhizgar",
+            NameArabic: "شهريار پرهيزكار",
+            NamePersian: "شهریار پرهیزگار",
+            NameEnglish: "Shahriar Parhizgar",
+            Style: "Tartil",
+            BaseUrl: "https://everyayah.com/data/Parhizgar_48kbps/",
+            BitrateKbps: 48
+        ),
+        new ReciterDto(
             Id: "alafasy",
             NameArabic: "مشاري راشد العفاسي",
             NamePersian: "مشاری راشد العفاسی",
@@ -32,15 +41,6 @@ public class GetRecitersQueryHandler : IRequestHandler<GetRecitersQuery, List<Re
             NameEnglish: "Abdul Basit Abdul Samad",
             Style: "Mujawwad",
             BaseUrl: "https://everyayah.com/data/Abdul_Basit_Mujawwad_128kbps/"
-        ),
-        new ReciterDto(
-            Id: "parhizgar",
-            NameArabic: "شهريار پرهيزكار",
-            NamePersian: "شهریار پرهیزگار",
-            NameEnglish: "Shahriar Parhizgar",
-            Style: "Tartil",
-            BaseUrl: "https://everyayah.com/data/Parhizgar_48kbps/",
-            BitrateKbps: 48
         )
     };
 

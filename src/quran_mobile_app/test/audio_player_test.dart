@@ -38,6 +38,14 @@ class FakeAudioPlayer implements AudioPlayer {
 class FakeAudioRepository implements AudioRepository {
   final List<Reciter> mockReciters = [
     Reciter(
+      id: 'parhizgar',
+      nameArabic: 'شهريار پرهيزكار',
+      namePersian: 'شهریار پرهیزگار',
+      nameEnglish: 'Shahriar Parhizgar',
+      style: 'Tartil',
+      baseUrl: 'https://everyayah.com/data/Parhizgar_48kbps/',
+    ),
+    Reciter(
       id: 'alafasy',
       nameArabic: 'مشاري راشد العفاسي',
       namePersian: 'مشاری راشد العفاسی',
@@ -86,8 +94,8 @@ void main() {
 
     test('Loads reciters on init and sets default reciter', () async {
       await notifier.loadReciters();
-      expect(notifier.currentState.availableReciters.length, 2);
-      expect(notifier.currentState.currentReciter?.id, 'alafasy');
+      expect(notifier.currentState.availableReciters.length, 3);
+      expect(notifier.currentState.currentReciter?.id, 'parhizgar');
     });
 
     test('Toggles auto play next state', () {
@@ -98,7 +106,7 @@ void main() {
 
     test('Switches current reciter', () async {
       await notifier.loadReciters();
-      final husary = notifier.currentState.availableReciters[1];
+      final husary = notifier.currentState.availableReciters.firstWhere((r) => r.id == 'husary');
       await notifier.selectReciter(husary);
       expect(notifier.currentState.currentReciter?.id, 'husary');
     });

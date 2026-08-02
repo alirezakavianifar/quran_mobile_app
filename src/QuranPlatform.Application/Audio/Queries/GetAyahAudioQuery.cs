@@ -20,8 +20,8 @@ public class GetAyahAudioQueryHandler : IRequestHandler<GetAyahAudioQuery, AyahA
         var reciterId = request.ReciterId.ToLowerInvariant();
         if (!ReciterBaseUrls.TryGetValue(reciterId, out var baseUrl))
         {
-            reciterId = "alafasy";
-            baseUrl = ReciterBaseUrls["alafasy"];
+            reciterId = "parhizgar";
+            baseUrl = ReciterBaseUrls["parhizgar"];
         }
 
         // Format surah and verse numbers as 3 digits (e.g. 001001.mp3)
