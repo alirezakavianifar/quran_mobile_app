@@ -61,7 +61,8 @@ class AppDatabase extends _$AppDatabase {
   // Seed sample Quran Surahs for offline reading
   Future<void> seedInitialData() async {
     final count = await select(surahs).get();
-    if (count.length < 114) {
+    final hasStaleParentheses = count.any((s) => s.namePersian.contains('('));
+    if (count.length < 114 || hasStaleParentheses) {
       await batch((b) {
         b.insertAll(surahs, initialSurahsList, mode: InsertMode.insertOrReplace);
       });

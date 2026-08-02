@@ -32,7 +32,9 @@ class TafsirBottomSheet extends ConsumerWidget {
       isPersian: isPersian,
     );
 
-    final surahTitle = isPersian ? surah.namePersian : surah.nameEnglish;
+    final surahTitle = (isPersian ? surah.namePersian : surah.nameEnglish)
+        .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
+        .trim();
 
     return Directionality(
       textDirection: isPersian ? TextDirection.rtl : TextDirection.ltr,

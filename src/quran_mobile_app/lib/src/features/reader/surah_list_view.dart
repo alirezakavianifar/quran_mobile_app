@@ -136,8 +136,11 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
                           final numberStr = isPersian
                               ? PersianDigitConverter.toPersian('${surah.number}')
                               : '${surah.number}';
-                          final nameStr =
+                          final rawNameStr =
                               isPersian ? surah.namePersian : surah.nameEnglish;
+                          final cleanNameStr = rawNameStr
+                              .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
+                              .trim();
                           final revType = surah.revelationType == 'Makki'
                               ? loc.translate('makki')
                               : loc.translate('madani');
@@ -146,9 +149,10 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
                                   '${surah.verseCount}')
                               : '${surah.verseCount}';
 
-                          final formattedTitle = nameStr.contains('(')
-                              ? '${surah.nameArabic} - $nameStr'
-                              : '${surah.nameArabic} ($nameStr)';
+                          final formattedTitle =
+                              (cleanNameStr.isEmpty || cleanNameStr == surah.nameArabic)
+                                  ? surah.nameArabic
+                                  : '${surah.nameArabic} ($cleanNameStr)';
 
                           return ListTile(
                             leading: CircleAvatar(

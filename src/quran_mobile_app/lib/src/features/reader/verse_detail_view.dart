@@ -24,7 +24,9 @@ class VerseDetailView extends ConsumerWidget {
     final versesAsync = ref.watch(surahVersesProvider(surah.number));
     final audioState = ref.watch(audioPlayerProvider);
     final audioNotifier = ref.read(audioPlayerProvider.notifier);
-    final surahTitle = isPersian ? surah.namePersian : surah.nameEnglish;
+    final surahTitle = (isPersian ? surah.namePersian : surah.nameEnglish)
+        .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
+        .trim();
     final settings = ref.watch(settingsProvider);
 
     ref.listen<AudioPlayerState>(audioPlayerProvider, (previous, next) {
