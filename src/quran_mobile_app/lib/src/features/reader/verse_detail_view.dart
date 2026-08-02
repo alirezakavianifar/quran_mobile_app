@@ -8,6 +8,7 @@ import '../audio/presentation/audio_player_bottom_bar.dart';
 import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
 import '../bookmarks/bookmarks_provider.dart';
+import '../../core/settings/settings_provider.dart';
 import 'reader_provider.dart';
 
 class VerseDetailView extends ConsumerWidget {
@@ -23,6 +24,7 @@ class VerseDetailView extends ConsumerWidget {
     final audioState = ref.watch(audioPlayerProvider);
     final audioNotifier = ref.read(audioPlayerProvider.notifier);
     final surahTitle = isPersian ? surah.namePersian : surah.nameEnglish;
+    final settings = ref.watch(settingsProvider);
 
     ref.listen<AudioPlayerState>(audioPlayerProvider, (previous, next) {
       if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
@@ -80,8 +82,11 @@ class VerseDetailView extends ConsumerWidget {
                       'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
                       textAlign: TextAlign.center,
                       textDirection: TextDirection.rtl,
-                      style: AppTheme.getArabicQuranTextStyle(fontSize: 26).copyWith(
+                      style: AppTheme.getArabicQuranTextStyle(
+                        fontSize: settings.arabicFontSize + 2,
+                        fontFamily: settings.arabicFontFamily,
                         color: Theme.of(context).colorScheme.primary,
+                      ).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -214,29 +219,34 @@ class VerseDetailView extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      // Arabic Uthmani Text
+                      // Arabic Uthmani Text with dynamic font & size from settings
                       Text(
                         arabicText,
                         textAlign: TextAlign.right,
                         textDirection: TextDirection.rtl,
-                        style: AppTheme.getArabicQuranTextStyle(fontSize: 22).copyWith(
+                        style: AppTheme.getArabicQuranTextStyle(
+                          fontSize: settings.arabicFontSize,
+                          fontFamily: settings.arabicFontFamily,
                           color: isAudioActive ? Theme.of(context).colorScheme.primary : null,
+                        ).copyWith(
                           fontWeight: isAudioActive ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      const Divider(),
-                      const SizedBox(height: 8),
-                      // Translation
-                      Text(
-                        trans?.translationText ?? 'No translation available.',
-                        textAlign: isPersian ? TextAlign.right : TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 16,
-                          height: 1.5,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                      if (settings.showTranslation && trans != null) ...[
+                        const SizedBox(height: 12),
+                        const Divider(),
+                        const SizedBox(height: 8),
+                        // Translation with dynamic font size
+                        Text(
+                          trans.translationText,
+                          textAlign: isPersian ? TextAlign.right : TextAlign.left,
+                          style: TextStyle(
+                            fontSize: settings.translationFontSize,
+                            height: 1.5,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),

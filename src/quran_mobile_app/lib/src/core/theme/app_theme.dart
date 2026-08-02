@@ -104,22 +104,94 @@ class AppTheme {
     );
   }
 
-  static TextStyle getArabicQuranTextStyle({double fontSize = 24}) {
+  static const Color sepiaBackground = Color(0xFFF4ECD8);
+  static const Color sepiaCard = Color(0xFFEAE0C8);
+  static const Color sepiaPrimary = Color(0xFF5B3E2B);
+
+  static ThemeData getSepiaTheme(Locale locale) {
+    final isPersian = locale.languageCode == 'fa';
+    final baseFont = isPersian
+        ? GoogleFonts.vazirmatnTextTheme()
+        : GoogleFonts.interTextTheme();
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: sepiaPrimary,
+        primary: sepiaPrimary,
+        secondary: secondaryGold,
+        surface: sepiaBackground,
+        brightness: Brightness.light,
+      ),
+      scaffoldBackgroundColor: sepiaBackground,
+      appBarTheme: AppBarTheme(
+        backgroundColor: sepiaPrimary,
+        foregroundColor: const Color(0xFFF4ECD8),
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: isPersian
+            ? GoogleFonts.vazirmatn(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFF4ECD8),
+              )
+            : GoogleFonts.inter(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFF4ECD8),
+              ),
+      ),
+      textTheme: baseFont.apply(
+        bodyColor: const Color(0xFF3E2723),
+        displayColor: sepiaPrimary,
+      ),
+      cardTheme: CardThemeData(
+        color: sepiaCard,
+        elevation: 1.5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  static TextStyle getArabicQuranTextStyle({
+    double fontSize = 24,
+    String fontFamily = 'Amiri',
+    Color? color,
+  }) {
+    final textColor = color ?? primaryGreen;
     try {
-      return GoogleFonts.scheherazadeNew(
+      if (fontFamily == 'Scheherazade New') {
+        return GoogleFonts.scheherazadeNew(
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+          height: 1.8,
+          color: textColor,
+        );
+      } else if (fontFamily == 'Lateef') {
+        return GoogleFonts.lateef(
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+          height: 1.8,
+          color: textColor,
+        );
+      }
+      return GoogleFonts.amiri(
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
         height: 1.8,
-        color: primaryGreen,
+        color: textColor,
       );
     } catch (_) {
       return TextStyle(
-        fontFamily: 'Scheherazade New',
-        fontFamilyFallback: const ['Amiri', 'Traditional Arabic', 'Naskh', 'serif'],
+        fontFamily: fontFamily,
+        fontFamilyFallback: const ['Amiri', 'Scheherazade New', 'Traditional Arabic', 'Naskh', 'serif'],
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
         height: 1.8,
-        color: primaryGreen,
+        color: textColor,
       );
     }
   }

@@ -3,11 +3,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/core/localization/app_localizations.dart';
+import 'src/core/settings/settings_provider.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/features/ai_chat/ai_chat_screen.dart';
 import 'src/features/bookmarks/bookmarks_screen.dart';
 import 'src/features/reader/surah_list_view.dart';
 import 'src/features/search/search_screen.dart';
+import 'src/features/settings/settings_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +23,20 @@ class QuranMobileApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
     final textDirection = ref.watch(textDirectionProvider);
+    final settings = ref.watch(settingsProvider);
+
+    ThemeData lightTheme = AppTheme.getLightTheme(locale);
+    ThemeData darkTheme = AppTheme.getDarkTheme(locale);
+    ThemeMode themeMode = ThemeMode.system;
+
+    if (settings.themeMode == 'light') {
+      themeMode = ThemeMode.light;
+    } else if (settings.themeMode == 'dark') {
+      themeMode = ThemeMode.dark;
+    } else if (settings.themeMode == 'sepia') {
+      themeMode = ThemeMode.light;
+      lightTheme = AppTheme.getSepiaTheme(locale);
+    }
 
     return MaterialApp(
       title: 'Quran Platform Mobile',
@@ -35,9 +51,9 @@ class QuranMobileApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: AppTheme.getLightTheme(locale),
-      darkTheme: AppTheme.getDarkTheme(locale),
-      themeMode: ThemeMode.system,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
       builder: (context, child) {
         return Directionality(
           textDirection: textDirection,
@@ -64,11 +80,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     SearchScreen(),
     AiChatScreen(),
     BookmarksScreen(),
+    SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final isPersian = loc.locale.languageCode == 'fa';
 
     return Scaffold(
       body: IndexedStack(
@@ -101,6 +119,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           BottomNavigationBarItem(
             icon: const Icon(Icons.bookmark),
             label: loc.translate('bookmarks'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings),
+            label: isPersian ? 'تنظیمات' : 'Settings',
           ),
         ],
       ),

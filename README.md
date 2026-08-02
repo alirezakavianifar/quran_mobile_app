@@ -191,6 +191,11 @@ Built with **Flutter** (`src/quran_mobile_app`) using **Feature-First Clean Arch
   - Automatic continuous verse playback progression across the active Surah.
   - Interactive active verse highlighting and reciter selection sheet.
   - Persistent bottom audio player bar with progress timeline slider and play/pause controls.
+- **User Settings & Customizations**:
+  - **Quran Typography**: Arabic script font selection (*Amiri*, *Scheherazade New*, *Lateef*), font size sliders for Arabic (18–42pt) and Translation (12–28pt), live verse text preview card, show/hide translation toggle, show/hide transliteration toggle.
+  - **Audio & Recitation**: Default reciter selection (*Shahriar Parhizgar*, *Mishary Alafasy*, *Abdul Basit*), audio playback speed slider (0.75x–2.0x), auto-scroll Ayah toggle.
+  - **Appearance & Themes**: Theme mode selector (*Light*, *Dark*, *System*, *Sepia eye-care mode*), interface language switcher (*Persian RTL* vs *English LTR*).
+  - **AI & Storage Utilities**: Hybrid search switch, Wi-Fi sync switch, audio cache cleaner, and reset settings dialog.
 - **Offline Reading**: Bundled Drift SQLite database with offline translations and bookmark management.
 - **Web Support**: Configured with web WASM SQLite support and CORS headers.
 
