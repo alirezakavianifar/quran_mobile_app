@@ -6,7 +6,7 @@ import '../localization/app_localizations.dart';
 class DioHttpClient {
   late final Dio dio;
 
-  DioHttpClient(Locale locale, {String baseUrl = 'http://localhost:5000'}) {
+  DioHttpClient(Locale locale, {String baseUrl = 'http://localhost:5153'}) {
     dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,

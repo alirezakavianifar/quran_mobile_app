@@ -127,7 +127,7 @@ try {
     Write-Step "Building Flutter Release APK with API_BASE_URL=$apiBaseUrl ..."
     if (Test-Path ".\android\gradlew.bat") { & .\android\gradlew.bat --stop | Out-Null }
     $env:DART_VM_OPTIONS = "--old_gen_heap_size=3072"
-    flutter build apk --release --target-platform android-arm64 --no-tree-shake-icons --dart-define=API_BASE_URL=$apiBaseUrl
+    flutter build apk --release --no-tree-shake-icons --dart-define=API_BASE_URL=$apiBaseUrl
 
     $apkPath = "$MOBILE_DIR\build\app\outputs\flutter-apk\app-release.apk"
     $destPath = "$OUTPUT_DIR\app-release.apk"
