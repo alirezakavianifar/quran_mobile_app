@@ -86,7 +86,7 @@ class VerseDetailView extends ConsumerWidget {
                       style: AppTheme.getArabicQuranTextStyle(
                         fontSize: settings.arabicFontSize + 2,
                         fontFamily: settings.arabicFontFamily,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ).copyWith(
                         fontWeight: FontWeight.bold,
                       ),

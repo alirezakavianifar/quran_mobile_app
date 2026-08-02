@@ -171,7 +171,7 @@ class SettingsScreen extends ConsumerWidget {
                           style: AppTheme.getArabicQuranTextStyle(
                             fontSize: settings.arabicFontSize,
                             fontFamily: settings.arabicFontFamily,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                         if (settings.showTranslation) ...[

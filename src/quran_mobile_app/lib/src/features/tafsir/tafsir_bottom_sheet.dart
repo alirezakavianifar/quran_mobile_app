@@ -195,7 +195,7 @@ class TafsirBottomSheet extends ConsumerWidget {
                             textDirection: TextDirection.rtl,
                             style: AppTheme.getArabicQuranTextStyle(
                               fontSize: 18,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   // Brand Colors
   static const Color primaryGreen = Color(0xFF0F5132);
+  static const Color darkPrimaryGreen = Color(0xFF4EBA6F);
   static const Color secondaryGold = Color(0xFFC59B27);
   static const Color darkBackground = Color(0xFF12181B);
   static const Color lightBackground = Color(0xFFF8F9FA);
@@ -66,8 +67,8 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryGreen,
-        primary: primaryGreen,
+        seedColor: darkPrimaryGreen,
+        primary: darkPrimaryGreen,
         secondary: secondaryGold,
         surface: darkBackground,
         brightness: Brightness.dark,
@@ -161,7 +162,7 @@ class AppTheme {
     String fontFamily = 'Amiri',
     Color? color,
   }) {
-    final textColor = color ?? primaryGreen;
+    final textColor = color;
     try {
       if (fontFamily == 'Scheherazade New') {
         return GoogleFonts.scheherazadeNew(
