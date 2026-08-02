@@ -124,6 +124,17 @@ void main() {
       expect(notifier.currentState.playbackSpeed, 1.5);
       expect(player.currentPlaybackRate, 1.5);
     });
+
+    test('stop clears surah and verse numbers', () async {
+      await notifier.playVerse(2, 2, 286);
+      expect(notifier.currentState.currentSurahId, 2);
+      expect(notifier.currentState.currentVerseNumber, 2);
+
+      await notifier.stop();
+      expect(notifier.currentState.currentSurahId, null);
+      expect(notifier.currentState.currentVerseNumber, null);
+      expect(notifier.currentState.isPlaying, false);
+    });
   });
 }
 

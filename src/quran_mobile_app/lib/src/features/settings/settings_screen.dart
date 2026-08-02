@@ -85,10 +85,19 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Amiri', label: Text('Amiri')),
-                      ButtonSegment(value: 'Scheherazade New', label: Text('Scheherazade')),
-                      ButtonSegment(value: 'Lateef', label: Text('Lateef')),
+                    segments: [
+                      ButtonSegment(
+                        value: 'Amiri',
+                        label: Text(isPersian ? 'امیری' : 'Amiri'),
+                      ),
+                      ButtonSegment(
+                        value: 'Scheherazade New',
+                        label: Text(isPersian ? 'شهرزاد' : 'Scheherazade'),
+                      ),
+                      ButtonSegment(
+                        value: 'Lateef',
+                        label: Text(isPersian ? 'لطیف' : 'Lateef'),
+                      ),
                     ],
                     selected: {settings.arabicFontFamily},
                     onSelectionChanged: (newSelection) {
@@ -200,7 +209,7 @@ class SettingsScreen extends ConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                   ),
                   SwitchListTile(
-                    title: Text(isPersian ? 'نمایش آوانویسی (Transliteration)' : 'Show Transliteration'),
+                    title: Text(isPersian ? 'نمایش آوانویسی' : 'Show Transliteration'),
                     value: settings.showTransliteration,
                     onChanged: (val) => settingsNotifier.updateShowTransliteration(val),
                     contentPadding: EdgeInsets.zero,
@@ -234,18 +243,18 @@ class SettingsScreen extends ConsumerWidget {
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
                         value: 'parhizgar',
-                        child: Text('استاد شهریار پرهیزگار (Shahriar Parhizgar)'),
+                        child: Text(isPersian ? 'استاد شهریار پرهیزگار' : 'Shahriar Parhizgar'),
                       ),
                       DropdownMenuItem(
                         value: 'alafasy',
-                        child: Text('مشاری راشد العفاسی (Mishary Alafasy)'),
+                        child: Text(isPersian ? 'مشاری راشد العفاسی' : 'Mishary Alafasy'),
                       ),
                       DropdownMenuItem(
                         value: 'basit',
-                        child: Text('عبدالباسط عبدالصمد (Abdul Basit)'),
+                        child: Text(isPersian ? 'عبدالباسط عبدالصمد' : 'Abdul Basit'),
                       ),
                     ],
                     onChanged: (val) {
@@ -337,8 +346,8 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'fa', label: Text('فارسی (Persian)')),
+                    segments: [
+                      ButtonSegment(value: 'fa', label: Text(isPersian ? 'فارسی' : 'Persian')),
                       ButtonSegment(value: 'en', label: Text('English')),
                     ],
                     selected: {settings.appLanguage},
@@ -371,7 +380,7 @@ class SettingsScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SwitchListTile(
-                    title: Text(isPersian ? 'جستجوی ترکیبی (Hybrid Search)' : 'Enable Hybrid Search'),
+                    title: Text(isPersian ? 'جستجوی ترکیبی' : 'Enable Hybrid Search'),
                     subtitle: Text(
                       isPersian
                           ? 'ترکیب جستجوی معنایی و کلیدواژه‌ای'

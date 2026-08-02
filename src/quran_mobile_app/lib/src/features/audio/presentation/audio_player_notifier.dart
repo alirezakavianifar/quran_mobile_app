@@ -37,11 +37,13 @@ class AudioPlayerState {
     return currentSurahId == surahId && currentVerseNumber == verseNumber;
   }
 
+static const Object _sentinel = Object();
+
   AudioPlayerState copyWith({
     Reciter? currentReciter,
-    int? currentSurahId,
-    int? currentVerseNumber,
-    int? totalVersesInSurah,
+    Object? currentSurahId = _sentinel,
+    Object? currentVerseNumber = _sentinel,
+    Object? totalVersesInSurah = _sentinel,
     bool? isPlaying,
     bool? isLoading,
     Duration? position,
@@ -53,9 +55,9 @@ class AudioPlayerState {
   }) {
     return AudioPlayerState(
       currentReciter: currentReciter ?? this.currentReciter,
-      currentSurahId: currentSurahId ?? this.currentSurahId,
-      currentVerseNumber: currentVerseNumber ?? this.currentVerseNumber,
-      totalVersesInSurah: totalVersesInSurah ?? this.totalVersesInSurah,
+      currentSurahId: currentSurahId == _sentinel ? this.currentSurahId : currentSurahId as int?,
+      currentVerseNumber: currentVerseNumber == _sentinel ? this.currentVerseNumber : currentVerseNumber as int?,
+      totalVersesInSurah: totalVersesInSurah == _sentinel ? this.totalVersesInSurah : totalVersesInSurah as int?,
       isPlaying: isPlaying ?? this.isPlaying,
       isLoading: isLoading ?? this.isLoading,
       position: position ?? this.position,
