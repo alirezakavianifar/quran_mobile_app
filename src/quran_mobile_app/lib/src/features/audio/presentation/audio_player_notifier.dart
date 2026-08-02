@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/settings/settings_provider.dart';
 import '../data/audio_repository.dart';
 
 class AudioPlayerState {
@@ -14,6 +15,7 @@ class AudioPlayerState {
   final Duration duration;
   final List<Reciter> availableReciters;
   final bool autoPlayNext;
+  final double playbackSpeed;
   final String? errorMessage;
 
   AudioPlayerState({
@@ -27,6 +29,7 @@ class AudioPlayerState {
     this.duration = Duration.zero,
     this.availableReciters = const [],
     this.autoPlayNext = true,
+    this.playbackSpeed = 1.0,
     this.errorMessage,
   });
 
@@ -45,6 +48,7 @@ class AudioPlayerState {
     Duration? duration,
     List<Reciter>? availableReciters,
     bool? autoPlayNext,
+    double? playbackSpeed,
     String? errorMessage,
   }) {
     return AudioPlayerState(
@@ -58,6 +62,7 @@ class AudioPlayerState {
       duration: duration ?? this.duration,
       availableReciters: availableReciters ?? this.availableReciters,
       autoPlayNext: autoPlayNext ?? this.autoPlayNext,
+      playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       errorMessage: errorMessage,
     );
   }
@@ -71,9 +76,9 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   StreamSubscription? _playerStateSubscription;
   StreamSubscription? _completeSubscription;
 
-  AudioPlayerNotifier(this._repository, {AudioPlayer? player})
+  AudioPlayerNotifier(this._repository, {AudioPlayer? player, double initialSpeed = 1.0})
       : _player = player ?? AudioPlayer(),
-        super(AudioPlayerState()) {
+        super(AudioPlayerState(playbackSpeed: initialSpeed)) {
     _initPlayerListeners();
     loadReciters();
   }
@@ -109,6 +114,13 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       availableReciters: reciters,
       currentReciter: state.currentReciter ?? defaultReciter,
     );
+  }
+
+  Future<void> setPlaybackSpeed(double speed) async {
+    state = state.copyWith(playbackSpeed: speed);
+    try {
+      await _player.setPlaybackRate(speed);
+    } catch (_) {}
   }
 
   Future<void> playVerse(int surahId, int verseNumber, int totalVerses) async {
@@ -153,6 +165,9 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
       await _player.stop();
       await _player.play(UrlSource(audioUrl));
+      try {
+        await _player.setPlaybackRate(state.playbackSpeed);
+      } catch (_) {}
       state = state.copyWith(isLoading: false, isPlaying: true);
     } catch (e) {
       state = state.copyWith(
@@ -242,5 +257,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 final audioPlayerProvider =
     StateNotifierProvider<AudioPlayerNotifier, AudioPlayerState>((ref) {
   final repository = ref.watch(audioRepositoryProvider);
-  return AudioPlayerNotifier(repository);
+  final initialSpeed = ref.watch(settingsProvider.select((s) => s.playbackSpeed));
+  return AudioPlayerNotifier(repository, initialSpeed: initialSpeed);
 });
+

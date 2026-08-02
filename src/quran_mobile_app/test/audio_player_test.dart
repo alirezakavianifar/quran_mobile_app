@@ -4,6 +4,8 @@ import 'package:quran_mobile_app/src/features/audio/data/audio_repository.dart';
 import 'package:quran_mobile_app/src/features/audio/presentation/audio_player_notifier.dart';
 
 class FakeAudioPlayer implements AudioPlayer {
+  double currentPlaybackRate = 1.0;
+
   @override
   Stream<Duration> get onDurationChanged => const Stream.empty();
 
@@ -27,6 +29,11 @@ class FakeAudioPlayer implements AudioPlayer {
 
   @override
   Future<void> seek(Duration position) async {}
+
+  @override
+  Future<void> setPlaybackRate(double speed) async {
+    currentPlaybackRate = speed;
+  }
 
   @override
   Future<void> dispose() async {}
@@ -110,5 +117,13 @@ void main() {
       await notifier.selectReciter(husary);
       expect(notifier.currentState.currentReciter?.id, 'husary');
     });
+
+    test('Updates playback speed in state and player', () async {
+      expect(notifier.currentState.playbackSpeed, 1.0);
+      await notifier.setPlaybackSpeed(1.5);
+      expect(notifier.currentState.playbackSpeed, 1.5);
+      expect(player.currentPlaybackRate, 1.5);
+    });
   });
 }
+

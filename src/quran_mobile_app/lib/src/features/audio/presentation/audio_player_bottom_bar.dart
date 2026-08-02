@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../core/settings/settings_provider.dart';
 import '../../../core/utils/persian_digit_converter.dart';
 import 'audio_player_notifier.dart';
 import 'reciter_selector_dialog.dart';
@@ -119,7 +120,62 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                     '${_formatDuration(state.position)} / ${_formatDuration(state.duration)}',
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
+                  // Playback Speed Selector Button
+                  PopupMenuButton<double>(
+                    tooltip: isPersian ? 'سرعت پخش' : 'Playback Speed',
+                    initialValue: state.playbackSpeed,
+                    onSelected: (double speed) {
+                      notifier.setPlaybackSpeed(speed);
+                      ref.read(settingsProvider.notifier).updatePlaybackSpeed(speed);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        isPersian
+                            ? '${PersianDigitConverter.toPersian((state.playbackSpeed % 1 == 0 ? state.playbackSpeed.toInt() : state.playbackSpeed).toString())}x'
+                            : '${state.playbackSpeed % 1 == 0 ? state.playbackSpeed.toInt() : state.playbackSpeed}x',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    itemBuilder: (context) => [
+                      0.5,
+                      0.75,
+                      1.0,
+                      1.25,
+                      1.5,
+                      2.0,
+                    ].map((speed) {
+                      final speedStr = speed % 1 == 0 ? speed.toInt().toString() : speed.toString();
+                      final label = isPersian
+                          ? '${PersianDigitConverter.toPersian(speedStr)} برابر'
+                          : '${speedStr}x';
+                      return PopupMenuItem<double>(
+                        value: speed,
+                        child: Row(
+                          children: [
+                            if (state.playbackSpeed == speed)
+                              Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.primary)
+                            else
+                              const SizedBox(width: 16),
+                            const SizedBox(width: 8),
+                            Text(label),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(width: 4),
                   // Auto play next toggle
                   IconButton(
                     icon: Icon(
@@ -172,3 +228,4 @@ class AudioPlayerBottomBar extends ConsumerWidget {
     );
   }
 }
+
