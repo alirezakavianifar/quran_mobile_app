@@ -259,7 +259,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 final audioPlayerProvider =
     StateNotifierProvider<AudioPlayerNotifier, AudioPlayerState>((ref) {
   final repository = ref.watch(audioRepositoryProvider);
-  final initialSpeed = ref.watch(settingsProvider.select((s) => s.playbackSpeed));
+  final initialSpeed = ref.read(settingsProvider).playbackSpeed;
   return AudioPlayerNotifier(repository, initialSpeed: initialSpeed);
 });
 
