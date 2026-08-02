@@ -12,19 +12,120 @@ import '../tafsir/tafsir_bottom_sheet.dart';
 import '../../core/settings/settings_provider.dart';
 import 'reader_provider.dart';
 
-class VerseDetailView extends ConsumerWidget {
+class VerseDetailView extends ConsumerStatefulWidget {
   final Surah surah;
 
   const VerseDetailView({super.key, required this.surah});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VerseDetailView> createState() => _VerseDetailViewState();
+}
+
+class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
+  final ScrollController _scrollController = ScrollController();
+  int _currentVisiblePage = 0;
+  int _currentVisibleJuz = 0;
+  List<VerseWithTranslation>? _lastVerses;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final verses = _lastVerses;
+    if (verses == null || verses.isEmpty || !_scrollController.hasClients) return;
+
+    const double estimatedItemHeight = 200.0;
+    final offset = _scrollController.offset;
+    final index = (offset / estimatedItemHeight).floor().clamp(0, verses.length - 1);
+    final verse = verses[index].verse;
+
+    if (_currentVisiblePage != verse.pageNumber || _currentVisibleJuz != verse.juzNumber) {
+      setState(() {
+        _currentVisiblePage = verse.pageNumber;
+        _currentVisibleJuz = verse.juzNumber;
+      });
+    }
+  }
+
+  Widget _buildPageHeader(BuildContext context, AppLocalizations loc, bool isPersian, int pageNum, int juzNum) {
+    final pageText = isPersian
+        ? PersianDigitConverter.toPersian('$pageNum')
+        : '$pageNum';
+    final juzText = isPersian
+        ? PersianDigitConverter.toPersian('$juzNum')
+        : '$juzNum';
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+              thickness: 1,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.menu_book_rounded,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${loc.translate("page")} $pageText • ${loc.translate("juz")} $juzText',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+              thickness: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final isPersian = loc.isPersian;
-    final versesAsync = ref.watch(surahVersesProvider(surah.number));
+    final versesAsync = ref.watch(surahVersesProvider(widget.surah.number));
     final audioState = ref.watch(audioPlayerProvider);
     final audioNotifier = ref.read(audioPlayerProvider.notifier);
-    final surahTitle = (isPersian ? surah.namePersian : surah.nameEnglish)
+    final surahTitle = (isPersian ? widget.surah.namePersian : widget.surah.nameEnglish)
         .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
         .trim();
     final settings = ref.watch(settingsProvider);
@@ -40,9 +141,33 @@ class VerseDetailView extends ConsumerWidget {
       }
     });
 
+    final activePageStr = _currentVisiblePage > 0
+        ? (isPersian ? PersianDigitConverter.toPersian('$_currentVisiblePage') : '$_currentVisiblePage')
+        : '';
+    final activeJuzStr = _currentVisibleJuz > 0
+        ? (isPersian ? PersianDigitConverter.toPersian('$_currentVisibleJuz') : '$_currentVisibleJuz')
+        : '';
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('${surah.nameArabic} - $surahTitle'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('${widget.surah.nameArabic} - $surahTitle', style: const TextStyle(fontSize: 17)),
+            if (_currentVisiblePage > 0) ...[
+              const SizedBox(height: 2),
+              Text(
+                '${loc.translate("page")} $activePageStr • ${loc.translate("juz")} $activeJuzStr',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.mic_outlined),
@@ -62,10 +187,18 @@ class VerseDetailView extends ConsumerWidget {
           if (verses.isEmpty) {
             return const Center(child: Text('No Verses found.'));
           }
-          final showBismillahHeader = surah.number != 1 && surah.number != 9;
+
+          _lastVerses = verses;
+          if (_currentVisiblePage == 0) {
+            _currentVisiblePage = verses.first.verse.pageNumber;
+            _currentVisibleJuz = verses.first.verse.juzNumber;
+          }
+
+          final showBismillahHeader = widget.surah.number != 1 && widget.surah.number != 9;
           final totalCount = showBismillahHeader ? verses.length + 1 : verses.length;
 
           return ListView.builder(
+            controller: _scrollController,
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
             itemCount: totalCount,
             itemBuilder: (context, index) {
@@ -102,8 +235,11 @@ class VerseDetailView extends ConsumerWidget {
               final verse = item.verse;
               final trans = item.translation;
 
+              final isFirstVerseOfPage = verseIndex == 0 ||
+                  verses[verseIndex - 1].verse.pageNumber != verse.pageNumber;
+
               var arabicText = verse.textUthmani;
-              if (surah.number != 1 && surah.number != 9 && verse.verseNumber == 1) {
+              if (widget.surah.number != 1 && widget.surah.number != 9 && verse.verseNumber == 1) {
                 const bismillahPatterns = [
                   'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ',
                   'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
@@ -121,16 +257,20 @@ class VerseDetailView extends ConsumerWidget {
               }
 
               final ayahKey = PersianDigitConverter.formatAyahKey(
-                surah.number,
+                widget.surah.number,
                 verse.verseNumber,
                 isPersian: isPersian,
               );
 
-              final isAudioActive = audioState.isVerseActive(surah.number, verse.verseNumber);
+              final pageNumberStr = isPersian
+                  ? PersianDigitConverter.toPersian('${verse.pageNumber}')
+                  : '${verse.pageNumber}';
+
+              final isAudioActive = audioState.isVerseActive(widget.surah.number, verse.verseNumber);
               final isPlayingThisVerse = isAudioActive && audioState.isPlaying;
               final isLoadingThisVerse = isAudioActive && audioState.isLoading;
 
-              return Card(
+              final verseCard = Card(
                 margin: const EdgeInsets.only(bottom: 16),
                 elevation: isAudioActive ? 4 : 1,
                 shape: RoundedRectangleBorder(
@@ -153,24 +293,47 @@ class VerseDetailView extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isAudioActive
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.secondary,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '[$ayahKey]',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isAudioActive
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.secondary,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '[$ayahKey]',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  '${loc.translate("page")} $pageNumberStr',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           Row(
                             children: [
@@ -195,7 +358,7 @@ class VerseDetailView extends ConsumerWidget {
                                       tooltip: isPersian ? 'پخش تلاوت' : 'Recite Ayah',
                                       onPressed: () {
                                         audioNotifier.playVerse(
-                                          surah.number,
+                                          widget.surah.number,
                                           verse.verseNumber,
                                           verses.length,
                                         );
@@ -210,7 +373,7 @@ class VerseDetailView extends ConsumerWidget {
                                     isScrollControlled: true,
                                     backgroundColor: Colors.transparent,
                                     builder: (_) => TafsirBottomSheet(
-                                      surah: surah,
+                                      surah: widget.surah,
                                       verse: verse,
                                     ),
                                   );
@@ -221,7 +384,7 @@ class VerseDetailView extends ConsumerWidget {
                                 onPressed: () {
                                   ref
                                       .read(bookmarksProvider.notifier)
-                                      .addBookmark(surah.number, verse.verseNumber);
+                                      .addBookmark(widget.surah.number, verse.verseNumber);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
@@ -269,6 +432,17 @@ class VerseDetailView extends ConsumerWidget {
                   ),
                 ),
               );
+
+              if (isFirstVerseOfPage) {
+                return Column(
+                  children: [
+                    _buildPageHeader(context, loc, isPersian, verse.pageNumber, verse.juzNumber),
+                    verseCard,
+                  ],
+                );
+              }
+
+              return verseCard;
             },
           );
         },

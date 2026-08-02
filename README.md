@@ -186,6 +186,10 @@ Built with **Flutter** (`src/quran_mobile_app`) using **Feature-First Clean Arch
 
 - **Persian RTL Layout (Default)**: `fa_IR` with Vazirmatn font and Persian digit conversion.
 - **English LTR Layout**: Dynamic switching to `en_US` with Inter font.
+- **Quran Page & Juz Indicators**:
+  - Dynamic `AppBar` header display showing the active Quran Page and Juz (e.g., `صفحه ۱ • جزء ۱` / `Page 1 • Juz 1`) automatically updated as the user scrolls.
+  - Visual page boundary transition headers (e.g., `─── صفحه ۲ • جزء ۱ ───`) rendered inside the reader view when page numbers change between consecutive verses.
+  - Individual Ayah page number badges (e.g., `[۱:۱] • صفحه ۱`) on every verse card header.
 - **Surah Recitation & Audio Playback**:
   - Full verse-by-verse audio streaming with support for top reciters (Mishary Rashid Alafasy, Mahmoud Khalil Al-Husary, etc.).
   - Automatic continuous verse playback progression across the active Surah.

@@ -45,6 +45,8 @@ class AppLocalizations {
       'copyTafsir': 'کپی متن تفسیر',
       'copiedToClipboard': 'متن تفسیر در حافظه کپی شد',
       'ayahTafsirHeader': 'تفسیر آیه',
+      'page': 'صفحه',
+      'juz': 'جزء',
     },
     'en': {
       'appTitle': 'Quran Exploration & RAG Platform',
@@ -77,6 +79,8 @@ class AppLocalizations {
       'copyTafsir': 'Copy Tafsir Text',
       'copiedToClipboard': 'Tafsir text copied to clipboard',
       'ayahTafsirHeader': 'Ayah Tafsir',
+      'page': 'Page',
+      'juz': 'Juz',
     },
   };
 
