@@ -4,6 +4,9 @@ import '../../core/database/app_database.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/persian_digit_converter.dart';
+import '../audio/presentation/audio_player_bottom_bar.dart';
+import '../audio/presentation/audio_player_notifier.dart';
+import '../audio/presentation/reciter_selector_dialog.dart';
 import '../bookmarks/bookmarks_provider.dart';
 import 'reader_provider.dart';
 
@@ -17,13 +20,38 @@ class VerseDetailView extends ConsumerWidget {
     final loc = AppLocalizations.of(context);
     final isPersian = loc.isPersian;
     final versesAsync = ref.watch(surahVersesProvider(surah.number));
-
+    final audioState = ref.watch(audioPlayerProvider);
+    final audioNotifier = ref.read(audioPlayerProvider.notifier);
     final surahTitle = isPersian ? surah.namePersian : surah.nameEnglish;
+
+    ref.listen<AudioPlayerState>(audioPlayerProvider, (previous, next) {
+      if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
         title: Text('${surah.nameArabic} - $surahTitle'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.mic_outlined),
+            tooltip: isPersian ? 'انتخاب قاری' : 'Select Reciter',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => const ReciterSelectorDialog(),
+              );
+            },
+          ),
+        ],
       ),
+      bottomNavigationBar: const AudioPlayerBottomBar(),
       body: versesAsync.when(
         data: (verses) {
           if (verses.isEmpty) {
@@ -33,7 +61,7 @@ class VerseDetailView extends ConsumerWidget {
           final totalCount = showBismillahHeader ? verses.length + 1 : verses.length;
 
           return ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
             itemCount: totalCount,
             itemBuilder: (context, index) {
               if (showBismillahHeader && index == 0) {
@@ -90,8 +118,25 @@ class VerseDetailView extends ConsumerWidget {
                 isPersian: isPersian,
               );
 
+              final isAudioActive = audioState.isVerseActive(surah.number, verse.verseNumber);
+              final isPlayingThisVerse = isAudioActive && audioState.isPlaying;
+              final isLoadingThisVerse = isAudioActive && audioState.isLoading;
+
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
+                elevation: isAudioActive ? 4 : 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: isAudioActive
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.transparent,
+                    width: isAudioActive ? 2 : 0,
+                  ),
+                ),
+                color: isAudioActive
+                    ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.15)
+                    : null,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -106,7 +151,9 @@ class VerseDetailView extends ConsumerWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
+                              color: isAudioActive
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.secondary,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -117,21 +164,52 @@ class VerseDetailView extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.bookmark_border),
-                            onPressed: () {
-                              ref
-                                  .read(bookmarksProvider.notifier)
-                                  .addBookmark(surah.number, verse.verseNumber);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '${loc.translate("addBookmark")} $ayahKey',
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            },
+                          Row(
+                            children: [
+                              isLoadingThisVerse
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(4.0),
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      ),
+                                    )
+                                  : IconButton(
+                                      icon: Icon(
+                                        isPlayingThisVerse
+                                            ? Icons.pause_circle_filled
+                                            : Icons.play_circle_outline,
+                                        color: isAudioActive
+                                            ? Theme.of(context).colorScheme.primary
+                                            : Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                                      ),
+                                      tooltip: isPersian ? 'پخش تلاوت' : 'Recite Ayah',
+                                      onPressed: () {
+                                        audioNotifier.playVerse(
+                                          surah.number,
+                                          verse.verseNumber,
+                                          verses.length,
+                                        );
+                                      },
+                                    ),
+                              IconButton(
+                                icon: const Icon(Icons.bookmark_border),
+                                onPressed: () {
+                                  ref
+                                      .read(bookmarksProvider.notifier)
+                                      .addBookmark(surah.number, verse.verseNumber);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        '${loc.translate("addBookmark")} $ayahKey',
+                                      ),
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -141,7 +219,10 @@ class VerseDetailView extends ConsumerWidget {
                         arabicText,
                         textAlign: TextAlign.right,
                         textDirection: TextDirection.rtl,
-                        style: AppTheme.getArabicQuranTextStyle(fontSize: 22),
+                        style: AppTheme.getArabicQuranTextStyle(fontSize: 22).copyWith(
+                          color: isAudioActive ? Theme.of(context).colorScheme.primary : null,
+                          fontWeight: isAudioActive ? FontWeight.bold : FontWeight.normal,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       const Divider(),

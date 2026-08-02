@@ -186,6 +186,11 @@ Built with **Flutter** (`src/quran_mobile_app`) using **Feature-First Clean Arch
 
 - **Persian RTL Layout (Default)**: `fa_IR` with Vazirmatn font and Persian digit conversion.
 - **English LTR Layout**: Dynamic switching to `en_US` with Inter font.
+- **Surah Recitation & Audio Playback**:
+  - Full verse-by-verse audio streaming with support for top reciters (Mishary Rashid Alafasy, Mahmoud Khalil Al-Husary, etc.).
+  - Automatic continuous verse playback progression across the active Surah.
+  - Interactive active verse highlighting and reciter selection sheet.
+  - Persistent bottom audio player bar with progress timeline slider and play/pause controls.
 - **Offline Reading**: Bundled Drift SQLite database with offline translations and bookmark management.
 - **Web Support**: Configured with web WASM SQLite support and CORS headers.
 

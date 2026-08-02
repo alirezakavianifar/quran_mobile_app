@@ -83,7 +83,13 @@ class AudioRepository {
   String _buildFallbackUrl(String reciterId, int surahId, int verseId) {
     final s = surahId.toString().padLeft(3, '0');
     final v = verseId.toString().padLeft(3, '0');
-    return 'https://everyayah.com/data/Alafasy_128kbps/$s$v.mp3';
+    final folderName = switch (reciterId.toLowerCase()) {
+      'husary' => 'Husary_128kbps',
+      'abdulbasit' => 'Abdul_Basit_Mujawwad_128kbps',
+      'parhizgar' => 'Parhizgar_48kbps',
+      _ => 'Alafasy_128kbps',
+    };
+    return 'https://everyayah.com/data/$folderName/$s$v.mp3';
   }
 }
 
