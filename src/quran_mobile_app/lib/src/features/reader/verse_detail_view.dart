@@ -8,6 +8,7 @@ import '../audio/presentation/audio_player_bottom_bar.dart';
 import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
 import '../bookmarks/bookmarks_provider.dart';
+import '../tafsir/tafsir_bottom_sheet.dart';
 import '../../core/settings/settings_provider.dart';
 import 'reader_provider.dart';
 
@@ -198,6 +199,21 @@ class VerseDetailView extends ConsumerWidget {
                                         );
                                       },
                                     ),
+                              IconButton(
+                                icon: const Icon(Icons.auto_stories_outlined),
+                                tooltip: isPersian ? 'تفسیر آیه (استاد قرائتی / نمونه)' : 'Ayah Tafsir',
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (_) => TafsirBottomSheet(
+                                      surah: surah,
+                                      verse: verse,
+                                    ),
+                                  );
+                                },
+                              ),
                               IconButton(
                                 icon: const Icon(Icons.bookmark_border),
                                 onPressed: () {
