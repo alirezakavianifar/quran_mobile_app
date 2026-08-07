@@ -84,6 +84,8 @@ class FakeAudioRepository implements AudioRepository {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('AudioPlayerNotifier Unit Tests', () {
     late FakeAudioRepository repository;
     late FakeAudioPlayer player;

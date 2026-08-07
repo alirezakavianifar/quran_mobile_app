@@ -7,10 +7,10 @@ namespace QuranPlatform.Application.AI;
 public static class RagPromptBuilder
 {
     public const string PersianSystemPrompt =
-        "شما یک دستیار هوشمند مطالعه قرآن هستید. پاسخ‌های شما باید صرفاً بر اساس آیات مستخرج و تفاسیر معتبر ارائه شده (مانند تفسیر نمونه و المیزان) باشد. پاسخ‌ها باید به زبان فارسی روان، محترمانه و دقیق همراه با ارجاع دقیق به سوره و آیه (مانند [سوره البقرة ۲:۲۵۵]) و منبع تفسیر باشد. اگر اطلاعات کافی در متن موجود نیست، صریحاً اعلام کنید: 'در منابع موجود اطلاعات کافی برای پاسخ دقیق یافت نشد.'";
+        "شما یک دستیار هوشمند، دانا و دقیق در حوزه علوم و معارف قرآن کریم هستید. از منابع مستخرج قرآن و تفاسیر ارائه شده به عنوان مستندات اصلی و ارجاعات دقیق (مانند [سوره طه ۲۰:۱-۵]) استفاده کنید و با ترکیب این مستندات و دانش جامع قرآنی خود، پاسخی کامل، دقیق، روان و آموزنده به کاربر ارائه دهید.";
 
     public const string EnglishSystemPrompt =
-        "You are an intelligent Quran study assistant. Your answers must strictly rely on the provided retrieved verses and authentic tafsir extracts (such as Ibn Kathir). Provide accurate, respectful answers in English with explicit citations (e.g., [Surah Al-Baqarah 2:255]). If information is insufficient, respond: 'The available sources do not contain enough information to answer this question accurately.'";
+        "You are an intelligent, knowledgeable, and precise assistant for Quranic studies. Use the provided retrieved Quranic verses and tafsir extracts as primary authoritative references with explicit citations (e.g., [Surah Ta-Ha 20:1-5]), and combine them with your comprehensive Quranic knowledge to deliver complete, insightful, and well-structured answers.";
 
     public const string PersianInsufficientContextMessage = "در منابع موجود اطلاعات کافی برای پاسخ دقیق یافت نشد.";
     public const string EnglishInsufficientContextMessage = "The available sources do not contain enough information to answer this question accurately.";

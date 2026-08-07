@@ -14,16 +14,17 @@ public class InfrastructureUnitTests
     {
         // Arrange
         var configMock = new Mock<IConfiguration>();
-        configMock.Setup(c => c["AI:Provider"]).Returns("Mock");
+        var aiConfigMock = new Mock<IAiConfigurationService>();
+        aiConfigMock.Setup(a => a.GetActiveProvider()).Returns("Mock");
 
-        var adapter = new LLMProviderAdapter(configMock.Object, new HttpClient());
+        var adapter = new LLMProviderAdapter(configMock.Object, aiConfigMock.Object, new HttpClient());
         var instruction = new SystemInstruction("دستورالعمل سیستم", "fa-IR");
 
         // Act
         var result = await adapter.GenerateGroundedAnswerAsync("صبر", instruction);
 
         // Assert
-        result.Should().Contain("[پاسخ مستند بر اساس تفسیر نمونه و المیزان]");
+        result.Should().Contain("تفسیر نمونه و المیزان");
     }
 
     [Fact]
@@ -31,15 +32,16 @@ public class InfrastructureUnitTests
     {
         // Arrange
         var configMock = new Mock<IConfiguration>();
-        configMock.Setup(c => c["AI:Provider"]).Returns("Mock");
+        var aiConfigMock = new Mock<IAiConfigurationService>();
+        aiConfigMock.Setup(a => a.GetActiveProvider()).Returns("Mock");
 
-        var adapter = new LLMProviderAdapter(configMock.Object, new HttpClient());
+        var adapter = new LLMProviderAdapter(configMock.Object, aiConfigMock.Object, new HttpClient());
         var instruction = new SystemInstruction("System instruction", "en-US");
 
         // Act
         var result = await adapter.GenerateGroundedAnswerAsync("Patience", instruction);
 
         // Assert
-        result.Should().Contain("[Grounded Answer based on Ibn Kathir Commentary]");
+        result.Should().Contain("Tafsir Ibn Kathir");
     }
 }

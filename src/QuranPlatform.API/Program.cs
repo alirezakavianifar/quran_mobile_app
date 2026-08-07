@@ -68,6 +68,7 @@ builder.Services.AddScoped<ISearchIndexRepository, OpenSearchIndexRepository>();
 builder.Services.AddScoped<IVectorSearchService, VectorSearchService>();
 builder.Services.AddScoped<ISearchOrchestrator, SearchOrchestrator>();
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IAiConfigurationService, AiConfigurationService>();
 builder.Services.AddScoped<IEmbeddingService, EmbeddingServiceAdapter>();
 builder.Services.AddScoped<ILLMProvider, LLMProviderAdapter>();
 builder.Services.AddScoped<IRagEngine, RagEngine>();

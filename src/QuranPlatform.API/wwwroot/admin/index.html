@@ -144,8 +144,21 @@
                 </div>
             </section>
 
-            <!-- Tab 3: AI Logs -->
+            <!-- Tab 3: AI Logs & Config -->
             <section id="tab-ai" class="tab-content">
+                <div class="analytics-card" style="margin-bottom: 24px;">
+                    <h3 id="ai-provider-title">تنظیمات سرویس‌دهنده هوش مصنوعی (AI LLM Provider)</h3>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 16px;" id="ai-provider-desc">
+                        انتخاب و تغییر آنی سرویس‌دهنده هوش مصنوعی (Google Gemini / xAI Grok / Mock) برای پاسخگویی به سوالات
+                    </p>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <button id="btn-provider-gemini" class="lang-btn" style="padding: 10px 18px; font-weight: 600;">✨ Google Gemini</button>
+                        <button id="btn-provider-grok" class="lang-btn" style="padding: 10px 18px; font-weight: 600;">🤖 xAI Grok</button>
+                        <button id="btn-provider-mock" class="lang-btn" style="padding: 10px 18px; font-weight: 600;">⚡ Mock Offline Generator</button>
+                    </div>
+                    <div id="ai-provider-status-msg" style="margin-top: 12px; font-size: 13px; color: var(--accent-emerald); font-weight: 500;"></div>
+                </div>
+
                 <div class="analytics-card">
                     <h3 id="ai-logs-title">آخرین تعاملات دستیار هوش مصنوعی</h3>
                     <div class="table-wrapper">

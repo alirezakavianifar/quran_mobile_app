@@ -192,6 +192,7 @@ Built with **Flutter** (`src/quran_mobile_app`) using **Feature-First Clean Arch
   - Individual Ayah page number badges (e.g., `[۱:۱] • صفحه ۱`) on every verse card header.
 - **Surah Recitation & Audio Playback**:
   - Full verse-by-verse audio streaming with support for top reciters (Mishary Rashid Alafasy, Mahmoud Khalil Al-Husary, etc.).
+  - Background audio playback session & CPU wake lock enabled (`WAKE_LOCK`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, iOS `UIBackgroundModes -> audio`).
   - Automatic continuous verse playback progression across the active Surah.
   - Interactive active verse highlighting and reciter selection sheet.
   - Persistent bottom audio player bar with progress timeline slider and play/pause controls.
@@ -246,13 +247,17 @@ docker-compose up -d
 
 ### 2. Web Admin Dashboard UI (`/admin`)
 The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
-- **URL**: `http://localhost:5000/admin`
+- **Access URLs**:
+  * **Local Admin Web Portal**: `http://localhost:5153/admin/` (or `https://localhost:5154/admin/`)
+  * **Ngrok Tunnel Admin Portal**: `https://<your-ngrok-subdomain>.ngrok-free.app/admin/`
+  * **Swagger Open API Explorer**: `http://localhost:5153/swagger`
 - **Features**:
-  - Persian RTL (Default) / English LTR toggle with Vazirmatn & Inter typography.
-  - Real-time System Statistics dashboard (Database metrics, vector counts, OpenSearch document totals).
-  - Search Analytics monitor (Top query trends in Persian and English).
-  - AI Assistant Conversation Logs and Guardrail Safety inspector.
-  - Translation & Tafsir source moderation interface.
+  * Persian RTL (Default) / English LTR toggle with Vazirmatn & Inter typography.
+  * Real-time System Statistics dashboard (Database metrics, vector counts, OpenSearch document totals).
+  * Search Analytics monitor (Top query trends in Persian and English).
+  * AI LLM Engine Manager (View & dynamically switch active provider between **Google Gemini**, **xAI Grok**, and **Mock** at runtime).
+  * AI Assistant Conversation Logs and Guardrail Safety inspector.
+  * Translation & Tafsir source moderation interface.
 
 ### 3. User Cloud Data Synchronization API (`SyncController`)
 - **POST `/api/v1/sync`**: Synchronizes local Drift SQLite bookmarks, highlights, notes, and reading history with the PostgreSQL backend using timestamp-based conflict resolution (latest wins).
@@ -270,7 +275,10 @@ The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
 # 1. Dev Launcher (Backend + App):
 .\scripts\start-dev.ps1
 
-# 2. Master 1-Click Ngrok Tunnel & Release Android APK Builder:
+# 2. Admin Panel Launcher (Backend + Browser Admin Dashboard):
+.\scripts\start-admin.ps1
+
+# 3. Master 1-Click Ngrok Tunnel & Release Android APK Builder:
 .\scripts\build-apk.ps1
 ```
 

@@ -1,19 +1,24 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using QuranPlatform.Application.Admin.Queries;
+using QuranPlatform.Application.Common.Interfaces;
 using QuranPlatform.Domain.Repositories;
 
 namespace QuranPlatform.API.Controllers;
+
+public record UpdateAiProviderRequest(string Provider);
 
 [ApiController]
 [Route("api/v1/[controller]")]
 public class AdminController : ControllerBase
 {
     private readonly ISender _mediator;
+    private readonly IAiConfigurationService _aiConfigService;
 
-    public AdminController(ISender mediator)
+    public AdminController(ISender mediator, IAiConfigurationService aiConfigService)
     {
         _mediator = mediator;
+        _aiConfigService = aiConfigService;
     }
 
     /// <summary>
@@ -44,5 +49,43 @@ public class AdminController : ControllerBase
     {
         var result = await _mediator.Send(new GetAiConversationLogsQuery(limit), ct);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Returns current active AI provider configuration and available providers.
+    /// </summary>
+    [HttpGet("ai-provider")]
+    public ActionResult<AiProviderStatusDto> GetAiProviderStatus()
+    {
+        var status = _aiConfigService.GetProviderStatus();
+        return Ok(status);
+    }
+
+    /// <summary>
+    /// Dynamically switches active AI provider (e.g. "Gemini", "Grok", "Mock") at runtime.
+    /// </summary>
+    [HttpPost("ai-provider")]
+    public IActionResult SetAiProvider([FromBody] UpdateAiProviderRequest request)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.Provider))
+        {
+            return BadRequest(new { message = "Provider field cannot be empty." });
+        }
+
+        var success = _aiConfigService.SetActiveProvider(request.Provider);
+        if (!success)
+        {
+            return BadRequest(new
+            {
+                message = $"Invalid provider '{request.Provider}'. Supported providers are: {string.Join(", ", _aiConfigService.GetAvailableProviders())}"
+            });
+        }
+
+        var updatedStatus = _aiConfigService.GetProviderStatus();
+        return Ok(new
+        {
+            message = $"Active AI provider successfully updated to '{updatedStatus.ActiveProvider}'.",
+            status = updatedStatus
+        });
     }
 }

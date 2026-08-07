@@ -9,11 +9,16 @@ namespace QuranPlatform.Infrastructure.AI;
 public class LLMProviderAdapter : ILLMProvider
 {
     private readonly IConfiguration _configuration;
+    private readonly IAiConfigurationService _aiConfigService;
     private readonly HttpClient _httpClient;
 
-    public LLMProviderAdapter(IConfiguration configuration, HttpClient httpClient)
+    public LLMProviderAdapter(
+        IConfiguration configuration,
+        IAiConfigurationService aiConfigService,
+        HttpClient httpClient)
     {
         _configuration = configuration;
+        _aiConfigService = aiConfigService;
         _httpClient = httpClient;
     }
 
@@ -22,7 +27,7 @@ public class LLMProviderAdapter : ILLMProvider
         SystemInstruction instruction,
         CancellationToken ct = default)
     {
-        var provider = _configuration["AI:Provider"] ?? "Mock";
+        var provider = _aiConfigService.GetActiveProvider();
 
         if (provider.Equals("Gemini", StringComparison.OrdinalIgnoreCase))
         {
@@ -47,7 +52,13 @@ public class LLMProviderAdapter : ILLMProvider
         var isPersian = instruction.CultureCode.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
         var questionLine = prompt.Split('\n').LastOrDefault(l => l.Contains("سوال") || l.Contains("Question") || l.Contains("User")) ?? prompt;
 
-        if (prompt.Contains("36") || prompt.Contains("یس"))
+        if (prompt.Contains("20") || prompt.Contains("بیستم") || prompt.Contains("طه") || prompt.Contains("taha"))
+        {
+            return isPersian
+                ? "سوره مبارکه طه (بیستمین سوره قرآن کریم) به داستان حضرت موسی (ع)، ماجرای فرعون و تسلی خاطر پیامبر اکرم (ص) می‌پردازد."
+                : "Surah Ta-Ha (Chapter 20) focuses on the story of Prophet Moses (pbuh), confrontation with Pharaoh, and divine guidance.";
+        }
+        if (prompt.Contains("36") || System.Text.RegularExpressions.Regex.IsMatch(prompt, @"(?:\b|^)(یس|یاسین)(?:\b|$)"))
         {
             return isPersian
                 ? "سوره مبارکه یس (قلب قرآن) به توحید، نبوت و معاد می‌پردازد. این سوره با تکیه بر آیات الهی و رستاخیز مردگان، انسان را به تدبر در خلقت فرا می‌خواند."
@@ -89,7 +100,8 @@ public class LLMProviderAdapter : ILLMProvider
     {
         try
         {
-            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={apiKey}";
+            var model = _configuration["AI:Gemini:Model"] ?? "gemini-2.5-flash";
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}";
             var requestBody = new
             {
                 system_instruction = new

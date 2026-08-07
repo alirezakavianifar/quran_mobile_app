@@ -13,6 +13,78 @@ class AiChatScreen extends ConsumerStatefulWidget {
 class _AiChatScreenState extends ConsumerState<AiChatScreen> {
   final TextEditingController _inputController = TextEditingController();
 
+  Widget _buildFormattedMessage(String content, TextStyle baseStyle) {
+    final lines = content.split('\n');
+    final List<Widget> widgets = [];
+
+    for (final line in lines) {
+      final trimmed = line.trim();
+      if (trimmed == '---') {
+        widgets.add(const Divider(height: 16));
+        continue;
+      }
+
+      var textLine = line;
+      bool isBullet = false;
+      if (textLine.trimLeft().startsWith('* ')) {
+        isBullet = true;
+        textLine = textLine.trimLeft().substring(2);
+      }
+
+      final List<InlineSpan> spans = [];
+      final regExp = RegExp(r'\*\*(.*?)\*\*');
+      int lastMatchEnd = 0;
+
+      for (final match in regExp.allMatches(textLine)) {
+        if (match.start > lastMatchEnd) {
+          spans.add(TextSpan(
+            text: textLine.substring(lastMatchEnd, match.start),
+            style: baseStyle,
+          ));
+        }
+        spans.add(TextSpan(
+          text: match.group(1),
+          style: baseStyle.copyWith(fontWeight: FontWeight.bold),
+        ));
+        lastMatchEnd = match.end;
+      }
+
+      if (lastMatchEnd < textLine.length) {
+        spans.add(TextSpan(
+          text: textLine.substring(lastMatchEnd),
+          style: baseStyle,
+        ));
+      }
+
+      if (isBullet) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0, top: 2.0, bottom: 2.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('• ', style: baseStyle.copyWith(fontWeight: FontWeight.bold)),
+                Expanded(child: SelectableText.rich(TextSpan(children: spans))),
+              ],
+            ),
+          ),
+        );
+      } else {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2.0),
+            child: SelectableText.rich(TextSpan(children: spans)),
+          ),
+        );
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widgets,
+    );
+  }
+
   @override
   void dispose() {
     _inputController.dispose();
@@ -80,9 +152,9 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              _buildFormattedMessage(
                                 msg.content,
-                                style: TextStyle(
+                                TextStyle(
                                   color: isUser
                                       ? Colors.white
                                       : Theme.of(context)
@@ -90,6 +162,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                                           .bodyLarge
                                           ?.color,
                                   fontSize: 15,
+                                  height: 1.4,
                                 ),
                               ),
                               if (msg.citations.isNotEmpty) ...[

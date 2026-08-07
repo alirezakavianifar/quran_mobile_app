@@ -119,8 +119,33 @@ class AiChatNotifier extends StateNotifier<List<ChatMessage>> {
       );
     }
 
-    // 2. Surah Ya-Sin (یس / یاسین)
-    if (q.contains('یس') || q.contains('یاسین') || q.contains('yasin') || q.contains('ya-sin') || q.contains('yaseen')) {
+    // 2. Surah Ta-Ha (بیستم / طه / 20)
+    final isSurah20 = q.contains('بیستم') ||
+        q.contains('طه') ||
+        q.contains('taha') ||
+        q.contains('ta-ha') ||
+        RegExp(r'(^|\s)(20|۲۰)(\s|$)').hasMatch(q);
+
+    if (isSurah20) {
+      return ChatMessage(
+        id: 'taha',
+        senderRole: 'assistant',
+        content: isPersian
+            ? 'سوره مبارکه طه (بیستمین سوره قرآن کریم) دارای ۱۳۵ آیه بوده و از سوره‌های مکی است. این سوره به داستان تفصیلی حضرت موسی (ع) و بعثت او در وادی مقدس طوی، ماجرای فرعون، آفرینش حضرت آدم (ع) و تسلی خاطر پیامبر اکرم (ص) می‌پردازد.'
+            : 'Surah Ta-Ha (Chapter 20) contains 135 verses and is a Makki Surah. It highlights the detailed story of Prophet Moses (pbuh), his divine calling at the sacred valley of Tuwa, the confrontation with Pharaoh, and reassurance to Prophet Muhammad (pbuh).',
+        citations: isPersian ? ['[سوره ۲۰:۱-۱۳۵]', '[تفسیر نمونه]'] : ['[Surah 20:1-135]', '[Tafsir Ibn Kathir]'],
+        timestamp: DateTime.now(),
+      );
+    }
+
+    // 3. Surah Ya-Sin (یس / یاسین / 36) - Use strict word boundary so 'بیستم' is not matched
+    final isYasin = RegExp(r'(^|\s)(یس|یاسین)(\s|$)').hasMatch(q) ||
+        q.contains('yasin') ||
+        q.contains('ya-sin') ||
+        q.contains('yaseen') ||
+        RegExp(r'(^|\s)(36|۳۶)(\s|$)').hasMatch(q);
+
+    if (isYasin) {
       return ChatMessage(
         id: 'yasin',
         senderRole: 'assistant',
@@ -132,7 +157,7 @@ class AiChatNotifier extends StateNotifier<List<ChatMessage>> {
       );
     }
 
-    // 3. Ayah al-Kursi (آیه الکرسی)
+    // 4. Ayah al-Kursi (آیه الکرسی)
     if (q.contains('کرسی') || q.contains('kursi')) {
       return ChatMessage(
         id: 'kursi',
@@ -145,7 +170,7 @@ class AiChatNotifier extends StateNotifier<List<ChatMessage>> {
       );
     }
 
-    // 4. Tasbih / Remembrance (تسبیح / ذکر)
+    // 5. Tasbih / Remembrance (تسبیح / ذکر)
     if (q.contains('تسبیح') || q.contains('tasbih') || q.contains('سبحان')) {
       return ChatMessage(
         id: 'tasbih',
@@ -158,7 +183,7 @@ class AiChatNotifier extends StateNotifier<List<ChatMessage>> {
       );
     }
 
-    // 5. Surah Al-Fatiha (حمد / الفاتحه)
+    // 6. Surah Al-Fatiha (حمد / الفاتحه)
     if (q.contains('حمد') || q.contains('فاتحه') || q.contains('fatiha')) {
       return ChatMessage(
         id: 'fatiha',
@@ -171,7 +196,7 @@ class AiChatNotifier extends StateNotifier<List<ChatMessage>> {
       );
     }
 
-    // 6. Generic Query Fallback with contextual quotation
+    // 7. Generic Query Fallback with contextual quotation
     return ChatMessage(
       id: 'generic',
       senderRole: 'assistant',

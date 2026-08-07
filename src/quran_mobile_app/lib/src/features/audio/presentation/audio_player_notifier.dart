@@ -81,11 +81,33 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   AudioPlayerNotifier(this._repository, {AudioPlayer? player, double initialSpeed = 1.0})
       : _player = player ?? AudioPlayer(),
         super(AudioPlayerState(playbackSpeed: initialSpeed)) {
+    _initAudioContext();
     _initPlayerListeners();
     loadReciters();
   }
 
   AudioPlayerState get currentState => state;
+
+  void _initAudioContext() {
+    try {
+      AudioPlayer.global.setAudioContext(
+        AudioContext(
+          android: const AudioContextAndroid(
+            stayAwake: true,
+            contentType: AndroidContentType.music,
+            usageType: AndroidUsageType.media,
+            audioFocus: AndroidAudioFocus.gain,
+          ),
+          iOS: AudioContextIOS(
+            category: AVAudioSessionCategory.playback,
+            options: const {
+              AVAudioSessionOptions.defaultToSpeaker,
+            },
+          ),
+        ),
+      );
+    } catch (_) {}
+  }
 
   void _initPlayerListeners() {
     _durationSubscription = _player.onDurationChanged.listen((duration) {

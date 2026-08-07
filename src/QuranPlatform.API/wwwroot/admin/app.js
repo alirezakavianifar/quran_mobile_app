@@ -145,7 +145,76 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             renderAiLogsTable(getFallbackAiData());
         }
+
+        loadAiProviderStatus();
     }
+
+    async function loadAiProviderStatus() {
+        try {
+            const res = await fetch('/api/v1/admin/ai-provider');
+            if (res.ok) {
+                const data = await res.json();
+                updateAiProviderUI(data);
+            }
+        } catch (e) {
+            console.log('AI Provider status endpoint fallback');
+        }
+    }
+
+    function updateAiProviderUI(data) {
+        const btnGemini = document.getElementById('btn-provider-gemini');
+        const btnGrok = document.getElementById('btn-provider-grok');
+        const btnMock = document.getElementById('btn-provider-mock');
+        const msg = document.getElementById('ai-provider-status-msg');
+
+        if (!btnGemini || !btnGrok || !btnMock) return;
+
+        btnGemini.classList.remove('active');
+        btnGrok.classList.remove('active');
+        btnMock.classList.remove('active');
+
+        const active = data.activeProvider;
+
+        if (active === 'Gemini') {
+            btnGemini.classList.add('active');
+            msg.textContent = `فعال: Google Gemini (${data.geminiModel || 'gemini-2.5-flash'})`;
+        } else if (active === 'Grok') {
+            btnGrok.classList.add('active');
+            msg.textContent = `فعال: xAI Grok (${data.grokModel || 'grok-2-1212'})`;
+        } else {
+            btnMock.classList.add('active');
+            msg.textContent = `فعال: Mock Offline Generator`;
+        }
+    }
+
+    async function setAiProvider(provider) {
+        try {
+            const res = await fetch('/api/v1/admin/ai-provider', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.status) {
+                    updateAiProviderUI(data.status);
+                } else {
+                    loadAiProviderStatus();
+                }
+            }
+        } catch (e) {
+            console.error('Failed to update AI provider:', e);
+        }
+    }
+
+    const btnGemini = document.getElementById('btn-provider-gemini');
+    const btnGrok = document.getElementById('btn-provider-grok');
+    const btnMock = document.getElementById('btn-provider-mock');
+
+    if (btnGemini) btnGemini.addEventListener('click', () => setAiProvider('Gemini'));
+    if (btnGrok) btnGrok.addEventListener('click', () => setAiProvider('Grok'));
+    if (btnMock) btnMock.addEventListener('click', () => setAiProvider('Mock'));
 
     function renderSearchTable(items) {
         const tbody = document.getElementById('search-analytics-tbody');

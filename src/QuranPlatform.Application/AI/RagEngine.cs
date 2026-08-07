@@ -102,11 +102,28 @@ public class RagEngine : IRagEngine
         PreferredCulture culture,
         CancellationToken ct)
     {
-        // Generate embedding vector
-        await _embeddingService.GenerateEmbeddingAsync(question, ct);
+        // 1. Check if question directly targets a specific Surah number or ordinal
+        var detectedSurah = SurahQueryDetector.DetectSurahNumber(question);
+        List<AyahKey> candidateKeys;
 
-        // Retrieve semantically matching AyahKeys
-        var candidateKeys = (await _vectorSearchService.SearchVectorAsync(question, culture, limit: 5, ct)).ToList();
+        if (detectedSurah.HasValue)
+        {
+            var surahId = detectedSurah.Value;
+            candidateKeys = new List<AyahKey>
+            {
+                new(surahId, 1),
+                new(surahId, 2),
+                new(surahId, 3),
+                new(surahId, 4),
+                new(surahId, 5)
+            };
+        }
+        else
+        {
+            // Generate embedding vector & retrieve semantically matching AyahKeys
+            await _embeddingService.GenerateEmbeddingAsync(question, ct);
+            candidateKeys = (await _vectorSearchService.SearchVectorAsync(question, culture, limit: 5, ct)).ToList();
+        }
 
         var hydratedList = new List<(Verse Verse, Translation? Translation, Tafsir? Tafsir)>();
 

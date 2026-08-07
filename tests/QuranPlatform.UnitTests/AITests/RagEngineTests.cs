@@ -108,4 +108,41 @@ public class RagEngineTests
         answer.Citations.Should().HaveCount(1);
         answer.Citations[0].SurahId.Should().Be(1);
     }
+
+    [Fact]
+    public async Task AnswerQuestionAsync_WhenSurah20Query_ShouldHydrateSurah20ContextDirectly()
+    {
+        var embeddingMock = new Mock<IEmbeddingService>();
+        var vectorSearchMock = new Mock<IVectorSearchService>();
+        var quranRepoMock = new Mock<IQuranRepository>();
+        var tafsirRepoMock = new Mock<ITafsirRepository>();
+        var llmProviderMock = new Mock<ILLMProvider>();
+
+        var surah20Key = new AyahKey(20, 1);
+        quranRepoMock
+            .Setup(q => q.GetVerseByKeyAsync(surah20Key, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Verse { SurahId = 20, VerseNumber = 1, TextUthmani = "طه" });
+
+        tafsirRepoMock
+            .Setup(t => t.GetTafsirForVerseAsync(surah20Key, 1, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Tafsir { TafsirEditionId = 1, ContentText = "تفسیر سوره طه" });
+
+        llmProviderMock
+            .Setup(l => l.GenerateGroundedAnswerAsync(It.IsAny<string>(), It.IsAny<SystemInstruction>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("سوره مبارکه طه بیستمین سوره قرآن [سوره 20:1]");
+
+        var ragEngine = new RagEngine(
+            embeddingMock.Object,
+            vectorSearchMock.Object,
+            quranRepoMock.Object,
+            tafsirRepoMock.Object,
+            llmProviderMock.Object);
+
+        var answer = await ragEngine.AnswerQuestionAsync("سوره بیستم قرآن", "fa-IR");
+
+        answer.HasSufficientContext.Should().BeTrue();
+        answer.AnswerText.Should().Contain("سوره مبارکه طه");
+        answer.Citations.Should().NotBeEmpty();
+        answer.Citations[0].SurahId.Should().Be(20);
+    }
 }
