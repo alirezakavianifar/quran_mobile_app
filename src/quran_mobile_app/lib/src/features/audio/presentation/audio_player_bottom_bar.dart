@@ -10,11 +10,12 @@ import 'verse_range_dialog.dart';
 class AudioPlayerBottomBar extends ConsumerWidget {
   const AudioPlayerBottomBar({super.key});
 
-  String _formatDuration(Duration duration) {
+  String _formatDuration(Duration d, {bool isPersian = false}) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return '$minutes:$seconds';
+    final minutes = twoDigits(d.inMinutes.remainder(60));
+    final seconds = twoDigits(d.inSeconds.remainder(60));
+    final formatted = '$minutes:$seconds';
+    return isPersian ? PersianDigitConverter.toPersian(formatted) : formatted;
   }
 
   @override
@@ -24,15 +25,19 @@ class AudioPlayerBottomBar extends ConsumerWidget {
     final loc = AppLocalizations.of(context);
     final isPersian = loc.isPersian;
 
+    // Do not show if not active and not playing
     if (state.currentSurahId == null || state.currentVerseNumber == null) {
       return const SizedBox.shrink();
     }
 
-    final reciter = state.currentReciter;
-    final reciterName = reciter != null
+    final reciterName = state.currentReciter != null
         ? (isPersian
-            ? (reciter.namePersian.isNotEmpty ? reciter.namePersian : reciter.nameArabic)
-            : (reciter.nameEnglish.isNotEmpty ? reciter.nameEnglish : reciter.nameArabic))
+            ? (state.currentReciter!.namePersian.isNotEmpty
+                ? state.currentReciter!.namePersian
+                : state.currentReciter!.nameArabic)
+            : (state.currentReciter!.nameEnglish.isNotEmpty
+                ? state.currentReciter!.nameEnglish
+                : state.currentReciter!.nameArabic))
         : '';
 
     final surahVerseText = isPersian
@@ -48,281 +53,132 @@ class AudioPlayerBottomBar extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 12,
+            offset: const Offset(0, -3),
           ),
         ],
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
         top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Active Verse-Range Repeat Badge
-            if (state.isRangeRepeatActive)
-              Container(
-                margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.repeat_rounded,
-                      size: 14,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        isPersian
-                            ? 'بازه فعال: آیه ${PersianDigitConverter.toPersian("${state.rangeStartVerse}")} تا ${PersianDigitConverter.toPersian("${state.rangeEndVerse}")} • دور ${PersianDigitConverter.toPersian("${state.currentRangeCycle}")}${state.rangeLoopCount > 0 ? " از ${PersianDigitConverter.toPersian('${state.rangeLoopCount}')}" : " (بی‌نهایت)"}'
-                            : 'Range Loop: Ayah ${state.rangeStartVerse} - ${state.rangeEndVerse} • Cycle ${state.currentRangeCycle}${state.rangeLoopCount > 0 ? "/${state.rangeLoopCount}" : " (∞)"}',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Active Verse-Range Repeat Header (if active)
+              if (state.isRangeRepeatActive)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 6.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.repeat_rounded,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          isPersian
+                              ? 'بازه فعال: آیه ${PersianDigitConverter.toPersian("${state.rangeStartVerse}")} تا ${PersianDigitConverter.toPersian("${state.rangeEndVerse}")} • دور ${PersianDigitConverter.toPersian("${state.currentRangeCycle}")}${state.rangeLoopCount > 0 ? " از ${PersianDigitConverter.toPersian('${state.rangeLoopCount}')}" : " (بی‌نهایت)"}'
+                              : 'Range: Ayah ${state.rangeStartVerse} - ${state.rangeEndVerse} • Cycle ${state.currentRangeCycle}${state.rangeLoopCount > 0 ? "/${state.rangeLoopCount}" : " (∞)"}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => notifier.clearVerseRange(),
+                        child: Icon(
+                          Icons.close,
+                          size: 16,
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () => notifier.clearVerseRange(),
-                      child: Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-            // Progress Bar Slider
-            SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                trackHeight: 3,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-              ),
-              child: Slider(
-                value: progressRatio,
-                onChanged: (value) {
-                  if (state.duration.inMilliseconds > 0) {
-                    final newMs = (value * state.duration.inMilliseconds).round();
-                    notifier.seek(Duration(milliseconds: newMs));
-                  }
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-              child: Row(
+              // Row 1: Surah/Ayah Info + Reciter + Primary Playback Controls
+              Row(
                 children: [
-                  // Reciter & Ayah Info
-                  IconButton(
-                    icon: const Icon(Icons.mic),
-                    tooltip: isPersian ? 'تغییر قاری' : 'Change Reciter',
-                    onPressed: () {
+                  // Reciter Avatar / Mic Icon
+                  InkWell(
+                    borderRadius: BorderRadius.circular(20),
+                    onTap: () {
                       showDialog(
                         context: context,
                         builder: (_) => const ReciterSelectorDialog(),
                       );
                     },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.mic_rounded,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
+                  const SizedBox(width: 10),
+
+                  // Surah, Ayah & Reciter Text Info
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          isPersian ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           surahVerseText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
                         ),
-                        if (reciterName.isNotEmpty)
-                          Text(
-                            reciterName,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Theme.of(context).textTheme.bodySmall?.color,
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            if (reciterName.isNotEmpty) ...[
+                              Flexible(
+                                child: Text(
+                                  reciterName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Theme.of(context).textTheme.bodySmall?.color,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                            ],
+                            Text(
+                              '• ${_formatDuration(state.position, isPersian: isPersian)} / ${_formatDuration(state.duration, isPersian: isPersian)}',
+                              style: const TextStyle(fontSize: 10, color: Colors.grey),
                             ),
-                          ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  // Time indicator
-                  Text(
-                    '${_formatDuration(state.position)} / ${_formatDuration(state.duration)}',
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
-                  ),
-                  const SizedBox(width: 6),
-                  // Playback Speed Selector Button
-                  PopupMenuButton<double>(
-                    tooltip: isPersian ? 'سرعت پخش' : 'Playback Speed',
-                    initialValue: state.playbackSpeed,
-                    onSelected: (double speed) {
-                      notifier.setPlaybackSpeed(speed);
-                      ref.read(settingsProvider.notifier).updatePlaybackSpeed(speed);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        isPersian
-                            ? '${PersianDigitConverter.toPersian((state.playbackSpeed % 1 == 0 ? state.playbackSpeed.toInt() : state.playbackSpeed).toString())}x'
-                            : '${state.playbackSpeed % 1 == 0 ? state.playbackSpeed.toInt() : state.playbackSpeed}x',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    itemBuilder: (context) => [
-                      0.5,
-                      0.75,
-                      1.0,
-                      1.25,
-                      1.5,
-                      2.0,
-                    ].map((speed) {
-                      final speedStr = speed % 1 == 0 ? speed.toInt().toString() : speed.toString();
-                      final label = isPersian
-                          ? '${PersianDigitConverter.toPersian(speedStr)} برابر'
-                          : '${speedStr}x';
-                      return PopupMenuItem<double>(
-                        value: speed,
-                        child: Row(
-                          children: [
-                            if (state.playbackSpeed == speed)
-                              Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.primary)
-                            else
-                              const SizedBox(width: 16),
-                            const SizedBox(width: 8),
-                            Text(label),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(width: 4),
-                  // Verse Repeat Selector Button
-                  PopupMenuButton<int>(
-                    tooltip: isPersian ? 'تکرار آیه' : 'Verse Repeat',
-                    initialValue: state.verseRepeatCount,
-                    onSelected: (int count) {
-                      notifier.setVerseRepeatCount(count);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
-                      decoration: BoxDecoration(
-                        color: state.verseRepeatCount != 1
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            state.verseRepeatCount == -1 ? Icons.all_inclusive : Icons.repeat,
-                            size: 13,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            state.verseRepeatCount == -1
-                                ? '∞'
-                                : (isPersian
-                                    ? '${PersianDigitConverter.toPersian(state.verseRepeatCount.toString())}x'
-                                    : '${state.verseRepeatCount}x'),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    itemBuilder: (context) => [
-                      1,
-                      2,
-                      3,
-                      5,
-                      10,
-                      -1,
-                    ].map((count) {
-                      final label = count == -1
-                          ? (isPersian ? 'تکرار بی‌نهایت (∞)' : 'Infinite Loop (∞)')
-                          : count == 1
-                              ? (isPersian ? 'یک‌بار (بدون تکرار)' : '1x (Play Once)')
-                              : (isPersian
-                                  ? '${PersianDigitConverter.toPersian(count.toString())} بار تکرار'
-                                  : '${count}x Repeat');
-                      return PopupMenuItem<int>(
-                        value: count,
-                        child: Row(
-                          children: [
-                            if (state.verseRepeatCount == count)
-                              Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.primary)
-                            else
-                              const SizedBox(width: 16),
-                            const SizedBox(width: 8),
-                            Text(label),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(width: 4),
-                  // Verse Range Repeat Dialog Button
-                  IconButton(
-                    icon: Icon(
-                      Icons.repeat_on_rounded,
-                      color: state.isRangeRepeatActive
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.grey,
-                      size: 20,
-                    ),
-                    tooltip: loc.translate('verseRangeRepeat'),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => VerseRangeDialog(
-                          surahId: state.currentSurahId!,
-                          totalVerses: state.totalVersesInSurah ?? state.currentVerseNumber!,
-                          currentVerse: state.currentVerseNumber,
-                        ),
-                      );
-                    },
-                  ),
-                  // Auto play next toggle
-                  IconButton(
-                    icon: Icon(
-                      state.autoPlayNext ? Icons.playlist_play : Icons.stop_circle_outlined,
-                      color: state.autoPlayNext
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.grey,
-                    ),
-                    tooltip: isPersian ? 'تلاوت پیوسته' : 'Auto Play Next',
-                    onPressed: () => notifier.toggleAutoPlayNext(),
-                  ),
+
                   // Play/Pause Button
                   state.isLoading
                       ? const SizedBox(
@@ -334,11 +190,13 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                           ),
                         )
                       : IconButton(
-                          iconSize: 32,
+                          iconSize: 34,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
                           icon: Icon(
                             state.isPlaying
-                                ? Icons.pause_circle_filled
-                                : Icons.play_circle_filled,
+                                ? Icons.pause_circle_filled_rounded
+                                : Icons.play_circle_filled_rounded,
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           onPressed: () {
@@ -349,20 +207,279 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                             }
                           },
                         ),
-                  // Stop Button
+                  const SizedBox(width: 4),
+
+                  // Close/Stop Button
                   IconButton(
-                    icon: const Icon(Icons.close),
-                    tooltip: isPersian ? 'بستن پخش‌کننده' : 'Stop',
+                    iconSize: 22,
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.close_rounded),
+                    tooltip: isPersian ? 'بستن' : 'Stop',
                     onPressed: () => notifier.stop(),
                   ),
                 ],
               ),
-            ),
-          ],
+
+              // Row 2: Progress Slider
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 3,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
+                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
+                ),
+                child: Slider(
+                  value: progressRatio,
+                  onChanged: (value) {
+                    if (state.duration.inMilliseconds > 0) {
+                      final newMs = (value * state.duration.inMilliseconds).round();
+                      notifier.seek(Duration(milliseconds: newMs));
+                    }
+                  },
+                ),
+              ),
+
+              // Row 3: Quick Action Chips Toolbar (Speed, Verse Repeat, Range Repeat, Continuous)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    // 1. Playback Speed Selector
+                    PopupMenuButton<double>(
+                      tooltip: isPersian ? 'سرعت پخش' : 'Playback Speed',
+                      initialValue: state.playbackSpeed,
+                      onSelected: (double speed) {
+                        notifier.setPlaybackSpeed(speed);
+                        ref.read(settingsProvider.notifier).updatePlaybackSpeed(speed);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.speed_rounded, size: 13, color: Theme.of(context).colorScheme.primary),
+                            const SizedBox(width: 4),
+                            Text(
+                              isPersian
+                                  ? '${PersianDigitConverter.toPersian((state.playbackSpeed % 1 == 0 ? state.playbackSpeed.toInt() : state.playbackSpeed).toString())}x'
+                                  : '${state.playbackSpeed % 1 == 0 ? state.playbackSpeed.toInt() : state.playbackSpeed}x',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      itemBuilder: (context) => [
+                        0.5,
+                        0.75,
+                        1.0,
+                        1.25,
+                        1.5,
+                        2.0,
+                      ].map((speed) {
+                        final speedStr = speed % 1 == 0 ? speed.toInt().toString() : speed.toString();
+                        final label = isPersian
+                            ? '${PersianDigitConverter.toPersian(speedStr)} برابر'
+                            : '${speedStr}x';
+                        return PopupMenuItem<double>(
+                          value: speed,
+                          child: Row(
+                            children: [
+                              if (state.playbackSpeed == speed)
+                                Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.primary)
+                              else
+                                const SizedBox(width: 16),
+                              const SizedBox(width: 8),
+                              Text(label),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(width: 6),
+
+                    // 2. Verse Repeat Selector
+                    PopupMenuButton<int>(
+                      tooltip: isPersian ? 'تکرار هر آیه' : 'Verse Repeat',
+                      initialValue: state.verseRepeatCount,
+                      onSelected: (int count) {
+                        notifier.setVerseRepeatCount(count);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        decoration: BoxDecoration(
+                          color: state.verseRepeatCount != 1
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              state.verseRepeatCount == -1 ? Icons.all_inclusive : Icons.repeat_one_rounded,
+                              size: 13,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              state.verseRepeatCount == -1
+                                  ? (isPersian ? 'بی‌نهایت' : '∞')
+                                  : (isPersian
+                                      ? '${PersianDigitConverter.toPersian(state.verseRepeatCount.toString())} بار'
+                                      : '${state.verseRepeatCount}x'),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      itemBuilder: (context) => [
+                        1,
+                        2,
+                        3,
+                        5,
+                        10,
+                        -1,
+                      ].map((count) {
+                        final label = count == -1
+                            ? (isPersian ? 'تکرار بی‌نهایت (∞)' : 'Infinite Loop (∞)')
+                            : count == 1
+                                ? (isPersian ? 'یک‌بار (بدون تکرار)' : '1x (Play Once)')
+                                : (isPersian
+                                    ? '${PersianDigitConverter.toPersian(count.toString())} بار تکرار'
+                                    : '${count}x Repeat');
+                        return PopupMenuItem<int>(
+                          value: count,
+                          child: Row(
+                            children: [
+                              if (state.verseRepeatCount == count)
+                                Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.primary)
+                              else
+                                const SizedBox(width: 16),
+                              const SizedBox(width: 8),
+                              Text(label),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(width: 6),
+
+                    // 3. Verse-Range Repeat (Hifz) Dialog Button
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => VerseRangeDialog(
+                            surahId: state.currentSurahId!,
+                            totalVerses: state.totalVersesInSurah ?? state.currentVerseNumber!,
+                            currentVerse: state.currentVerseNumber,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        decoration: BoxDecoration(
+                          color: state.isRangeRepeatActive
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.repeat_rounded,
+                              size: 13,
+                              color: state.isRangeRepeatActive
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              isPersian ? 'تکرار بازه‌ای (حفظ)' : 'Range Loop',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: state.isRangeRepeatActive
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+
+                    // 4. Auto-Play Next (Continuous) Toggle
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => notifier.toggleAutoPlayNext(),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        decoration: BoxDecoration(
+                          color: state.autoPlayNext
+                              ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.6)
+                              : Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              state.autoPlayNext ? Icons.playlist_play_rounded : Icons.pause_circle_outline,
+                              size: 14,
+                              color: state.autoPlayNext
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              isPersian ? 'تلاوت پیوسته' : 'Continuous',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: state.autoPlayNext
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
-
