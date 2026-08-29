@@ -18,6 +18,8 @@ void main() {
       expect(settings.playbackSpeed, equals(1.0));
       expect(settings.themeMode, equals('system'));
       expect(settings.appLanguage, equals('fa'));
+      expect(settings.defaultVerseTapAction, equals('showTafsir'));
+      expect(settings.defaultTafsirEdition, equals('fa.noor'));
     });
 
     test('UserSettings toMap and fromMap conversion works accurately', () {
@@ -30,6 +32,8 @@ void main() {
         playbackSpeed: 1.25,
         themeMode: 'dark',
         appLanguage: 'en',
+        defaultVerseTapAction: 'playAudio',
+        defaultTafsirEdition: 'fa.nemoneh',
       );
 
       final map = settings.toMap();
@@ -43,6 +47,8 @@ void main() {
       expect(restored.playbackSpeed, equals(1.25));
       expect(restored.themeMode, equals('dark'));
       expect(restored.appLanguage, equals('en'));
+      expect(restored.defaultVerseTapAction, equals('playAudio'));
+      expect(restored.defaultTafsirEdition, equals('fa.nemoneh'));
     });
 
     test('UserSettings copyWith updates specific fields correctly', () {
@@ -50,10 +56,14 @@ void main() {
       final updated = initial.copyWith(
         arabicFontSize: 28.0,
         themeMode: 'sepia',
+        defaultVerseTapAction: 'showMenu',
+        defaultTafsirEdition: 'fa.almizan',
       );
 
       expect(updated.arabicFontSize, equals(28.0));
       expect(updated.themeMode, equals('sepia'));
+      expect(updated.defaultVerseTapAction, equals('showMenu'));
+      expect(updated.defaultTafsirEdition, equals('fa.almizan'));
       expect(updated.arabicFontFamily, equals(initial.arabicFontFamily));
     });
   });
@@ -69,6 +79,8 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       expect(notifier.state.arabicFontSize, equals(24.0));
+      expect(notifier.state.defaultVerseTapAction, equals('showTafsir'));
+      expect(notifier.state.defaultTafsirEdition, equals('fa.noor'));
 
       await notifier.updateArabicFontSize(28.0);
       expect(notifier.state.arabicFontSize, equals(28.0));
@@ -79,11 +91,19 @@ void main() {
       await notifier.updateReciter('alafasy');
       expect(notifier.state.defaultReciterId, equals('alafasy'));
 
+      await notifier.updateDefaultVerseTapAction('playAudio');
+      expect(notifier.state.defaultVerseTapAction, equals('playAudio'));
+
+      await notifier.updateDefaultTafsirEdition('fa.almizan');
+      expect(notifier.state.defaultTafsirEdition, equals('fa.almizan'));
+
       // Test reset functionality
       await notifier.resetToDefaults();
       expect(notifier.state.arabicFontSize, equals(24.0));
       expect(notifier.state.themeMode, equals('system'));
       expect(notifier.state.defaultReciterId, equals('parhizgar'));
+      expect(notifier.state.defaultVerseTapAction, equals('showTafsir'));
+      expect(notifier.state.defaultTafsirEdition, equals('fa.noor'));
     });
   });
 }

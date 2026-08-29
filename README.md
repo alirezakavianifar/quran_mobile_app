@@ -280,7 +280,29 @@ The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
 
 # 3. Master 1-Click Ngrok Tunnel & Release Android APK Builder:
 .\scripts\build-apk.ps1
+
+# 4. Production Server 1-Click Deployment:
+.\scripts\deploy-to-server.ps1 -ServerIP "45.94.215.188" -ServerUser "root"
+
+# 5. Rubika Bot Build Distribution CLI:
+python .\scripts\upload-to-rubika.py --file "app-release.rar"
 ```
+
+---
+
+## 🤖 GitHub Actions CI/CD & Automated Pipelines (`.github/workflows/`)
+
+| Workflow | File | Trigger | Description |
+| :--- | :--- | :--- | :--- |
+| **Android APK Build** | [build-apk.yml](file:///.github/workflows/build-apk.yml) | `workflow_dispatch` | Builds release APK with ABI selection (`arm64-v8a`, `universal`, `all`), creates `.zip` archive, uploads artifacts, and optionally sends to Rubika Bot. |
+| **Unified Mobile Build** | [build-mobile.yml](file:///.github/workflows/build-mobile.yml) | `push` / `workflow_dispatch` | Automated multi-target pipeline building Android APKs (Ubuntu) and iOS IPAs/Simulator packages (macOS runner). |
+| **Server Deployment** | [deploy-server.yml](file:///.github/workflows/deploy-server.yml) | `push` / `workflow_dispatch` | Automated zero-downtime server deployment via SSH: packages source archive, extracts to `/opt/quran-platform`, executes `docker compose up -d --build`, and verifies `/healthz`. |
+| **CI Quality Gate** | [ci-cd.yml](file:///.github/workflows/ci-cd.yml) | `push` / `pull_request` | Validates .NET backend tests, Python ETL & NLP tests, and Flutter mobile test suite. |
+
+### Repository Secrets Required for Actions:
+* `SERVER_SSH_KEY` / `DEPLOY_SSH_KEY`: Private SSH key for production server deployment.
+* `RUBIKA_BOT_TOKEN`: Token for automated release distribution via Rubika Bot.
+
 
 ---
 

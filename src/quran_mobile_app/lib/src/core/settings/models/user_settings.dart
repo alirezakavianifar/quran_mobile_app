@@ -13,6 +13,8 @@ class UserSettings {
   final String appLanguage; // 'fa', 'en'
   final bool hybridSearchEnabled;
   final bool autoSyncWifiOnly;
+  final String defaultVerseTapAction; // 'showTafsir', 'playAudio', 'showMenu'
+  final String defaultTafsirEdition; // 'fa.noor', 'fa.nemoneh', 'fa.almizan', 'en.ibnkathir'
 
   const UserSettings({
     this.arabicFontFamily = 'Amiri',
@@ -27,6 +29,8 @@ class UserSettings {
     this.appLanguage = 'fa',
     this.hybridSearchEnabled = true,
     this.autoSyncWifiOnly = true,
+    this.defaultVerseTapAction = 'showTafsir',
+    this.defaultTafsirEdition = 'fa.noor',
   });
 
   UserSettings copyWith({
@@ -42,6 +46,8 @@ class UserSettings {
     String? appLanguage,
     bool? hybridSearchEnabled,
     bool? autoSyncWifiOnly,
+    String? defaultVerseTapAction,
+    String? defaultTafsirEdition,
   }) {
     return UserSettings(
       arabicFontFamily: arabicFontFamily ?? this.arabicFontFamily,
@@ -56,6 +62,8 @@ class UserSettings {
       appLanguage: appLanguage ?? this.appLanguage,
       hybridSearchEnabled: hybridSearchEnabled ?? this.hybridSearchEnabled,
       autoSyncWifiOnly: autoSyncWifiOnly ?? this.autoSyncWifiOnly,
+      defaultVerseTapAction: defaultVerseTapAction ?? this.defaultVerseTapAction,
+      defaultTafsirEdition: defaultTafsirEdition ?? this.defaultTafsirEdition,
     );
   }
 
@@ -73,6 +81,8 @@ class UserSettings {
       'appLanguage': appLanguage,
       'hybridSearchEnabled': hybridSearchEnabled,
       'autoSyncWifiOnly': autoSyncWifiOnly,
+      'defaultVerseTapAction': defaultVerseTapAction,
+      'defaultTafsirEdition': defaultTafsirEdition,
     };
   }
 
@@ -90,6 +100,8 @@ class UserSettings {
       appLanguage: map['appLanguage'] as String? ?? 'fa',
       hybridSearchEnabled: map['hybridSearchEnabled'] as bool? ?? true,
       autoSyncWifiOnly: map['autoSyncWifiOnly'] as bool? ?? true,
+      defaultVerseTapAction: map['defaultVerseTapAction'] as String? ?? 'showTafsir',
+      defaultTafsirEdition: map['defaultTafsirEdition'] as String? ?? 'fa.noor',
     );
   }
 

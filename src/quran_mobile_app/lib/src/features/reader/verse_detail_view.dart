@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/database/app_database.dart';
 import '../../core/localization/app_localizations.dart';
+import '../../core/settings/models/user_settings.dart';
+import '../../core/settings/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/persian_digit_converter.dart';
 import '../audio/presentation/audio_player_bottom_bar.dart';
@@ -9,7 +12,6 @@ import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
 import '../bookmarks/bookmarks_provider.dart';
 import '../tafsir/tafsir_bottom_sheet.dart';
-import '../../core/settings/settings_provider.dart';
 import 'reader_provider.dart';
 
 class VerseDetailView extends ConsumerStatefulWidget {
@@ -116,6 +118,167 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
         ],
       ),
     );
+  }
+
+  void _showVerseQuickActions({
+    required BuildContext context,
+    required Surah surah,
+    required Verse verse,
+    required Translation? trans,
+    required int totalVerses,
+    required AppLocalizations loc,
+    required AudioPlayerNotifier audioNotifier,
+    required AudioPlayerState audioState,
+  }) {
+    final isPersian = loc.isPersian;
+    final isAudioActive = audioState.isVerseActive(surah.number, verse.verseNumber);
+    final isPlaying = isAudioActive && audioState.isPlaying;
+    final ayahKey = PersianDigitConverter.formatAyahKey(
+      surah.number,
+      verse.verseNumber,
+      isPersian: isPersian,
+    );
+    final surahTitle = (isPersian ? surah.namePersian : surah.nameEnglish)
+        .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
+        .trim();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Directionality(
+        textDirection: isPersian ? TextDirection.rtl : TextDirection.ltr,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '$surahTitle - [$ayahKey]',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              ListTile(
+                leading: Icon(
+                  isPlaying ? Icons.pause_circle_filled : Icons.play_circle_outline,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(loc.translate('listenAyah')),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  audioNotifier.playVerse(surah.number, verse.verseNumber, totalVerses);
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.auto_stories_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(loc.translate('ayahTafsirHeader')),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => TafsirBottomSheet(surah: surah, verse: verse),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.bookmark_border,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(loc.translate('addBookmark')),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  ref.read(bookmarksProvider.notifier).addBookmark(surah.number, verse.verseNumber);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${loc.translate("addBookmark")} $ayahKey'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.copy_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(loc.translate('copyAyah')),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  final textToCopy = '${verse.textUthmani}\n${trans?.translationText ?? ""}\n[$surahTitle - $ayahKey]';
+                  Clipboard.setData(ClipboardData(text: textToCopy));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(loc.translate('ayahCopied')),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onVerseSelected({
+    required BuildContext context,
+    required Surah surah,
+    required Verse verse,
+    required Translation? trans,
+    required int totalVerses,
+    required UserSettings settings,
+    required AppLocalizations loc,
+    required AudioPlayerNotifier audioNotifier,
+    required AudioPlayerState audioState,
+  }) {
+    switch (settings.defaultVerseTapAction) {
+      case 'playAudio':
+        audioNotifier.playVerse(surah.number, verse.verseNumber, totalVerses);
+        break;
+      case 'showMenu':
+        _showVerseQuickActions(
+          context: context,
+          surah: surah,
+          verse: verse,
+          trans: trans,
+          totalVerses: totalVerses,
+          loc: loc,
+          audioNotifier: audioNotifier,
+          audioState: audioState,
+        );
+        break;
+      case 'showTafsir':
+      default:
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => TafsirBottomSheet(
+            surah: surah,
+            verse: verse,
+          ),
+        );
+        break;
+    }
   }
 
   @override
@@ -285,150 +448,166 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                 color: isAudioActive
                     ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.15)
                     : null,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isAudioActive
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.secondary,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  '[$ayahKey]',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    _onVerseSelected(
+                      context: context,
+                      surah: widget.surah,
+                      verse: verse,
+                      trans: trans,
+                      totalVerses: verses.length,
+                      settings: settings,
+                      loc: loc,
+                      audioNotifier: audioNotifier,
+                      audioState: audioState,
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isAudioActive
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.secondary,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    '[$ayahKey]',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  '${loc.translate("page")} $pageNumberStr',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                    fontWeight: FontWeight.w500,
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '${loc.translate("page")} $pageNumberStr',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                isLoadingThisVerse
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(4.0),
+                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                        ),
+                                      )
+                                    : IconButton(
+                                        icon: Icon(
+                                          isPlayingThisVerse
+                                              ? Icons.pause_circle_filled
+                                              : Icons.play_circle_outline,
+                                          color: isAudioActive
+                                              ? Theme.of(context).colorScheme.primary
+                                              : Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                                        ),
+                                        tooltip: isPersian ? 'پخش تلاوت' : 'Recite Ayah',
+                                        onPressed: () {
+                                          audioNotifier.playVerse(
+                                            widget.surah.number,
+                                            verse.verseNumber,
+                                            verses.length,
+                                          );
+                                        },
+                                      ),
+                                IconButton(
+                                  icon: const Icon(Icons.auto_stories_outlined),
+                                  tooltip: isPersian ? 'تفسیر آیه (استاد قرائتی / نمونه)' : 'Ayah Tafsir',
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (_) => TafsirBottomSheet(
+                                        surah: widget.surah,
+                                        verse: verse,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.bookmark_border),
+                                  onPressed: () {
+                                    ref
+                                        .read(bookmarksProvider.notifier)
+                                        .addBookmark(widget.surah.number, verse.verseNumber);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          '${loc.translate("addBookmark")} $ayahKey',
+                                        ),
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        // Arabic Uthmani Text with dynamic font & size from settings
+                        Text(
+                          arabicText,
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                          style: AppTheme.getArabicQuranTextStyle(
+                            fontSize: settings.arabicFontSize,
+                            fontFamily: settings.arabicFontFamily,
+                            color: isAudioActive ? Theme.of(context).colorScheme.primary : null,
+                          ).copyWith(
+                            fontWeight: isAudioActive ? FontWeight.bold : FontWeight.normal,
                           ),
-                          Row(
-                            children: [
-                              isLoadingThisVerse
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(4.0),
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      ),
-                                    )
-                                  : IconButton(
-                                      icon: Icon(
-                                        isPlayingThisVerse
-                                            ? Icons.pause_circle_filled
-                                            : Icons.play_circle_outline,
-                                        color: isAudioActive
-                                            ? Theme.of(context).colorScheme.primary
-                                            : Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
-                                      ),
-                                      tooltip: isPersian ? 'پخش تلاوت' : 'Recite Ayah',
-                                      onPressed: () {
-                                        audioNotifier.playVerse(
-                                          widget.surah.number,
-                                          verse.verseNumber,
-                                          verses.length,
-                                        );
-                                      },
-                                    ),
-                              IconButton(
-                                icon: const Icon(Icons.auto_stories_outlined),
-                                tooltip: isPersian ? 'تفسیر آیه (استاد قرائتی / نمونه)' : 'Ayah Tafsir',
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (_) => TafsirBottomSheet(
-                                      surah: widget.surah,
-                                      verse: verse,
-                                    ),
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.bookmark_border),
-                                onPressed: () {
-                                  ref
-                                      .read(bookmarksProvider.notifier)
-                                      .addBookmark(widget.surah.number, verse.verseNumber);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '${loc.translate("addBookmark")} $ayahKey',
-                                      ),
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                        ),
+                        if (settings.showTranslation && trans != null) ...[
+                          const SizedBox(height: 12),
+                          const Divider(),
+                          const SizedBox(height: 8),
+                          // Translation with dynamic font size
+                          Text(
+                            trans.translationText,
+                            textAlign: isPersian ? TextAlign.right : TextAlign.left,
+                            style: TextStyle(
+                              fontSize: settings.translationFontSize,
+                              height: 1.5,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 12),
-                      // Arabic Uthmani Text with dynamic font & size from settings
-                      Text(
-                        arabicText,
-                        textAlign: TextAlign.right,
-                        textDirection: TextDirection.rtl,
-                        style: AppTheme.getArabicQuranTextStyle(
-                          fontSize: settings.arabicFontSize,
-                          fontFamily: settings.arabicFontFamily,
-                          color: isAudioActive ? Theme.of(context).colorScheme.primary : null,
-                        ).copyWith(
-                          fontWeight: isAudioActive ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                      if (settings.showTranslation && trans != null) ...[
-                        const SizedBox(height: 12),
-                        const Divider(),
-                        const SizedBox(height: 8),
-                        // Translation with dynamic font size
-                        Text(
-                          trans.translationText,
-                          textAlign: isPersian ? TextAlign.right : TextAlign.left,
-                          style: TextStyle(
-                            fontSize: settings.translationFontSize,
-                            height: 1.5,
-                            color: Theme.of(context).textTheme.bodyMedium?.color,
-                          ),
-                        ),
                       ],
-                    ],
+                    ),
                   ),
                 ),
               );

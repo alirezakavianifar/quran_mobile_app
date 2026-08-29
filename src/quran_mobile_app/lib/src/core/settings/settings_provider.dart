@@ -72,6 +72,14 @@ class SettingsNotifier extends StateNotifier<UserSettings> {
     updateSettings(state.copyWith(autoSyncWifiOnly: wifiOnly));
   }
 
+  Future<void> updateDefaultVerseTapAction(String action) async {
+    updateSettings(state.copyWith(defaultVerseTapAction: action));
+  }
+
+  Future<void> updateDefaultTafsirEdition(String editionId) async {
+    updateSettings(state.copyWith(defaultTafsirEdition: editionId));
+  }
+
   Future<void> resetToDefaults() async {
     const defaults = UserSettings();
     state = defaults;

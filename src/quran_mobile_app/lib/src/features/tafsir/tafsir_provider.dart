@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/database/app_database.dart';
 import '../reader/reader_provider.dart';
 
-/// Active selected Tafsir Edition (defaults to 'fa.noor' - Tafsir Noor by Dr. Mohsen Qara'ati)
-final selectedTafsirEditionProvider = StateProvider<String>((ref) => 'fa.noor');
+/// Active selected Tafsir Edition override (if null, falls back to settings.defaultTafsirEdition)
+final selectedTafsirEditionProvider = StateProvider<String?>((ref) => null);
 
 class TafsirQueryParam {
   final int verseId;

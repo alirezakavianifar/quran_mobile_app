@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/database/app_database.dart';
 import '../../core/localization/app_localizations.dart';
+import '../../core/settings/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/persian_digit_converter.dart';
+import '../audio/presentation/audio_player_notifier.dart';
 import 'tafsir_provider.dart';
 
 class TafsirBottomSheet extends ConsumerWidget {
@@ -21,7 +23,14 @@ class TafsirBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context);
     final isPersian = loc.isPersian;
-    final activeEdition = ref.watch(selectedTafsirEditionProvider);
+    final userDefaultEdition = ref.watch(settingsProvider.select((s) => s.defaultTafsirEdition));
+    final activeEdition = ref.watch(selectedTafsirEditionProvider) ?? userDefaultEdition;
+
+    final audioState = ref.watch(audioPlayerProvider);
+    final audioNotifier = ref.read(audioPlayerProvider.notifier);
+    final isAudioActive = audioState.isVerseActive(surah.number, verse.verseNumber);
+    final isPlayingThisVerse = isAudioActive && audioState.isPlaying;
+    final isLoadingThisVerse = isAudioActive && audioState.isLoading;
 
     final param = TafsirQueryParam(verseId: verse.id, editionId: activeEdition);
     final tafsirAsync = ref.watch(verseTafsirProvider(param));
@@ -65,7 +74,7 @@ class TafsirBottomSheet extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
 
-            // Header Title & Ayah Key
+            // Header Title & Ayah Key & Audio Toggle
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -84,6 +93,33 @@ class TafsirBottomSheet extends ConsumerWidget {
                           ),
                     ),
                   ),
+                  isLoadingThisVerse
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : IconButton(
+                          icon: Icon(
+                            isPlayingThisVerse
+                                ? Icons.pause_circle_filled
+                                : Icons.play_circle_outline,
+                            color: isAudioActive
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                          ),
+                          tooltip: loc.translate('listenAyah'),
+                          onPressed: () {
+                            audioNotifier.playVerse(
+                              surah.number,
+                              verse.verseNumber,
+                              surah.verseCount,
+                            );
+                          },
+                        ),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.of(context).pop(),

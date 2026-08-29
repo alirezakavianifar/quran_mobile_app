@@ -201,7 +201,6 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const Divider(height: 28),
 
-                  // Toggles
                   SwitchListTile(
                     title: Text(isPersian ? 'نمایش ترجمه' : 'Show Translation'),
                     value: settings.showTranslation,
@@ -213,6 +212,85 @@ class SettingsScreen extends ConsumerWidget {
                     value: settings.showTransliteration,
                     onChanged: (val) => settingsNotifier.updateShowTransliteration(val),
                     contentPadding: EdgeInsets.zero,
+                  ),
+                  const Divider(height: 28),
+
+                  // Verse Selection Action Selector
+                  Text(
+                    isPersian ? 'عملیات پیش‌فرض لمس آیه' : 'Default Verse Tap Action',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isPersian
+                        ? 'تعیین رفتاری که با لمس مستقیم متن یا کارت آیه رخ می‌دهد'
+                        : 'Choose what happens when tapping directly on a verse card',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SegmentedButton<String>(
+                    segments: [
+                      ButtonSegment(
+                        value: 'showTafsir',
+                        label: Text(isPersian ? 'تفسیر' : 'Tafsir'),
+                        icon: const Icon(Icons.auto_stories_outlined, size: 18),
+                      ),
+                      ButtonSegment(
+                        value: 'playAudio',
+                        label: Text(isPersian ? 'صوت' : 'Audio'),
+                        icon: const Icon(Icons.play_circle_outline, size: 18),
+                      ),
+                      ButtonSegment(
+                        value: 'showMenu',
+                        label: Text(isPersian ? 'منو' : 'Menu'),
+                        icon: const Icon(Icons.menu_open_rounded, size: 18),
+                      ),
+                    ],
+                    selected: {settings.defaultVerseTapAction},
+                    onSelectionChanged: (newSelection) {
+                      settingsNotifier.updateDefaultVerseTapAction(newSelection.first);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Default Tafsir Edition
+                  Text(
+                    isPersian ? 'تفسیر پیش‌فرض' : 'Default Tafsir Edition',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: settings.defaultTafsirEdition,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'fa.noor',
+                        child: Text(isPersian ? 'تفسیر نور (استاد قرائتی)' : 'Tafsir Noor (Dr. Qara\'ati)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'fa.nemoneh',
+                        child: Text(isPersian ? 'تفسیر نمونه (آیت‌الله مکارم شیرازی)' : 'Tafsir Nemoneh (Makarem Shirazi)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'fa.almizan',
+                        child: Text(isPersian ? 'تفسیر المیزان (علامه طباطبائی)' : 'Tafsir Al-Mizan (Allameh Tabataba\'i)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'en.ibnkathir',
+                        child: Text(isPersian ? 'تفسیر ابن کثیر (انگلیسی)' : 'Tafsir Ibn Kathir (English)'),
+                      ),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) {
+                        settingsNotifier.updateDefaultTafsirEdition(val);
+                      }
+                    },
                   ),
                 ],
               ),
