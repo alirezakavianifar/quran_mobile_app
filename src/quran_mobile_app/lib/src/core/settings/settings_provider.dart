@@ -80,6 +80,14 @@ class SettingsNotifier extends StateNotifier<UserSettings> {
     updateSettings(state.copyWith(defaultTafsirEdition: editionId));
   }
 
+  Future<void> updateKeepScreenOn(bool keep) async {
+    updateSettings(state.copyWith(keepScreenOn: keep));
+  }
+
+  Future<void> updateDefaultVerseRepeatCount(int count) async {
+    updateSettings(state.copyWith(defaultVerseRepeatCount: count));
+  }
+
   Future<void> resetToDefaults() async {
     const defaults = UserSettings();
     state = defaults;

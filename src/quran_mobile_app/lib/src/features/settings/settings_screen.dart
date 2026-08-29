@@ -213,6 +213,21 @@ class SettingsScreen extends ConsumerWidget {
                     onChanged: (val) => settingsNotifier.updateShowTransliteration(val),
                     contentPadding: EdgeInsets.zero,
                   ),
+                  SwitchListTile(
+                    title: Text(isPersian ? 'روشن ماندن صفحه هنگام قرائت' : 'Keep Screen On While Reading'),
+                    subtitle: Text(
+                      isPersian
+                          ? 'جلوگیری از به خواب رفتن صفحه هنگام مطالعه و قرائت'
+                          : 'Prevent display sleep during Quran reading',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    value: settings.keepScreenOn,
+                    onChanged: (val) => settingsNotifier.updateKeepScreenOn(val),
+                    contentPadding: EdgeInsets.zero,
+                  ),
                   const Divider(height: 28),
 
                   // Verse Selection Action Selector
@@ -365,6 +380,60 @@ class SettingsScreen extends ConsumerWidget {
                     value: settings.autoScrollAudio,
                     onChanged: (val) => settingsNotifier.updateAutoScrollAudio(val),
                     contentPadding: EdgeInsets.zero,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    isPersian ? 'تکرار پیش‌فرض هر آیه' : 'Default Verse Repeat',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isPersian
+                        ? 'تعداد دفعات تکرار هر آیه پیش از رفتن به آیه بعد هنگام تلاوت'
+                        : 'Number of times to repeat each verse before advancing to next',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<int>(
+                    value: settings.defaultVerseRepeatCount,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text(isPersian ? '۱ بار (بدون تکرار)' : '1x (Play Once)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text(isPersian ? '۲ بار تکرار' : '2x Repeat'),
+                      ),
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Text(isPersian ? '۳ بار تکرار (تجوید و تمرین)' : '3x Repeat (Tajweed Practice)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 5,
+                        child: Text(isPersian ? '۵ بار تکرار (حفظ قرآن)' : '5x Repeat (Hifz / Memorization)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 10,
+                        child: Text(isPersian ? '۱۰ بار تکرار (حفظ فشرده)' : '10x Repeat (Intensive)'),
+                      ),
+                      DropdownMenuItem(
+                        value: -1,
+                        child: Text(isPersian ? 'تکرار بی‌نهایت (∞)' : 'Infinite Loop (∞)'),
+                      ),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) {
+                        settingsNotifier.updateDefaultVerseRepeatCount(val);
+                      }
+                    },
                   ),
                 ],
               ),

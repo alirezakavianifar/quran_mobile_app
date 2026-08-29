@@ -15,6 +15,8 @@ class UserSettings {
   final bool autoSyncWifiOnly;
   final String defaultVerseTapAction; // 'showTafsir', 'playAudio', 'showMenu'
   final String defaultTafsirEdition; // 'fa.noor', 'fa.nemoneh', 'fa.almizan', 'en.ibnkathir'
+  final bool keepScreenOn;
+  final int defaultVerseRepeatCount; // 1, 2, 3, 5, 10, -1 (infinite)
 
   const UserSettings({
     this.arabicFontFamily = 'Amiri',
@@ -31,6 +33,8 @@ class UserSettings {
     this.autoSyncWifiOnly = true,
     this.defaultVerseTapAction = 'playAudio',
     this.defaultTafsirEdition = 'fa.noor',
+    this.keepScreenOn = true,
+    this.defaultVerseRepeatCount = 1,
   });
 
   UserSettings copyWith({
@@ -48,6 +52,8 @@ class UserSettings {
     bool? autoSyncWifiOnly,
     String? defaultVerseTapAction,
     String? defaultTafsirEdition,
+    bool? keepScreenOn,
+    int? defaultVerseRepeatCount,
   }) {
     return UserSettings(
       arabicFontFamily: arabicFontFamily ?? this.arabicFontFamily,
@@ -64,6 +70,8 @@ class UserSettings {
       autoSyncWifiOnly: autoSyncWifiOnly ?? this.autoSyncWifiOnly,
       defaultVerseTapAction: defaultVerseTapAction ?? this.defaultVerseTapAction,
       defaultTafsirEdition: defaultTafsirEdition ?? this.defaultTafsirEdition,
+      keepScreenOn: keepScreenOn ?? this.keepScreenOn,
+      defaultVerseRepeatCount: defaultVerseRepeatCount ?? this.defaultVerseRepeatCount,
     );
   }
 
@@ -83,6 +91,8 @@ class UserSettings {
       'autoSyncWifiOnly': autoSyncWifiOnly,
       'defaultVerseTapAction': defaultVerseTapAction,
       'defaultTafsirEdition': defaultTafsirEdition,
+      'keepScreenOn': keepScreenOn,
+      'defaultVerseRepeatCount': defaultVerseRepeatCount,
     };
   }
 
@@ -102,6 +112,8 @@ class UserSettings {
       autoSyncWifiOnly: map['autoSyncWifiOnly'] as bool? ?? true,
       defaultVerseTapAction: map['defaultVerseTapAction'] as String? ?? 'playAudio',
       defaultTafsirEdition: map['defaultTafsirEdition'] as String? ?? 'fa.noor',
+      keepScreenOn: map['keepScreenOn'] as bool? ?? true,
+      defaultVerseRepeatCount: (map['defaultVerseRepeatCount'] as num?)?.toInt() ?? 1,
     );
   }
 

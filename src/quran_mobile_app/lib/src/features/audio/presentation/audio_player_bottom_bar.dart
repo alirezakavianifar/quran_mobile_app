@@ -176,6 +176,79 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                     }).toList(),
                   ),
                   const SizedBox(width: 4),
+                  // Verse Repeat Selector Button
+                  PopupMenuButton<int>(
+                    tooltip: isPersian ? 'تکرار آیه' : 'Verse Repeat',
+                    initialValue: state.verseRepeatCount,
+                    onSelected: (int count) {
+                      notifier.setVerseRepeatCount(count);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                        color: state.verseRepeatCount != 1
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : null,
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            state.verseRepeatCount == -1 ? Icons.all_inclusive : Icons.repeat,
+                            size: 13,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            state.verseRepeatCount == -1
+                                ? '∞'
+                                : (isPersian
+                                    ? '${PersianDigitConverter.toPersian(state.verseRepeatCount.toString())}x'
+                                    : '${state.verseRepeatCount}x'),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    itemBuilder: (context) => [
+                      1,
+                      2,
+                      3,
+                      5,
+                      10,
+                      -1,
+                    ].map((count) {
+                      final label = count == -1
+                          ? (isPersian ? 'تکرار بی‌نهایت (∞)' : 'Infinite Loop (∞)')
+                          : count == 1
+                              ? (isPersian ? 'یک‌بار (بدون تکرار)' : '1x (Play Once)')
+                              : (isPersian
+                                  ? '${PersianDigitConverter.toPersian(count.toString())} بار تکرار'
+                                  : '${count}x Repeat');
+                      return PopupMenuItem<int>(
+                        value: count,
+                        child: Row(
+                          children: [
+                            if (state.verseRepeatCount == count)
+                              Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.primary)
+                            else
+                              const SizedBox(width: 16),
+                            const SizedBox(width: 8),
+                            Text(label),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(width: 4),
                   // Auto play next toggle
                   IconButton(
                     icon: Icon(

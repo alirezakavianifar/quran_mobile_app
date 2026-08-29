@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../core/database/app_database.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/settings/models/user_settings.dart';
@@ -33,13 +34,29 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyWakelock(ref.read(settingsProvider).keepScreenOn);
+    });
   }
 
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    try {
+      WakelockPlus.disable().catchError((_) {});
+    } catch (_) {}
     super.dispose();
+  }
+
+  void _applyWakelock(bool keepOn) {
+    try {
+      if (keepOn) {
+        WakelockPlus.enable().catchError((_) {});
+      } else {
+        WakelockPlus.disable().catchError((_) {});
+      }
+    } catch (_) {}
   }
 
   void _onScroll() {
@@ -292,6 +309,10 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
         .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
         .trim();
     final settings = ref.watch(settingsProvider);
+
+    ref.listen<bool>(settingsProvider.select((s) => s.keepScreenOn), (previous, next) {
+      _applyWakelock(next);
+    });
 
     ref.listen<AudioPlayerState>(audioPlayerProvider, (previous, next) {
       if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {

@@ -136,6 +136,18 @@ void main() {
       expect(notifier.currentState.currentSurahId, null);
       expect(notifier.currentState.currentVerseNumber, null);
       expect(notifier.currentState.isPlaying, false);
+      expect(notifier.currentState.currentVersePlayCount, 1);
+    });
+
+    test('Updates verse repeat count in state', () {
+      expect(notifier.currentState.verseRepeatCount, 1);
+      expect(notifier.currentState.currentVersePlayCount, 1);
+
+      notifier.setVerseRepeatCount(3);
+      expect(notifier.currentState.verseRepeatCount, 3);
+
+      notifier.setVerseRepeatCount(-1);
+      expect(notifier.currentState.verseRepeatCount, -1);
     });
   });
 }
