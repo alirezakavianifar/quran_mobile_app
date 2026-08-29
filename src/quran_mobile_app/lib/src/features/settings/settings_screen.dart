@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/settings/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../audio/data/audio_storage_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -559,16 +560,76 @@ class SettingsScreen extends ConsumerWidget {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
                 const Divider(height: 1),
+                FutureBuilder<int>(
+                  future: ref.read(audioStorageServiceProvider).getTotalAudioCacheSizeBytes(),
+                  builder: (context, snapshot) {
+                    final bytes = snapshot.data ?? 0;
+                    final sizeText = ref.read(audioStorageServiceProvider).formatBytes(bytes);
+                    return ListTile(
+                      leading: const Icon(Icons.download_done_rounded),
+                      title: Text(isPersian ? 'فایل‌های صوتی آفلاین' : 'Offline Audio Files'),
+                      subtitle: Text(
+                        isPersian
+                            ? 'فضای اشغال‌شده: $sizeText'
+                            : 'Storage used: $sizeText',
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete_outline, color: Colors.red),
+                        tooltip: isPersian ? 'پاکسازی' : 'Clear',
+                        onPressed: bytes == 0
+                            ? null
+                            : () async {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text(isPersian ? 'پاکسازی فایل‌های صوتی' : 'Clear Audio Files'),
+                                    content: Text(
+                                      isPersian
+                                          ? 'آیا مطمئن هستید که می‌خواهید تمام فایل‌های صوتی دانلود شده را حذف کنید؟'
+                                          : 'Are you sure you want to delete all downloaded offline audio files?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(ctx, false),
+                                        child: Text(isPersian ? 'انصراف' : 'Cancel'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () => Navigator.pop(ctx, true),
+                                        child: Text(isPersian ? 'حذف' : 'Delete'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirm == true) {
+                                  await ref.read(audioStorageServiceProvider).clearAllAudioCache();
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          isPersian
+                                              ? 'تمام فایل‌های صوتی آفلاین پاکسازی شدند'
+                                              : 'All offline audio files cleared successfully',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                      ),
+                    );
+                  },
+                ),
+                const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.cleaning_services_rounded),
-                  title: Text(isPersian ? 'پاکسازی حافظه موقت صوت' : 'Clear Audio Cache'),
+                  title: Text(isPersian ? 'پاکسازی حافظه موقت' : 'Clear Cache'),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           isPersian
-                              ? 'حافظه موقت فایل‌های صوتی پاک شد'
-                              : 'Audio cache cleared successfully',
+                              ? 'حافظه موقت با موفقیت پاک شد'
+                              : 'Cache cleared successfully',
                         ),
                       ),
                     );

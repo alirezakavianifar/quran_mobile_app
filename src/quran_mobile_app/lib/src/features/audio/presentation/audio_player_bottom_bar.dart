@@ -5,6 +5,7 @@ import '../../../core/settings/settings_provider.dart';
 import '../../../core/utils/persian_digit_converter.dart';
 import 'audio_player_notifier.dart';
 import 'reciter_selector_dialog.dart';
+import 'verse_range_dialog.dart';
 
 class AudioPlayerBottomBar extends ConsumerWidget {
   const AudioPlayerBottomBar({super.key});
@@ -59,6 +60,47 @@ class AudioPlayerBottomBar extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Active Verse-Range Repeat Badge
+            if (state.isRangeRepeatActive)
+              Container(
+                margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.repeat_rounded,
+                      size: 14,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        isPersian
+                            ? 'بازه فعال: آیه ${PersianDigitConverter.toPersian("${state.rangeStartVerse}")} تا ${PersianDigitConverter.toPersian("${state.rangeEndVerse}")} • دور ${PersianDigitConverter.toPersian("${state.currentRangeCycle}")}${state.rangeLoopCount > 0 ? " از ${PersianDigitConverter.toPersian('${state.rangeLoopCount}')}" : " (بی‌نهایت)"}'
+                            : 'Range Loop: Ayah ${state.rangeStartVerse} - ${state.rangeEndVerse} • Cycle ${state.currentRangeCycle}${state.rangeLoopCount > 0 ? "/${state.rangeLoopCount}" : " (∞)"}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => notifier.clearVerseRange(),
+                      child: Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             // Progress Bar Slider
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
@@ -249,10 +291,31 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                     }).toList(),
                   ),
                   const SizedBox(width: 4),
+                  // Verse Range Repeat Dialog Button
+                  IconButton(
+                    icon: Icon(
+                      Icons.repeat_on_rounded,
+                      color: state.isRangeRepeatActive
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.grey,
+                      size: 20,
+                    ),
+                    tooltip: loc.translate('verseRangeRepeat'),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => VerseRangeDialog(
+                          surahId: state.currentSurahId!,
+                          totalVerses: state.totalVersesInSurah ?? state.currentVerseNumber!,
+                          currentVerse: state.currentVerseNumber,
+                        ),
+                      );
+                    },
+                  ),
                   // Auto play next toggle
                   IconButton(
                     icon: Icon(
-                      state.autoPlayNext ? Icons.repeat : Icons.repeat_one,
+                      state.autoPlayNext ? Icons.playlist_play : Icons.stop_circle_outlined,
                       color: state.autoPlayNext
                           ? Theme.of(context).colorScheme.primary
                           : Colors.grey,
@@ -301,4 +364,5 @@ class AudioPlayerBottomBar extends ConsumerWidget {
     );
   }
 }
+
 

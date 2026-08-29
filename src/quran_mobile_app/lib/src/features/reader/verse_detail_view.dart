@@ -8,10 +8,13 @@ import '../../core/settings/models/user_settings.dart';
 import '../../core/settings/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/persian_digit_converter.dart';
+import '../audio/presentation/audio_download_notifier.dart';
 import '../audio/presentation/audio_player_bottom_bar.dart';
 import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
 import '../bookmarks/bookmarks_provider.dart';
+import '../notes/models/ayah_note_model.dart';
+import '../notes/presentation/ayah_notes_provider.dart';
 import '../tafsir/tafsir_bottom_sheet.dart';
 import 'reader_provider.dart';
 
@@ -36,6 +39,12 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _applyWakelock(ref.read(settingsProvider).keepScreenOn);
+      final currentReciterId = ref.read(settingsProvider).defaultReciterId;
+      ref.read(audioDownloadProvider.notifier).checkSurahStatus(
+            currentReciterId,
+            widget.surah.number,
+            widget.surah.verseCount,
+          );
     });
   }
 
@@ -68,7 +77,7 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
     final index = (offset / estimatedItemHeight).floor().clamp(0, verses.length - 1);
     final verse = verses[index].verse;
 
-    if (_currentVisiblePage != verse.pageNumber || _currentVisibleJuz != verse.juzNumber) {
+    if (verse.pageNumber != _currentVisiblePage || verse.juzNumber != _currentVisibleJuz) {
       setState(() {
         _currentVisiblePage = verse.pageNumber;
         _currentVisibleJuz = verse.juzNumber;
@@ -133,6 +142,124 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showNoteAndHighlightDialog(
+    BuildContext context,
+    int surahNumber,
+    int verseNumber,
+    AppLocalizations loc,
+  ) {
+    final isPersian = loc.isPersian;
+    final noteState = ref.read(ayahNotesProvider.notifier).getNote(surahNumber, verseNumber);
+    final textController = TextEditingController(text: noteState?.noteText ?? '');
+    String? selectedColorHex = noteState?.colorHex;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Text(loc.translate('addNoteAndHighlight')),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  loc.translate('highlightColor'),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ...AyahHighlightPalette.options.map((opt) {
+                      final isSelected = selectedColorHex == opt.hex;
+                      return InkWell(
+                        onTap: () {
+                          setDialogState(() {
+                            selectedColorHex = isSelected ? null : opt.hex;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: opt.color.withValues(alpha: isSelected ? 0.35 : 0.15),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: opt.color,
+                              width: isSelected ? 2.5 : 1.0,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(backgroundColor: opt.color, radius: 5),
+                              const SizedBox(width: 6),
+                              Text(
+                                isPersian ? opt.labelFa : opt.labelEn,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                    if (selectedColorHex != null)
+                      ActionChip(
+                        avatar: const Icon(Icons.close, size: 14),
+                        label: Text(loc.translate('removeHighlight'), style: const TextStyle(fontSize: 11)),
+                        onPressed: () {
+                          setDialogState(() {
+                            selectedColorHex = null;
+                          });
+                        },
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  isPersian ? 'یادداشت یا تدبر شخصی:' : 'Personal Reflection / Note:',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: textController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    hintText: loc.translate('personalNoteHint'),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(isPersian ? 'انصراف' : 'Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                ref.read(ayahNotesProvider.notifier).saveAyahNote(
+                      surahId: surahNumber,
+                      verseNumber: verseNumber,
+                      noteText: textController.text.trim(),
+                      colorHex: selectedColorHex,
+                    );
+                Navigator.pop(ctx);
+              },
+              child: Text(loc.translate('saveNote')),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -212,6 +339,17 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                     backgroundColor: Colors.transparent,
                     builder: (_) => TafsirBottomSheet(surah: surah, verse: verse),
                   );
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.palette_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(loc.translate('addNoteAndHighlight')),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showNoteAndHighlightDialog(context, surah.number, verse.verseNumber, loc);
                 },
               ),
               ListTile(
@@ -353,6 +491,90 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
           ],
         ),
         actions: [
+          Consumer(
+            builder: (context, ref, _) {
+              final currentReciterId = ref.watch(audioPlayerProvider).currentReciter?.id ??
+                  ref.watch(settingsProvider).defaultReciterId;
+              final downloadMap = ref.watch(audioDownloadProvider);
+              final key = '${currentReciterId}_${widget.surah.number}';
+              final downloadState = downloadMap[key] ??
+                  SurahDownloadState(
+                    reciterId: currentReciterId,
+                    surahId: widget.surah.number,
+                    totalVerses: widget.surah.verseCount,
+                  );
+              final notifier = ref.read(audioDownloadProvider.notifier);
+
+              if (downloadState.isDownloading) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Center(
+                    child: SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            value: downloadState.progressRatio,
+                            strokeWidth: 3,
+                          ),
+                          Text(
+                            '${(downloadState.progressRatio * 100).toInt()}%',
+                            style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              } else if (downloadState.isCompleted) {
+                return PopupMenuButton<String>(
+                  icon: const Icon(Icons.offline_pin_rounded, color: Colors.green),
+                  tooltip: loc.translate('surahDownloadedReady'),
+                  onSelected: (val) {
+                    if (val == 'delete') {
+                      notifier.deleteSurahDownload(
+                        currentReciterId,
+                        widget.surah.number,
+                        widget.surah.verseCount,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(loc.translate('deleteSurahAudio'))),
+                      );
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                          const SizedBox(width: 8),
+                          Text(loc.translate('deleteSurahAudio')),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return IconButton(
+                  icon: const Icon(Icons.download_for_offline_outlined),
+                  tooltip: loc.translate('downloadSurahTooltip'),
+                  onPressed: () {
+                    notifier.downloadSurah(
+                      currentReciterId,
+                      widget.surah.number,
+                      widget.surah.verseCount,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(loc.translate('downloadingSurah'))),
+                    );
+                  },
+                );
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.mic_outlined),
             tooltip: isPersian ? 'انتخاب قاری' : 'Select Reciter',
@@ -454,21 +676,25 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
               final isPlayingThisVerse = isAudioActive && audioState.isPlaying;
               final isLoadingThisVerse = isAudioActive && audioState.isLoading;
 
+              final notesMap = ref.watch(ayahNotesProvider);
+              final ayahNote = notesMap['${widget.surah.number}_${verse.verseNumber}'];
+              final highlightColor = AyahHighlightPalette.getColorFromHex(ayahNote?.colorHex);
+
               final verseCard = Card(
                 margin: const EdgeInsets.only(bottom: 16),
-                elevation: isAudioActive ? 4 : 1,
+                elevation: isAudioActive ? 4 : (highlightColor != null ? 2 : 1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                   side: BorderSide(
                     color: isAudioActive
                         ? Theme.of(context).colorScheme.primary
-                        : Colors.transparent,
-                    width: isAudioActive ? 2 : 0,
+                        : (highlightColor ?? Colors.transparent),
+                    width: isAudioActive ? 2 : (highlightColor != null ? 1.5 : 0),
                   ),
                 ),
                 color: isAudioActive
                     ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.15)
-                    : null,
+                    : (highlightColor != null ? highlightColor.withValues(alpha: 0.12) : null),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () {
@@ -502,7 +728,7 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                                   decoration: BoxDecoration(
                                     color: isAudioActive
                                         ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context).colorScheme.secondary,
+                                        : (highlightColor ?? Theme.of(context).colorScheme.secondary),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
@@ -564,6 +790,22 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                                         },
                                       ),
                                 IconButton(
+                                  icon: Icon(
+                                    ayahNote?.hasNote == true
+                                        ? Icons.note_alt_rounded
+                                        : (ayahNote?.hasHighlight == true ? Icons.palette : Icons.palette_outlined),
+                                    color: highlightColor ?? (ayahNote?.hasNote == true ? Theme.of(context).colorScheme.primary : null),
+                                    size: 20,
+                                  ),
+                                  tooltip: loc.translate('addNoteAndHighlight'),
+                                  onPressed: () => _showNoteAndHighlightDialog(
+                                    context,
+                                    widget.surah.number,
+                                    verse.verseNumber,
+                                    loc,
+                                  ),
+                                ),
+                                IconButton(
                                   icon: const Icon(Icons.auto_stories_outlined),
                                   tooltip: isPersian ? 'تفسیر آیه (استاد قرائتی / نمونه)' : 'Ayah Tafsir',
                                   onPressed: () {
@@ -624,6 +866,42 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                               fontSize: settings.translationFontSize,
                               height: 1.5,
                               color: Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                          ),
+                        ],
+                        if (ayahNote?.hasNote == true) ...[
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: (highlightColor ?? Theme.of(context).colorScheme.primaryContainer)
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: (highlightColor ?? Theme.of(context).colorScheme.primary)
+                                    .withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.edit_note_rounded,
+                                  size: 18,
+                                  color: highlightColor ?? Theme.of(context).colorScheme.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    ayahNote!.noteText!,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      height: 1.4,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../data/audio_repository.dart';
+import '../data/audio_storage_service.dart';
 
 class AudioPlayerState {
   final Reciter? currentReciter;
@@ -18,6 +19,10 @@ class AudioPlayerState {
   final double playbackSpeed;
   final int verseRepeatCount; // 1, 2, 3, 5, 10, -1 (infinite)
   final int currentVersePlayCount; // 1-indexed count of how many times current verse has played
+  final int? rangeStartVerse;
+  final int? rangeEndVerse;
+  final int rangeLoopCount; // 1, 2, 3, 5, 10, -1 (infinite)
+  final int currentRangeCycle; // 1-indexed count of how many times range has looped
   final String? errorMessage;
 
   AudioPlayerState({
@@ -34,12 +39,21 @@ class AudioPlayerState {
     this.playbackSpeed = 1.0,
     this.verseRepeatCount = 1,
     this.currentVersePlayCount = 1,
+    this.rangeStartVerse,
+    this.rangeEndVerse,
+    this.rangeLoopCount = 1,
+    this.currentRangeCycle = 1,
     this.errorMessage,
   });
 
   bool isVerseActive(int surahId, int verseNumber) {
     return currentSurahId == surahId && currentVerseNumber == verseNumber;
   }
+
+  bool get isRangeRepeatActive =>
+      rangeStartVerse != null &&
+      rangeEndVerse != null &&
+      rangeStartVerse! <= rangeEndVerse!;
 
   static const Object _sentinel = Object();
 
@@ -57,6 +71,10 @@ class AudioPlayerState {
     double? playbackSpeed,
     int? verseRepeatCount,
     int? currentVersePlayCount,
+    Object? rangeStartVerse = _sentinel,
+    Object? rangeEndVerse = _sentinel,
+    int? rangeLoopCount,
+    int? currentRangeCycle,
     String? errorMessage,
   }) {
     return AudioPlayerState(
@@ -73,6 +91,10 @@ class AudioPlayerState {
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       verseRepeatCount: verseRepeatCount ?? this.verseRepeatCount,
       currentVersePlayCount: currentVersePlayCount ?? this.currentVersePlayCount,
+      rangeStartVerse: rangeStartVerse == _sentinel ? this.rangeStartVerse : rangeStartVerse as int?,
+      rangeEndVerse: rangeEndVerse == _sentinel ? this.rangeEndVerse : rangeEndVerse as int?,
+      rangeLoopCount: rangeLoopCount ?? this.rangeLoopCount,
+      currentRangeCycle: currentRangeCycle ?? this.currentRangeCycle,
       errorMessage: errorMessage,
     );
   }
@@ -80,6 +102,7 @@ class AudioPlayerState {
 
 class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   final AudioRepository _repository;
+  final AudioStorageService? _storageService;
   final AudioPlayer _player;
   StreamSubscription? _durationSubscription;
   StreamSubscription? _positionSubscription;
@@ -88,10 +111,12 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
   AudioPlayerNotifier(
     this._repository, {
+    AudioStorageService? storageService,
     AudioPlayer? player,
     double initialSpeed = 1.0,
     int initialRepeatCount = 1,
-  })  : _player = player ?? AudioPlayer(),
+  })  : _storageService = storageService,
+        _player = player ?? AudioPlayer(),
         super(AudioPlayerState(
           playbackSpeed: initialSpeed,
           verseRepeatCount: initialRepeatCount,
@@ -166,6 +191,36 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     state = state.copyWith(verseRepeatCount: count);
   }
 
+  Future<void> setVerseRange({
+    required int surahId,
+    required int startVerse,
+    required int endVerse,
+    required int totalVerses,
+    int loopCount = 1,
+    bool startPlaying = true,
+  }) async {
+    state = state.copyWith(
+      rangeStartVerse: startVerse,
+      rangeEndVerse: endVerse,
+      rangeLoopCount: loopCount,
+      currentRangeCycle: 1,
+      currentVersePlayCount: 1,
+    );
+
+    if (startPlaying) {
+      await playVerse(surahId, startVerse, totalVerses);
+    }
+  }
+
+  void clearVerseRange() {
+    state = state.copyWith(
+      rangeStartVerse: null,
+      rangeEndVerse: null,
+      rangeLoopCount: 1,
+      currentRangeCycle: 1,
+    );
+  }
+
   Future<void> playVerse(int surahId, int verseNumber, int totalVerses, {bool isReplay = false}) async {
     if (state.currentReciter == null) {
       await loadReciters();
@@ -198,17 +253,24 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     );
 
     try {
-      final audioUrl = await _repository.getAyahAudioUrl(reciter.id, surahId, verseNumber);
-      if (audioUrl.isEmpty) {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: 'Audio URL not found.',
-        );
-        return;
+      Source source;
+      final localPath = await _storageService?.getLocalAyahAudioPath(reciter.id, surahId, verseNumber);
+      if (localPath != null) {
+        source = DeviceFileSource(localPath);
+      } else {
+        final audioUrl = await _repository.getAyahAudioUrl(reciter.id, surahId, verseNumber);
+        if (audioUrl.isEmpty) {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: 'Audio URL not found.',
+          );
+          return;
+        }
+        source = UrlSource(audioUrl);
       }
 
       await _player.stop();
-      await _player.play(UrlSource(audioUrl));
+      await _player.play(source);
       try {
         await _player.setPlaybackRate(state.playbackSpeed);
       } catch (_) {}
@@ -280,9 +342,9 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     final verseNum = state.currentVerseNumber!;
     final totalVerses = state.totalVersesInSurah ?? verseNum;
 
-    // Check repeat logic
+    // 1. Check per-verse repeat logic
     if (state.verseRepeatCount == -1) {
-      // Infinite Loop
+      // Infinite Loop on current verse
       await _replayVerse(surahId, verseNum, totalVerses);
       return;
     } else if (state.currentVersePlayCount < state.verseRepeatCount) {
@@ -292,9 +354,44 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       return;
     }
 
-    // Finished repeats for this verse, advance if autoPlayNext is enabled
+    // Finished repeats for this verse
     state = state.copyWith(currentVersePlayCount: 1);
 
+    // 2. Check Range Repeat logic
+    if (state.isRangeRepeatActive) {
+      final rangeStart = state.rangeStartVerse!;
+      final rangeEnd = state.rangeEndVerse!;
+
+      if (verseNum < rangeEnd) {
+        final nextVerse = verseNum + 1;
+        state = state.copyWith(currentSurahId: null, currentVerseNumber: null);
+        await playVerse(surahId, nextVerse, totalVerses);
+      } else {
+        // Reached end of range
+        if (state.rangeLoopCount == -1) {
+          // Infinite range loop
+          state = state.copyWith(
+            currentRangeCycle: state.currentRangeCycle + 1,
+            currentSurahId: null,
+            currentVerseNumber: null,
+          );
+          await playVerse(surahId, rangeStart, totalVerses);
+        } else if (state.currentRangeCycle < state.rangeLoopCount) {
+          state = state.copyWith(
+            currentRangeCycle: state.currentRangeCycle + 1,
+            currentSurahId: null,
+            currentVerseNumber: null,
+          );
+          await playVerse(surahId, rangeStart, totalVerses);
+        } else {
+          // Finished all range cycles
+          await stop();
+        }
+      }
+      return;
+    }
+
+    // 3. Standard autoPlayNext logic
     if (state.autoPlayNext && verseNum < totalVerses) {
       final nextVerse = verseNum + 1;
       state = state.copyWith(currentSurahId: null, currentVerseNumber: null);
@@ -317,14 +414,21 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     );
 
     try {
-      final audioUrl = await _repository.getAyahAudioUrl(reciter.id, surahId, verseNumber);
-      if (audioUrl.isEmpty) {
-        await stop();
-        return;
+      Source source;
+      final localPath = await _storageService?.getLocalAyahAudioPath(reciter.id, surahId, verseNumber);
+      if (localPath != null) {
+        source = DeviceFileSource(localPath);
+      } else {
+        final audioUrl = await _repository.getAyahAudioUrl(reciter.id, surahId, verseNumber);
+        if (audioUrl.isEmpty) {
+          await stop();
+          return;
+        }
+        source = UrlSource(audioUrl);
       }
 
       await _player.stop();
-      await _player.play(UrlSource(audioUrl));
+      await _player.play(source);
       try {
         await _player.setPlaybackRate(state.playbackSpeed);
       } catch (_) {}
@@ -352,11 +456,14 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 final audioPlayerProvider =
     StateNotifierProvider<AudioPlayerNotifier, AudioPlayerState>((ref) {
   final repository = ref.watch(audioRepositoryProvider);
+  final storageService = ref.watch(audioStorageServiceProvider);
   final userSettings = ref.watch(settingsProvider);
   return AudioPlayerNotifier(
     repository,
+    storageService: storageService,
     initialSpeed: userSettings.playbackSpeed,
     initialRepeatCount: userSettings.defaultVerseRepeatCount,
   );
 });
+
 

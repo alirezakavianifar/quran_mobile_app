@@ -149,6 +149,30 @@ void main() {
       notifier.setVerseRepeatCount(-1);
       expect(notifier.currentState.verseRepeatCount, -1);
     });
+
+    test('Configures verse range repeat and clears it', () async {
+      expect(notifier.currentState.isRangeRepeatActive, false);
+
+      await notifier.setVerseRange(
+        surahId: 1,
+        startVerse: 1,
+        endVerse: 5,
+        totalVerses: 7,
+        loopCount: 3,
+        startPlaying: false,
+      );
+
+      expect(notifier.currentState.isRangeRepeatActive, true);
+      expect(notifier.currentState.rangeStartVerse, 1);
+      expect(notifier.currentState.rangeEndVerse, 5);
+      expect(notifier.currentState.rangeLoopCount, 3);
+      expect(notifier.currentState.currentRangeCycle, 1);
+
+      notifier.clearVerseRange();
+      expect(notifier.currentState.isRangeRepeatActive, false);
+      expect(notifier.currentState.rangeStartVerse, null);
+      expect(notifier.currentState.rangeEndVerse, null);
+    });
   });
 }
 

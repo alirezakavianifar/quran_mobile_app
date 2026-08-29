@@ -267,6 +267,14 @@ The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
 - **GET `/api/v1/audio/reciters`**: Returns available reciter profiles (Mishary Rashid Alafasy, Mahmoud Khalil Al-Husary, Abdul Basit, Shahriar Parhizgar).
 - **GET `/api/v1/audio/ayah/{reciterId}/{surahId}/{verseId}`**: Returns verse audio stream URLs and word-by-word timing metadata.
 
+### 5. Advanced Flutter Mobile Companion Features (Phase 8)
+- **Offline Audio Batch Downloader**: Download entire Surahs locally (`audio_cache/{reciter}/{surah}/{verse}.mp3`) with live progress and zero-latency offline playback.
+- **Khatmah / Daily Reading Plan & Progress Tracker**: Plan custom reading goals (30-day Ramadan, 60-day, 90-day, 1-year) with daily quotas, consecutive reading streak tracking (🔥 Day Streak), home banner, and direct page jump.
+- **Verse-Range Repeat (Hifz Mode)**: Loop custom verse ranges (e.g., Ayah 1 to 5) with multipliers (1x, 2x, 3x, 5x, 10x, ∞) and nested single-verse repeats.
+- **Personal Ayah Notes & 5-Color Highlights**: Color-code verses across 5 palettes (Green, Gold, Blue, Purple, Orange), attach personal reflections, and search/filter via the Notes Hub.
+- **Qibla Compass & Prayer Times Engine**: High-precision astronomical solar calculations (University of Tehran, MWL, Umm al-Qura, ISNA) for 8 daily prayer events, live countdowns, and spherical trigonometric Qibla direction dial with distance to Kaaba.
+- **Keep Screen On (WakeLock)**: Prevent device sleep during study and recitation with customizable settings toggle.
+
 ---
 
 ## ⚡ Development & Launch Helper Scripts (`scripts/`)
@@ -338,6 +346,7 @@ cd src/quran_mobile_app; flutter test
 | **Phase 5 — Flutter Mobile & Web App** | Feature-First RTL Persian UI with dynamic English switching & Drift SQLite. | ✅ Completed |
 | **Phase 6 — Admin Portal & Quality Assurance** | Admin API telemetry, `/healthz` probes, CI/CD workflow & master testing suite. | ✅ Completed |
 | **Phase 7 — Production Deployment & Sync** | Docker orchestration, Web Admin Dashboard UI (`/admin`), Sync & Audio APIs. | ✅ Completed |
+| **Phase 8 — Companion & Islamic Productivity Suite** | Offline Audio Downloader, Khatmah Planner, Verse-Range Loop, Notes & Qibla. | ✅ Completed |
 
 ---
 

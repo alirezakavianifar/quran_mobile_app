@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/utils/persian_digit_converter.dart';
+import '../khatmah/presentation/khatmah_screen.dart';
+import '../khatmah/presentation/widgets/khatmah_home_banner.dart';
+import '../notes/presentation/notes_hub_screen.dart';
+import '../prayer_times/presentation/prayer_times_screen.dart';
 import 'reader_provider.dart';
 import 'verse_detail_view.dart';
 
@@ -61,6 +65,36 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.explore_outlined),
+            tooltip: loc.translate('prayerTimesAndQibla'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PrayerTimesScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.note_alt_outlined),
+            tooltip: loc.translate('notesAndHighlights'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotesHubScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.auto_stories_outlined),
+            tooltip: loc.translate('khatmah'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const KhatmahScreen()),
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(isPersian ? Icons.language : Icons.g_translate),
             tooltip: loc.translate('language'),
             onPressed: () {
@@ -100,6 +134,7 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
 
           return Column(
             children: [
+              if (_filterQuery.isEmpty) const KhatmahHomeBanner(),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: TextField(
