@@ -43,7 +43,22 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.translate('surahs')),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/images/app_icon.png',
+                width: 30,
+                height: 30,
+                errorBuilder: (_, __, ___) => const Icon(Icons.menu_book_rounded),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(loc.translate('surahs')),
+          ],
+        ),
         actions: [
           IconButton(
             icon: Icon(isPersian ? Icons.language : Icons.g_translate),

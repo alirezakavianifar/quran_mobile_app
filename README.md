@@ -286,6 +286,9 @@ The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
 
 # 5. Rubika Bot Build Distribution CLI:
 python .\scripts\upload-to-rubika.py --file "app-release.rar"
+
+# 6. Multi-Platform App Icon Generator:
+python .\scripts\generate_app_icons.py icon.png
 ```
 
 ---

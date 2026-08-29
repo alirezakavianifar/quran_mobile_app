@@ -508,6 +508,33 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 12),
+          Center(
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    'assets/images/app_icon.png',
+                    width: 60,
+                    height: 60,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.menu_book, size: 48),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  isPersian ? 'نرم‌افزار جامع قرآن کریم' : 'Quran Knowledge Platform',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isPersian ? 'نسخه ۱.۰.۰' : 'Version 1.0.0',
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
         ],
       ),
     );

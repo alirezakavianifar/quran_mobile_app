@@ -18,7 +18,7 @@ void main() {
       expect(settings.playbackSpeed, equals(1.0));
       expect(settings.themeMode, equals('system'));
       expect(settings.appLanguage, equals('fa'));
-      expect(settings.defaultVerseTapAction, equals('showTafsir'));
+      expect(settings.defaultVerseTapAction, equals('playAudio'));
       expect(settings.defaultTafsirEdition, equals('fa.noor'));
     });
 
@@ -79,7 +79,7 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       expect(notifier.state.arabicFontSize, equals(24.0));
-      expect(notifier.state.defaultVerseTapAction, equals('showTafsir'));
+      expect(notifier.state.defaultVerseTapAction, equals('playAudio'));
       expect(notifier.state.defaultTafsirEdition, equals('fa.noor'));
 
       await notifier.updateArabicFontSize(28.0);
@@ -91,8 +91,8 @@ void main() {
       await notifier.updateReciter('alafasy');
       expect(notifier.state.defaultReciterId, equals('alafasy'));
 
-      await notifier.updateDefaultVerseTapAction('playAudio');
-      expect(notifier.state.defaultVerseTapAction, equals('playAudio'));
+      await notifier.updateDefaultVerseTapAction('showTafsir');
+      expect(notifier.state.defaultVerseTapAction, equals('showTafsir'));
 
       await notifier.updateDefaultTafsirEdition('fa.almizan');
       expect(notifier.state.defaultTafsirEdition, equals('fa.almizan'));
@@ -102,7 +102,7 @@ void main() {
       expect(notifier.state.arabicFontSize, equals(24.0));
       expect(notifier.state.themeMode, equals('system'));
       expect(notifier.state.defaultReciterId, equals('parhizgar'));
-      expect(notifier.state.defaultVerseTapAction, equals('showTafsir'));
+      expect(notifier.state.defaultVerseTapAction, equals('playAudio'));
       expect(notifier.state.defaultTafsirEdition, equals('fa.noor'));
     });
   });

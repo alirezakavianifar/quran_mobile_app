@@ -14,9 +14,9 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    test('Default verse tap action is showTafsir and default edition is fa.noor', () {
+    test('Default verse tap action is playAudio and default edition is fa.noor', () {
       const settings = UserSettings();
-      expect(settings.defaultVerseTapAction, equals('showTafsir'));
+      expect(settings.defaultVerseTapAction, equals('playAudio'));
       expect(settings.defaultTafsirEdition, equals('fa.noor'));
     });
 

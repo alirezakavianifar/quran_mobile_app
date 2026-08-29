@@ -29,7 +29,7 @@ class UserSettings {
     this.appLanguage = 'fa',
     this.hybridSearchEnabled = true,
     this.autoSyncWifiOnly = true,
-    this.defaultVerseTapAction = 'showTafsir',
+    this.defaultVerseTapAction = 'playAudio',
     this.defaultTafsirEdition = 'fa.noor',
   });
 
@@ -100,7 +100,7 @@ class UserSettings {
       appLanguage: map['appLanguage'] as String? ?? 'fa',
       hybridSearchEnabled: map['hybridSearchEnabled'] as bool? ?? true,
       autoSyncWifiOnly: map['autoSyncWifiOnly'] as bool? ?? true,
-      defaultVerseTapAction: map['defaultVerseTapAction'] as String? ?? 'showTafsir',
+      defaultVerseTapAction: map['defaultVerseTapAction'] as String? ?? 'playAudio',
       defaultTafsirEdition: map['defaultTafsirEdition'] as String? ?? 'fa.noor',
     );
   }
