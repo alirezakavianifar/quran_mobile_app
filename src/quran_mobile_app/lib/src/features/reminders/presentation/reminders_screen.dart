@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../core/notifications/notification_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/persian_digit_converter.dart';
 import '../../reader/reader_provider.dart';
@@ -16,7 +19,96 @@ class RemindersScreen extends ConsumerStatefulWidget {
 }
 
 class _RemindersScreenState extends ConsumerState<RemindersScreen> {
+  static const String _prefsKey = 'quran_reminder_settings';
   ReminderSettings _settings = const ReminderSettings();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonStr = prefs.getString(_prefsKey);
+    if (jsonStr != null) {
+      try {
+        final map = jsonDecode(jsonStr) as Map<String, dynamic>;
+        setState(() {
+          _settings = ReminderSettings.fromMap(map);
+        });
+      } catch (_) {}
+    }
+  }
+
+  Future<void> _updateSettings(ReminderSettings newSettings) async {
+    setState(() {
+      _settings = newSettings;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefsKey, jsonEncode(newSettings.toMap()));
+
+    // Schedule / cancel notifications with NotificationService
+    try {
+      await NotificationService.instance.requestPermissions();
+      final todayAyah = DailyAyahCurator.getTodayAyah();
+
+      // 1. Daily Ayah
+      if (newSettings.dailyAyahEnabled) {
+        final parts = newSettings.dailyAyahTime.split(':');
+        final h = int.tryParse(parts[0]) ?? 8;
+        final m = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+        await NotificationService.instance.scheduleDaily(
+          id: NotificationService.idDailyAyah,
+          title: 'آیه روز: ${todayAyah.surahNameFa}',
+          body: '${todayAyah.arabicText}\n${todayAyah.translationFa}',
+          hour: h,
+          minute: m,
+          channelId: NotificationService.channelDailyAyah,
+        );
+      } else {
+        await NotificationService.instance.cancelNotification(NotificationService.idDailyAyah);
+      }
+
+      // 2. Khatmah Reminder
+      if (newSettings.khatmahReminderEnabled) {
+        final parts = newSettings.khatmahTime.split(':');
+        final h = int.tryParse(parts[0]) ?? 20;
+        final m = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+        await NotificationService.instance.scheduleDaily(
+          id: NotificationService.idKhatmah,
+          title: 'یادآور برنامه ختم قرآن',
+          body: 'زمان مطالعه و تلاوت صفحات تعیین‌شده امروز فرا رسیده است.',
+          hour: h,
+          minute: m,
+          channelId: NotificationService.channelKhatmah,
+        );
+      } else {
+        await NotificationService.instance.cancelNotification(NotificationService.idKhatmah);
+      }
+
+      // 3. Friday Surah Kahf
+      if (newSettings.fridayKahfReminderEnabled) {
+        final parts = newSettings.fridayKahfTime.split(':');
+        final h = int.tryParse(parts[0]) ?? 9;
+        final m = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+        await NotificationService.instance.scheduleWeekly(
+          id: NotificationService.idFridayKahf,
+          title: 'سنت روز جمعه: سوره مبارکه کهف',
+          body: 'تلاوت سوره مبارکه کهف در روز جمعه دارای پاداش و نورانیت فراوان است.',
+          dayOfWeek: DateTime.friday,
+          hour: h,
+          minute: m,
+          channelId: NotificationService.channelKhatmah,
+        );
+      } else {
+        await NotificationService.instance.cancelNotification(NotificationService.idFridayKahf);
+      }
+    } catch (e) {
+      debugPrint('Notification scheduling error: $e');
+    }
+  }
 
   Future<void> _pickTime(String currentVal, Function(String) onSelected) async {
     final parts = currentVal.split(':');
@@ -31,9 +123,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     if (picked != null) {
       final hourStr = picked.hour.toString().padLeft(2, '0');
       final minStr = picked.minute.toString().padLeft(2, '0');
-      setState(() {
-        onSelected('$hourStr:$minStr');
-      });
+      onSelected('$hourStr:$minStr');
     }
   }
 
@@ -182,10 +272,10 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                     isEnabled: _settings.dailyAyahEnabled,
                     isPersian: isPersian,
                     onToggle: (val) =>
-                        setState(() => _settings = _settings.copyWith(dailyAyahEnabled: val)),
+                        _updateSettings(_settings.copyWith(dailyAyahEnabled: val)),
                     onPickTime: () => _pickTime(
                       _settings.dailyAyahTime,
-                      (t) => _settings = _settings.copyWith(dailyAyahTime: t),
+                      (t) => _updateSettings(_settings.copyWith(dailyAyahTime: t)),
                     ),
                   ),
                   const Divider(height: 1),
@@ -198,10 +288,10 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                     isEnabled: _settings.khatmahReminderEnabled,
                     isPersian: isPersian,
                     onToggle: (val) =>
-                        setState(() => _settings = _settings.copyWith(khatmahReminderEnabled: val)),
+                        _updateSettings(_settings.copyWith(khatmahReminderEnabled: val)),
                     onPickTime: () => _pickTime(
                       _settings.khatmahTime,
-                      (t) => _settings = _settings.copyWith(khatmahTime: t),
+                      (t) => _updateSettings(_settings.copyWith(khatmahTime: t)),
                     ),
                   ),
                   const Divider(height: 1),
@@ -214,10 +304,10 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                     isEnabled: _settings.fridayKahfReminderEnabled,
                     isPersian: isPersian,
                     onToggle: (val) =>
-                        setState(() => _settings = _settings.copyWith(fridayKahfReminderEnabled: val)),
+                        _updateSettings(_settings.copyWith(fridayKahfReminderEnabled: val)),
                     onPickTime: () => _pickTime(
                       _settings.fridayKahfTime,
-                      (t) => _settings = _settings.copyWith(fridayKahfTime: t),
+                      (t) => _updateSettings(_settings.copyWith(fridayKahfTime: t)),
                     ),
                   ),
                 ],

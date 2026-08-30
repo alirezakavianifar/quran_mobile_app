@@ -499,6 +499,24 @@ Phase 14 introduces comprehensive sacred supplications with 100x counters, alleg
 
 ---
 
+## 🔔 Phase 15 — Native Android Local Notifications & Scheduled Alarms
+
+Phase 15 integrates native Android OS background notifications, exact alarms, and reboot recovery using `flutter_local_notifications` and `timezone`.
+
+### 1. Notification Channels & Background Alarms (`lib/src/core/notifications/`)
+- **Android Channels (`NotificationService`)**:
+  - 🕌 **Adhan & Prayer Times Channel (`adhan_prayer_channel`)**: Max importance, audio chime, vibration alerts.
+  - 📖 **Daily Ayah & Quran Channel (`daily_ayah_channel`)**: High importance, heads-up banner notifications.
+  - 📿 **Khatmah & Devotionals Channel (`khatmah_reminder_channel`)**: Default importance.
+- **Scheduled Alarms**:
+  - **Daily Ayah Reminder**: Exact time alarm (e.g. 08:00) delivering the daily inspirational verse with Surah name and translation.
+  - **Khatmah Reading Target Reminder**: Daily reminder prompt for remaining pages to meet the reading goal.
+  - **Friday Surah Al-Kahf Reminder**: Weekly Friday morning reminder for Surah Kahf Sunnah recitation.
+  - **Survives Device Reboot**: Configured with `RECEIVE_BOOT_COMPLETED` and `ScheduledNotificationBootReceiver`.
+  - **Android 13+ Ready**: Full runtime `POST_NOTIFICATIONS` and `SCHEDULE_EXACT_ALARM` permission management.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -518,12 +536,14 @@ Phase 14 introduces comprehensive sacred supplications with 100x counters, alleg
 | **Phase 12 — Tajweed, Topics & Asmaul Husna** | Color Tajweed Guide, Thematic Topics Index, 99 Names of Allah Hub. | ✅ Completed |
 | **Phase 13 — Hijri Calendar, Roots & Daily Adhkar** | Hijri & Moon Tracker, Quranic Roots Explorer, Daily Adhkar Suite. | ✅ Completed |
 | **Phase 14 — Ziyarat, Parables & Islamic Wasiyyah** | Ashura 100x & Duas, Quranic Parables, Islamic Will Composer. | ✅ Completed |
+| **Phase 15 — Native Android Notifications & Alarms** | Daily Ayah Alarms, Khatmah Alerts, Boot Receiver & Android 13+ Permissions. | ✅ Completed |
 
 ---
 
 ## 📄 Remote Repository
 
 Changes are pushed to: [github.com/alirezakavianifar/quran_mobile_app.git](https://github.com/alirezakavianifar/quran_mobile_app.git)
+
 
 
 

@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/core/localization/app_localizations.dart';
+import 'src/core/notifications/notification_service.dart';
 import 'src/core/settings/settings_provider.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/features/ai_chat/ai_chat_screen.dart';
@@ -11,8 +12,13 @@ import 'src/features/reader/surah_list_view.dart';
 import 'src/features/search/search_screen.dart';
 import 'src/features/settings/settings_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await NotificationService.instance.initialize();
+  } catch (e) {
+    debugPrint('Failed to initialize NotificationService: $e');
+  }
   runApp(const ProviderScope(child: QuranMobileApp()));
 }
 
