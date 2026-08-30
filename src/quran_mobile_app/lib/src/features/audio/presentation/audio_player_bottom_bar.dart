@@ -5,6 +5,7 @@ import '../../../core/settings/settings_provider.dart';
 import '../../../core/utils/persian_digit_converter.dart';
 import 'audio_player_notifier.dart';
 import 'reciter_selector_dialog.dart';
+import 'sleep_timer_dialog.dart';
 import 'verse_range_dialog.dart';
 
 class AudioPlayerBottomBar extends ConsumerWidget {
@@ -465,6 +466,57 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: state.autoPlayNext
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+
+                    // 5. Sleep Timer Button & Live Countdown
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const SleepTimerDialog(),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        decoration: BoxDecoration(
+                          color: state.isSleepTimerActive
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : Theme.of(context).colorScheme.surface,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.bedtime_rounded,
+                              size: 13,
+                              color: state.isSleepTimerActive
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              state.isSleepTimerActive
+                                  ? (state.isEndOfSurahSleepTimer
+                                      ? (isPersian ? 'پایان سوره' : 'End of Surah')
+                                      : _formatDuration(state.sleepTimerRemaining ?? Duration.zero, isPersian: isPersian))
+                                  : (isPersian ? 'تایمر خواب' : 'Sleep Timer'),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: state.isSleepTimerActive
                                     ? Theme.of(context).colorScheme.primary
                                     : Theme.of(context).colorScheme.onSurfaceVariant,
                               ),

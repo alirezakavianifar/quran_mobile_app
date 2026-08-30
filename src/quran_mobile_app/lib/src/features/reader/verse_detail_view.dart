@@ -12,9 +12,15 @@ import '../audio/presentation/audio_download_notifier.dart';
 import '../audio/presentation/audio_player_bottom_bar.dart';
 import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
+import '../analytics/presentation/reading_analytics_provider.dart';
 import '../bookmarks/bookmarks_provider.dart';
+import '../card_generator/presentation/ayah_card_generator_screen.dart';
+import '../hifz/models/hifz_mode_model.dart';
+import '../hifz/presentation/hifz_provider.dart';
 import '../notes/models/ayah_note_model.dart';
 import '../notes/presentation/ayah_notes_provider.dart';
+import '../sajdah/models/sajdah_model.dart';
+import '../sajdah/presentation/sajdah_dialog.dart';
 import '../tafsir/tafsir_bottom_sheet.dart';
 import 'reader_provider.dart';
 
@@ -387,6 +393,29 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                   );
                 },
               ),
+              ListTile(
+                leading: Icon(
+                  Icons.photo_library_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(loc.translate('createAyahCard')),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AyahCardGeneratorScreen(
+                        surahNameFa: surah.namePersian,
+                        surahNameEn: surah.nameEnglish,
+                        surahNumber: surah.number,
+                        verseNumber: verse.verseNumber,
+                        arabicText: verse.textUthmani,
+                        translationText: trans?.translationText ?? '',
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -576,6 +605,20 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
             },
           ),
           IconButton(
+            icon: Icon(
+              ref.watch(hifzProvider).isEnabled
+                  ? Icons.visibility_off_rounded
+                  : Icons.visibility_outlined,
+              color: ref.watch(hifzProvider).isEnabled
+                  ? Theme.of(context).colorScheme.primary
+                  : null,
+            ),
+            tooltip: loc.translate('hifzMode'),
+            onPressed: () {
+              ref.read(hifzProvider.notifier).toggleHifzMode();
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.mic_outlined),
             tooltip: isPersian ? 'انتخاب قاری' : 'Select Reciter',
             onPressed: () {
@@ -588,20 +631,25 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
         ],
       ),
       bottomNavigationBar: const AudioPlayerBottomBar(),
-      body: versesAsync.when(
-        data: (verses) {
-          if (verses.isEmpty) {
-            return const Center(child: Text('No Verses found.'));
-          }
+      body: Column(
+        children: [
+          if (ref.watch(hifzProvider).isEnabled)
+            _buildHifzControlBar(context, ref, loc, isPersian),
+          Expanded(
+            child: versesAsync.when(
+              data: (verses) {
+                if (verses.isEmpty) {
+                  return const Center(child: Text('No Verses found.'));
+                }
 
-          _lastVerses = verses;
-          if (_currentVisiblePage == 0) {
-            _currentVisiblePage = verses.first.verse.pageNumber;
-            _currentVisibleJuz = verses.first.verse.juzNumber;
-          }
+                _lastVerses = verses;
+                if (_currentVisiblePage == 0) {
+                  _currentVisiblePage = verses.first.verse.pageNumber;
+                  _currentVisibleJuz = verses.first.verse.juzNumber;
+                }
 
-          final showBismillahHeader = widget.surah.number != 1 && widget.surah.number != 9;
-          final totalCount = showBismillahHeader ? verses.length + 1 : verses.length;
+                final showBismillahHeader = widget.surah.number != 1 && widget.surah.number != 9;
+                final totalCount = showBismillahHeader ? verses.length + 1 : verses.length;
 
           return ListView.builder(
             controller: _scrollController,
@@ -679,6 +727,7 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
               final notesMap = ref.watch(ayahNotesProvider);
               final ayahNote = notesMap['${widget.surah.number}_${verse.verseNumber}'];
               final highlightColor = AyahHighlightPalette.getColorFromHex(ayahNote?.colorHex);
+              final sajdahInfo = SajdahData.getSajdahInfo(widget.surah.number, verse.verseNumber);
 
               final verseCard = Card(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -758,6 +807,64 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                                     ),
                                   ),
                                 ),
+                                if (sajdahInfo != null) ...[
+                                  const SizedBox(width: 6),
+                                  InkWell(
+                                    borderRadius: BorderRadius.circular(12),
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => SajdahDialog(sajdahInfo: sajdahInfo),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: sajdahInfo.isWajib
+                                            ? Colors.red.withValues(alpha: 0.15)
+                                            : Colors.amber.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: sajdahInfo.isWajib
+                                              ? Colors.red.shade700
+                                              : Colors.amber.shade800,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '۩',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: sajdahInfo.isWajib
+                                                  ? Colors.red.shade700
+                                                  : Colors.amber.shade800,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            sajdahInfo.isWajib
+                                                ? loc.translate('wajibSajdah')
+                                                : loc.translate('mustahabSajdah'),
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: sajdahInfo.isWajib
+                                                  ? Colors.red.shade700
+                                                  : Colors.amber.shade800,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                             Row(
@@ -828,9 +935,7 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                                         .addBookmark(widget.surah.number, verse.verseNumber);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                          '${loc.translate("addBookmark")} $ayahKey',
-                                        ),
+                                        content: Text('${loc.translate("addBookmark")} $ayahKey'),
                                         duration: const Duration(seconds: 2),
                                       ),
                                     );
@@ -841,19 +946,29 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        // Arabic Uthmani Text with dynamic font & size from settings
-                        Text(
-                          arabicText,
-                          textAlign: TextAlign.right,
-                          textDirection: TextDirection.rtl,
-                          style: AppTheme.getArabicQuranTextStyle(
-                            fontSize: settings.arabicFontSize,
-                            fontFamily: settings.arabicFontFamily,
-                            color: isAudioActive ? Theme.of(context).colorScheme.primary : null,
-                          ).copyWith(
-                            fontWeight: isAudioActive ? FontWeight.bold : FontWeight.normal,
-                          ),
-                        ),
+                        // Arabic Uthmani Text (Standard or Hifz Mask Mode)
+                        ref.watch(hifzProvider).isEnabled
+                            ? _buildHifzArabicText(
+                                context,
+                                verse,
+                                arabicText,
+                                settings,
+                                isAudioActive,
+                                ref.watch(hifzProvider),
+                                ref,
+                              )
+                            : Text(
+                                arabicText,
+                                textAlign: TextAlign.right,
+                                textDirection: TextDirection.rtl,
+                                style: AppTheme.getArabicQuranTextStyle(
+                                  fontSize: settings.arabicFontSize,
+                                  fontFamily: settings.arabicFontFamily,
+                                  color: isAudioActive ? Theme.of(context).colorScheme.primary : null,
+                                ).copyWith(
+                                  fontWeight: isAudioActive ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
                         if (settings.showTranslation && trans != null) ...[
                           const SizedBox(height: 12),
                           const Divider(),
@@ -865,11 +980,19 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                             style: TextStyle(
                               fontSize: settings.translationFontSize,
                               height: 1.5,
-                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            trans.authorName,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Theme.of(context).colorScheme.outline,
                             ),
                           ),
                         ],
-                        if (ayahNote?.hasNote == true) ...[
+                        if (ayahNote?.hasNote == true && ayahNote!.noteText != null) ...[
                           const SizedBox(height: 10),
                           Container(
                             padding: const EdgeInsets.all(10),
@@ -927,6 +1050,142 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHifzControlBar(
+      BuildContext context, WidgetRef ref, AppLocalizations loc, bool isPersian) {
+    final notifier = ref.read(hifzProvider.notifier);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.visibility_off_rounded,
+                  size: 16, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(width: 6),
+              Text(
+                loc.translate('hifzMode'),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              TextButton(
+                onPressed: () => notifier.maskAllInSurah(),
+                child: Text(loc.translate('hifzMaskAll'),
+                    style: const TextStyle(fontSize: 11)),
+              ),
+              TextButton(
+                onPressed: () => notifier.revealAllInSurah(
+                    widget.surah.number, widget.surah.verseCount),
+                child: Text(loc.translate('hifzRevealAll'),
+                    style: const TextStyle(fontSize: 11)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHifzArabicText(
+    BuildContext context,
+    Verse verse,
+    String arabicText,
+    UserSettings settings,
+    bool isAudioActive,
+    HifzState hifzState,
+    WidgetRef ref,
+  ) {
+    if (hifzState.isVerseRevealed(widget.surah.number, verse.verseNumber)) {
+      return Text(
+        arabicText,
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.rtl,
+        style: AppTheme.getArabicQuranTextStyle(
+          fontSize: settings.arabicFontSize,
+          fontFamily: settings.arabicFontFamily,
+          color: isAudioActive ? Theme.of(context).colorScheme.primary : null,
+        ),
+      );
+    }
+
+    final words =
+        arabicText.split(' ').where((w) => w.trim().isNotEmpty).toList();
+
+    return Wrap(
+      alignment: WrapAlignment.end,
+      textDirection: TextDirection.rtl,
+      spacing: 6,
+      runSpacing: 8,
+      children: List.generate(words.length, (wordIdx) {
+        final word = words[wordIdx];
+        final isRevealed = hifzState.isWordRevealed(
+            widget.surah.number, verse.verseNumber, wordIdx);
+
+        if (isRevealed) {
+          return InkWell(
+            onTap: () => ref.read(hifzProvider.notifier).toggleWordReveal(
+                widget.surah.number, verse.verseNumber, wordIdx),
+            child: Text(
+              word,
+              textDirection: TextDirection.rtl,
+              style: AppTheme.getArabicQuranTextStyle(
+                fontSize: settings.arabicFontSize,
+                fontFamily: settings.arabicFontFamily,
+                color: Theme.of(context).colorScheme.primary,
+              ).copyWith(fontWeight: FontWeight.bold),
+            ),
+          );
+        }
+
+        String maskedText;
+        if (hifzState.maskMode == HifzMaskMode.firstLetterOnly &&
+            word.isNotEmpty) {
+          maskedText = '${word[0]}...';
+        } else {
+          maskedText = ' ۞ ';
+        }
+
+        return InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => ref.read(hifzProvider.notifier).toggleWordReveal(
+              widget.surah.number, verse.verseNumber, wordIdx),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                width: 1,
+              ),
+            ),
+            child: Text(
+              maskedText,
+              textDirection: TextDirection.rtl,
+              style: AppTheme.getArabicQuranTextStyle(
+                fontSize: settings.arabicFontSize * 0.85,
+                fontFamily: settings.arabicFontFamily,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }

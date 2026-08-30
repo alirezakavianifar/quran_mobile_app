@@ -23,6 +23,8 @@ class AudioPlayerState {
   final int? rangeEndVerse;
   final int rangeLoopCount; // 1, 2, 3, 5, 10, -1 (infinite)
   final int currentRangeCycle; // 1-indexed count of how many times range has looped
+  final Duration? sleepTimerRemaining;
+  final bool isEndOfSurahSleepTimer;
   final String? errorMessage;
 
   AudioPlayerState({
@@ -43,6 +45,8 @@ class AudioPlayerState {
     this.rangeEndVerse,
     this.rangeLoopCount = 1,
     this.currentRangeCycle = 1,
+    this.sleepTimerRemaining,
+    this.isEndOfSurahSleepTimer = false,
     this.errorMessage,
   });
 
@@ -54,6 +58,9 @@ class AudioPlayerState {
       rangeStartVerse != null &&
       rangeEndVerse != null &&
       rangeStartVerse! <= rangeEndVerse!;
+
+  bool get isSleepTimerActive =>
+      sleepTimerRemaining != null || isEndOfSurahSleepTimer;
 
   static const Object _sentinel = Object();
 
@@ -75,6 +82,8 @@ class AudioPlayerState {
     Object? rangeEndVerse = _sentinel,
     int? rangeLoopCount,
     int? currentRangeCycle,
+    Object? sleepTimerRemaining = _sentinel,
+    bool? isEndOfSurahSleepTimer,
     String? errorMessage,
   }) {
     return AudioPlayerState(
@@ -95,6 +104,10 @@ class AudioPlayerState {
       rangeEndVerse: rangeEndVerse == _sentinel ? this.rangeEndVerse : rangeEndVerse as int?,
       rangeLoopCount: rangeLoopCount ?? this.rangeLoopCount,
       currentRangeCycle: currentRangeCycle ?? this.currentRangeCycle,
+      sleepTimerRemaining: sleepTimerRemaining == _sentinel
+          ? this.sleepTimerRemaining
+          : sleepTimerRemaining as Duration?,
+      isEndOfSurahSleepTimer: isEndOfSurahSleepTimer ?? this.isEndOfSurahSleepTimer,
       errorMessage: errorMessage,
     );
   }
@@ -392,6 +405,12 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     }
 
     // 3. Standard autoPlayNext logic
+    if (state.isEndOfSurahSleepTimer && verseNum >= totalVerses) {
+      await stop();
+      cancelSleepTimer();
+      return;
+    }
+
     if (state.autoPlayNext && verseNum < totalVerses) {
       final nextVerse = verseNum + 1;
       state = state.copyWith(currentSurahId: null, currentVerseNumber: null);
@@ -399,6 +418,56 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     } else {
       await stop();
     }
+  }
+
+  Timer? _sleepTimer;
+
+  void startSleepTimer(Duration duration) {
+    cancelSleepTimer();
+    state = state.copyWith(
+      sleepTimerRemaining: duration,
+      isEndOfSurahSleepTimer: false,
+    );
+
+    _sleepTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      final current = state.sleepTimerRemaining;
+      if (current == null || current.inSeconds <= 1) {
+        try {
+          await _player.setVolume(1.0);
+        } catch (_) {}
+        await pause();
+        cancelSleepTimer();
+      } else {
+        final remainingSec = current.inSeconds - 1;
+        if (remainingSec <= 15) {
+          try {
+            final volume = (remainingSec / 15.0).clamp(0.0, 1.0);
+            await _player.setVolume(volume);
+          } catch (_) {}
+        }
+        state = state.copyWith(sleepTimerRemaining: Duration(seconds: remainingSec));
+      }
+    });
+  }
+
+  void startEndOfSurahSleepTimer() {
+    cancelSleepTimer();
+    state = state.copyWith(
+      isEndOfSurahSleepTimer: true,
+      sleepTimerRemaining: null,
+    );
+  }
+
+  void cancelSleepTimer() {
+    _sleepTimer?.cancel();
+    _sleepTimer = null;
+    try {
+      _player.setVolume(1.0);
+    } catch (_) {}
+    state = state.copyWith(
+      sleepTimerRemaining: null,
+      isEndOfSurahSleepTimer: false,
+    );
   }
 
   Future<void> _replayVerse(int surahId, int verseNumber, int totalVerses) async {
@@ -444,6 +513,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
   @override
   void dispose() {
+    _sleepTimer?.cancel();
     _durationSubscription?.cancel();
     _positionSubscription?.cancel();
     _playerStateSubscription?.cancel();

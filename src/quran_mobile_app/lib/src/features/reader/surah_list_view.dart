@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/utils/persian_digit_converter.dart';
+import '../analytics/presentation/analytics_screen.dart';
+import '../asmaul_husna/presentation/asmaul_husna_screen.dart';
+import '../bookmarks/presentation/smart_bookmarks_screen.dart';
+import '../divisions/presentation/quran_index_screen.dart';
+import '../duas/presentation/quranic_duas_screen.dart';
 import '../khatmah/presentation/khatmah_screen.dart';
 import '../khatmah/presentation/widgets/khatmah_home_banner.dart';
 import '../notes/presentation/notes_hub_screen.dart';
 import '../prayer_times/presentation/prayer_times_screen.dart';
+import '../quiz/presentation/quiz_screen.dart';
+import '../reminders/presentation/reminders_screen.dart';
+import '../tajweed/presentation/tajweed_guide_screen.dart';
+import '../tasbih/presentation/tasbih_screen.dart';
+import '../topics/presentation/quran_topics_screen.dart';
 import 'reader_provider.dart';
 import 'verse_detail_view.dart';
 
@@ -47,52 +57,187 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/app_icon.png',
-                width: 30,
-                height: 30,
-                errorBuilder: (_, __, ___) => const Icon(Icons.menu_book_rounded),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(loc.translate('surahs')),
-          ],
-        ),
+        title: Text(loc.translate('surahs')),
         actions: [
           IconButton(
-            icon: const Icon(Icons.explore_outlined),
-            tooltip: loc.translate('prayerTimesAndQibla'),
+            icon: const Icon(Icons.view_list_rounded),
+            tooltip: loc.translate('quranIndex'),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const PrayerTimesScreen()),
+                MaterialPageRoute(builder: (_) => const QuranIndexScreen()),
               );
             },
           ),
           IconButton(
-            icon: const Icon(Icons.note_alt_outlined),
-            tooltip: loc.translate('notesAndHighlights'),
+            icon: const Icon(Icons.volunteer_activism_outlined),
+            tooltip: loc.translate('quranicDuas'),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const NotesHubScreen()),
+                MaterialPageRoute(builder: (_) => const QuranicDuasScreen()),
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.auto_stories_outlined),
-            tooltip: loc.translate('khatmah'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const KhatmahScreen()),
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.apps_rounded),
+            tooltip: isPersian ? 'ابزارها و امکانات اسلامی' : 'Islamic Companion Tools',
+            onSelected: (val) {
+              Widget? screen;
+              switch (val) {
+                case 'tajweed':
+                  screen = const TajweedGuideScreen();
+                  break;
+                case 'topics':
+                  screen = const QuranTopicsScreen();
+                  break;
+                case 'asmaul_husna':
+                  screen = const AsmaulHusnaScreen();
+                  break;
+                case 'smart_bookmarks':
+                  screen = const SmartBookmarksScreen();
+                  break;
+                case 'reminders':
+                  screen = const RemindersScreen();
+                  break;
+                case 'analytics':
+                  screen = const AnalyticsScreen();
+                  break;
+                case 'quiz':
+                  screen = const QuizScreen();
+                  break;
+                case 'tasbih':
+                  screen = const TasbihScreen();
+                  break;
+                case 'prayer_times':
+                  screen = const PrayerTimesScreen();
+                  break;
+                case 'notes':
+                  screen = const NotesHubScreen();
+                  break;
+                case 'khatmah':
+                  screen = const KhatmahScreen();
+                  break;
+              }
+              if (screen != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => screen!),
+                );
+              }
             },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'tajweed',
+                child: Row(
+                  children: [
+                    const Icon(Icons.palette_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('tajweedGuide')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'topics',
+                child: Row(
+                  children: [
+                    const Icon(Icons.category_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('quranTopics')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'asmaul_husna',
+                child: Row(
+                  children: [
+                    const Icon(Icons.stars_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('asmaulHusna')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'smart_bookmarks',
+                child: Row(
+                  children: [
+                    const Icon(Icons.collections_bookmark_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('smartBookmarks')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'reminders',
+                child: Row(
+                  children: [
+                    const Icon(Icons.notifications_active_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('reminders')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'analytics',
+                child: Row(
+                  children: [
+                    const Icon(Icons.analytics_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('readingAnalytics')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'quiz',
+                child: Row(
+                  children: [
+                    const Icon(Icons.quiz_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('quranQuiz')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'tasbih',
+                child: Row(
+                  children: [
+                    const Icon(Icons.touch_app_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('digitalTasbih')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'prayer_times',
+                child: Row(
+                  children: [
+                    const Icon(Icons.explore_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('prayerTimesAndQibla')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'notes',
+                child: Row(
+                  children: [
+                    const Icon(Icons.note_alt_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('notesAndHighlights')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'khatmah',
+                child: Row(
+                  children: [
+                    const Icon(Icons.auto_stories_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('khatmah')),
+                  ],
+                ),
+              ),
+            ],
           ),
           IconButton(
             icon: Icon(isPersian ? Icons.language : Icons.g_translate),

@@ -267,7 +267,25 @@ The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
 - **GET `/api/v1/audio/reciters`**: Returns available reciter profiles (Mishary Rashid Alafasy, Mahmoud Khalil Al-Husary, Abdul Basit, Shahriar Parhizgar).
 - **GET `/api/v1/audio/ayah/{reciterId}/{surahId}/{verseId}`**: Returns verse audio stream URLs and word-by-word timing metadata.
 
-### 5. Advanced Flutter Mobile Companion Features (Phase 8)
+### 5. Advanced Flutter Mobile Companion Features (Phases 8 & 9)
+- **Digital Tasbih & Multi-Stage Dhikr Counter (`features/tasbih/`)**:
+  * Multi-stage sequential prayer progression (e.g. **Tasbihat of Lady Fatima (س)**: $34 \times \text{Allahu Akbar} \to 33 \times \text{Alhamdulillah} \to 33 \times \text{Subhanallah}$).
+  * Rich presets (Salawat, Istighfar, dynamic Persian weekday prayers) and custom prayer creator with haptic feedback pulses and persistent lifetime counts.
+  * Interactive circular glowing progress dial with real-time sweep animation.
+- **40 Rabbana & Quranic Duas Hub (`features/duas/`)**:
+  * 40+ curated divine supplications starting with *Rabbana* and *Rabbi* across 6 thematic categories (*Forgiveness, Family, Faith, Relief, Knowledge, Patience*).
+  * Thematic filter chips, instant search across Arabic/Translations/Surahs, 1-tap audio recitation, and clipboard copying.
+- **Obligatory & Recommended Sajdah Verses System (`features/sajdah/`)**:
+  * Fiqh taxonomy classifying the **4 Wajib Sajdah verses** (32:15, 41:38, 53:62, 96:19) and **11 Mustahab Sajdah verses**.
+  * Decorated Sajdah badge (`۩ سجده واجب` / `۩ سجده مستحب`) in reader cards with 1-tap popup displaying the prescribed Sajdah dua (*لا إِلَهَ إِلا اللَّهُ حَقّاً حَقّاً...*), translation, and fiqh rules.
+- **Recitation Sleep Timer & Gentle Fade-Out Engine (`features/audio/`)**:
+  * Sleep timer presets (15m, 30m, 45m, 60m, end-of-surah, or custom minutes).
+  * Gentle 15-second volume fade-out before pausing, and live countdown badge (`💤 ۱۴:۵۹`) on the reader player bar.
+- **Ayah Story & Image Card Generator (`features/card_generator/`)**:
+  * Export beautiful, high-resolution PNG images of Quranic verses at $3.0\times$ pixel ratio.
+  * Formats: **1:1 Square (Post)** and **9:16 Vertical (Story / Status)**.
+  * 4 Visual Themes: 🌿 *Emerald & Gold*, 🌌 *Deep Midnight*, 📜 *Ancient Parchment*, 💎 *Modern Glassmorphism*.
+  * Font sizing, translation visibility toggles, and direct file export.
 - **Offline Audio Batch Downloader**: Download entire Surahs locally (`audio_cache/{reciter}/{surah}/{verse}.mp3`) with live progress and zero-latency offline playback.
 - **Khatmah / Daily Reading Plan & Progress Tracker**: Plan custom reading goals (30-day Ramadan, 60-day, 90-day, 1-year) with daily quotas, consecutive reading streak tracking (🔥 Day Streak), home banner, and direct page jump.
 - **Verse-Range Repeat (Hifz Mode)**: Loop custom verse ranges (e.g., Ayah 1 to 5) with multipliers (1x, 2x, 3x, 5x, 10x, ∞) and nested single-verse repeats.
@@ -334,6 +352,91 @@ cd src/quran_mobile_app; flutter test
 
 ---
 
+## 🧠 Phase 10 — Interactive Hifz, Study Analytics & Quranic Quiz Suite
+
+Phase 10 introduces advanced memorization testing tools, reading habit consistency trackers, and gamified Quranic knowledge challenges.
+
+### 1. Interactive Hifz Hide-and-Reveal Practice Mode (`lib/src/features/hifz/`)
+- **3 Practice Testing Styles**:
+  - `fullMask`: All words are blurred/masked behind interactive tokens (` ۞ `). Tapping any word smoothly reveals it to test recall during memorization.
+  - `firstLetterOnly`: Displays only the initial letter of each Arabic word (e.g. `ب...`) as an active recall memory prompt.
+  - `translationPrompt`: Masks the entire Arabic text completely, prompting the reciter to recall and recite the Ayah solely from the translation.
+- **Reader Integration**: Dedicated Hifz Mode toggle in `VerseDetailView` with "Mask All" and "Reveal All" quick action buttons.
+
+### 2. 52-Week Reading Activity Heatmap & Analytics Engine (`lib/src/features/analytics/`)
+- **Activity Tracking Engine (`ReadingActivityRepository`)**: Automatically logs daily reading activity, verses read, Khatmah pages completed, and recitation listening minutes.
+- **Interactive Analytics Dashboard (`AnalyticsScreen`)**:
+  - **GitHub-style 52-Week Year-Round Heatmap**: Horizontally scrollable 52-column matrix with 5 color intensity levels ($0 \to 4$) and interactive date tooltips.
+  - **Daily Consistency Streak Counter (🔥)**: Tracks consecutive daily reading habits.
+  - **Weekly Activity Breakdown**: Day-by-day bar charts comparing reading volume across the week.
+  - **Milestone Badges**: *First Steps (1st Ayah)*, *Week of Light (7-Day Streak)*, *Quran Companion (100 Verses)*.
+
+### 3. Interactive Quranic Knowledge & Vocabulary Quiz (`lib/src/features/quiz/`)
+- **Multiple Question Categories**:
+  - `missingWord`: "Fill in the missing Quranic word in the verse" (*کلمه جاافتاده در آیه چیست؟*).
+  - `nextVerse`: "What is the next Ayah?" (*آیه بعدی کدام است؟*).
+  - `surahIdentification`: "Which Surah does this Ayah belong to?" (*این آیه متعلق به کدام سوره است؟*).
+- **Gamified 10-Question Rounds**: Dynamic score streaks, haptic tactile feedback, instant green/red answer animations, and detailed explanation cards with Ayah citations.
+
+---
+
+## 📑 Phase 11 — Advanced Quran Divisions, Smart Bookmark Collections & Daily Reminders Hub
+
+Phase 11 introduces comprehensive multi-index navigation across the Holy Quran, structured bookmark collections with tagging, and daily habit reminders.
+
+### 1. Advanced Quran Divisions & Chronological Revelation Index (`lib/src/features/divisions/`)
+- **Multi-Tab Index Navigator (`QuranIndexScreen`)**:
+  - **30 Juz Index Tab**: Complete catalog of all 30 Juz with starting Arabic Ayah snippets, names, page spans (`صفحه ۱ تا ۲۱`), verse counts, and 1-tap reading navigation.
+  - **Chronological Revelation Order Tab (ترتیب نزول)**: 114 Surahs ordered by historical revelation (e.g. Surah 96 Al-Alaq #1 ... Surah 110 An-Nasr #114) with search and Makki/Madani filter toggle (`همه`, `مکی`, `مدنی`).
+
+### 2. Smart Bookmark Collections & Tagging Taxonomy (`lib/src/features/bookmarks/`)
+- **Multi-Folder Organization (`SmartBookmarksScreen` & `EnhancedBookmarksRepository`)**:
+  - Create and manage custom folders (*General*, *Tadabbur & Reflections*, *Memorization Goals*, *Friday Recitations*).
+  - Multi-tag tagging taxonomy (`#صبر`, `#امید`, `#خانواده`, `#دعا`, `#Patience`, `#Mercy`) with fast choice chip filtering.
+  - Full JSON backup export & restore utility (`exportToJson()` and `importFromJson()`).
+
+### 3. Daily Quranic Devotional Reminders Hub (`lib/src/features/reminders/`)
+- **Daily Ayah Curator (`DailyAyahCurator`)**: Rotating daily inspirational Ayah widget with Uthmani script, translations, theme labels, and direct Surah navigation.
+- **Devotional Reminders Suite (`RemindersScreen`)**:
+  - **Daily Ayah Reminder (آیه روز)**: Scheduled morning verse reminder with time picker.
+  - **Khatmah Reading Target Reminder**: Daily reading goal reminder with time picker.
+  - **Friday Surah Al-Kahf Reminder**: Weekly Sunnah recitation reminder for Fridays.
+
+---
+
+## 🎨 Phase 12 — Phonetic Tajweed Guide, Thematic Topics Index & Asmaul Husna Hub
+
+Phase 12 delivers foundational Quranic pronunciation learning, semantic theme-based exploration, and the complete 99 Beautiful Names of Allah.
+
+### 1. Phonetic Tajweed Rules & Color Coding Guide (`lib/src/features/tajweed/`)
+- **6 Core Tajweed Rule Families**:
+  - 🔴 **Ghunnah (غنه)** (#E53935): Nasalization rules in Noon & Meem Mushaddad with 2-vowel duration.
+  - 🔵 **Qalqalah (قلقله)** (#1E88E5): Bouncing/echoing consonants (ق، ط، ب، ج، د - قُطب جَد) in state of Sukoon.
+  - 🟢 **Ikhfa (اخفاء)** (#43A047): Concealment of Noon Sakinah/Tanween before 15 consonants with 2-beat nasalization.
+  - 🟠 **Idgham (ادغام)** (#FB8C00): Merging letters into Yarmaloon (یرملون) with/without Ghunnah.
+  - 🟣 **Madd (مد)** (#8E24AA): Prolongation rules (Madd Muttasil, Munfasil, Lazim) from 4 to 6 counts.
+  - 🟡 **Iqlab (اقلاب)** (#8D6E63): Transforming Noon Sakinah into a hidden Meem before Ba (ب).
+- **Interactive Guide Screen (`TajweedGuideScreen`)**:
+  - Color-coded rule legend, letter badges, authentic Quranic examples in Amiri Quran typography, and 1-tap navigation directly into Surah reader.
+
+### 2. Conceptual Quranic Topics & Thematic Index (`lib/src/features/topics/`)
+- **Thematic Exploration (`QuranTopicsScreen`)**:
+  - ⚖️ *Justice, Ethics & Human Rights (عدالت، قسط و امانت‌داری)*
+  - 🌿 *Nature, Creation & Cosmos (طبیعت، کیهان و شگفتی‌های آفرینش)*
+  - 📜 *Stories of the Prophets (داستان‌ها و عبرت‌های پیامبران الهی)*
+  - 🕊 *Charity, Benevolence & Brotherhood (انفاق، احسان و برادری ایمانی)*
+  - 🛡 *Patience & Steadfastness (صبر، شکیبایی و استقامت)*
+  - 🌙 *Afterlife & Resurrection (معاد، روز حساب و سرای باقی)*
+- **Interactive Features**: Instant search across topics, category carousel filters, and expandable verse preview cards with 1-tap reading navigation.
+
+### 3. Asmaul Husna (99 Beautiful Names of Allah) Hub (`lib/src/features/asmaul_husna/`)
+- **Divine Names Hub (`AsmaulHusnaScreen`)**:
+  - Complete authentic 99 Names catalog with Uthmani calligraphy, transliteration, deep Persian & English spiritual meanings, and Quranic citations.
+  - Interactive search by Arabic name, transliteration, or meaning keywords.
+  - Detail modal with spiritual reflection and **1-tap "Count in Digital Tasbih (ذکر در تسبیح‌شمار)"** action.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -347,10 +450,17 @@ cd src/quran_mobile_app; flutter test
 | **Phase 6 — Admin Portal & Quality Assurance** | Admin API telemetry, `/healthz` probes, CI/CD workflow & master testing suite. | ✅ Completed |
 | **Phase 7 — Production Deployment & Sync** | Docker orchestration, Web Admin Dashboard UI (`/admin`), Sync & Audio APIs. | ✅ Completed |
 | **Phase 8 — Companion & Islamic Productivity Suite** | Offline Audio Downloader, Khatmah Planner, Verse-Range Loop, Notes & Qibla. | ✅ Completed |
+| **Phase 9 — Devotional & Visual Suite** | Digital Tasbih, 40 Rabbana Duas, Sajdah Verses, Sleep Timer, Ayah Story Cards. | ✅ Completed |
+| **Phase 10 — Hifz, Analytics & Quiz Suite** | Hifz Mask Mode, 52-Week Heatmap & Streaks, Quranic Ayah Knowledge Quiz. | ✅ Completed |
+| **Phase 11 — Divisions, Smart Bookmarks & Reminders** | 30 Juz & Revelation Index, Tagged Folders & Backup, Daily Ayah Reminders. | ✅ Completed |
+| **Phase 12 — Tajweed, Topics & Asmaul Husna** | Color Tajweed Guide, Thematic Topics Index, 99 Names of Allah Hub. | ✅ Completed |
 
 ---
 
 ## 📄 Remote Repository
 
 Changes are pushed to: [github.com/alirezakavianifar/quran_mobile_app.git](https://github.com/alirezakavianifar/quran_mobile_app.git)
+
+
+
 
