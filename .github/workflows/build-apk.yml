@@ -1,6 +1,10 @@
 name: Android APK Build & Distribution Pipeline
 
 on:
+  push:
+    branches:
+      - master
+      - main
   workflow_dispatch:
     inputs:
       abi:
