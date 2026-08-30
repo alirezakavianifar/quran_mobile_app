@@ -437,6 +437,68 @@ Phase 12 delivers foundational Quranic pronunciation learning, semantic theme-ba
 
 ---
 
+## 🌙 Phase 13 — Islamic Hijri Calendar, Quranic Root Words & Daily Adhkar Hub
+
+Phase 13 delivers Islamic calendar date conversion, real-time lunar moon phase calculations, root word morphology semantics, and daily prophetic Adhkar.
+
+### 1. Islamic Hijri Calendar & Holy Events (`lib/src/features/calendar/`)
+- **Multi-Calendar Converter (`IslamicCalendarScreen`)**:
+  - Gregorian $\leftrightarrow$ Lunar Hijri $\leftrightarrow$ Solar Shamsi date conversion.
+  - Complete catalog of Islamic holy occasions across all 12 Hijri months (Ramadan, Laylat al-Qadr, Eid al-Fitr, Eid al-Adha, Eid al-Ghadir, Ashura, Arbaeen, Mab'ath, Mid-Sha'ban).
+  - **Real-Time Moon Phase Tracker**: Illumination percentage, phase badges (🌑🌒🌓🌔🌕🌖🌗🌘), and recommended Quranic Surahs/A'mal for holy dates.
+
+### 2. Quranic Vocab & Arabic Root Word Explorer (`lib/src/features/roots/`)
+- **Morphological Root Word Library (`QuranRootsScreen`)**:
+  - Root letters (`الجذر` - e.g. `ر-ح-م`, `ع-ل-م`, `ص-ب-ر`, `خ-ل-ق`, `ن-ص-ر`, `ک-ت-ب`, `ه-د-ی`).
+  - Total occurrences count across the entire Quran.
+  - Core linguistic meaning in Persian and English.
+  - Morphological derived forms (nouns, verbs, participles).
+  - Sample verses with 1-tap navigation directly into the Quran reader.
+
+### 3. Daily Morning, Evening & Post-Salah Adhkar Suite (`lib/src/features/adhkar/`)
+- **Authentic Adhkar Collections (`DailyAdhkarScreen`)**:
+  - 🌅 *Morning Adhkar (اذکار و تعقیبات صبحگاه)*
+  - 🌇 *Evening Adhkar (اذکار و تعقیبات شامگاه)*
+  - 🛏 *Bedtime Adhkar & Sleep Sunnahs (اذکار و آداب خواب)*
+  - 🕌 *Post-Salah Adhkar (تعقیبات مشترکه نمازها)*
+- **Interactive Step Counter**: Tap-to-count with haptic feedback, step progress, virtues/sources, reset action, and completion indicators.
+
+---
+
+## 🕊 Phase 14 — Sacred Ziyarat Sanctuary, Quranic Parables & Islamic Wasiyyah Builder
+
+Phase 14 introduces comprehensive sacred supplications with 100x counters, allegorical Quranic parables, and a spiritual will composer.
+
+### 1. Sacred Ziyarat & Landmark Supplications (`lib/src/features/ziyarat/`)
+- **Sacred Ziyarats & Duas Sanctuary (`ZiyaratHubScreen` & `ZiyaratDetailScreen`)**:
+  - 🕊 **Ziyarat Ashura (زیارت عاشورا)** with interactive 100x Peace & Curse counters (۱۰۰ سلام و ۱۰۰ لعن) featuring haptic feedback and completion badges.
+  - 🌟 **Ziyarat Warith (زیارت وارث)**: Connecting the legacy of the major Prophets with Imam Hussain (AS).
+  - 💫 **Dua Kumayl (دعای کمیل)**: Soulful supplication for Friday nights and Mid-Sha'ban.
+  - 🛡 **Dua Tawassul (دعای توسل)**: Seeking intercession of the Prophet (PBUH) and Ahlulbayt.
+  - 🌿 **Ziyarat Ale Yasin (زیارت آل یاسین)**: Special Ziyarat for Imam al-Mahdi (AJ).
+  - 🤲 **Dua Ahd (دعای عهد)**: Morning renewal of allegiance with the Living Imam.
+
+### 2. Quranic Parables & Metaphors (امثال قرآن) Hub (`lib/src/features/parables/`)
+- **Divine Parables Explorer (`QuranParablesScreen`)**:
+  - 💡 *The Light of Allah (آیه نور - النور: ۳۵)*: Niche, lamp, pearly star, and the blessed olive tree.
+  - 🕸 *The Spider's Web (مَثَل عنکبوت - العنکبوت: ۴۱)*: The utter frailty of polytheism and false idols.
+  - 🌧 *The Rain on the Hard Rock (باران بر تخته سنگ - البقرة: ۲۶۴)*: The ruin of insincere and ostentatious charity.
+  - 🌳 *The Good Word as a Pure Tree (کلمه طیبه شجره طیبه - ابراهیم: ۲۴)*: Deep-rooted faith producing endless fruits.
+  - 📚 *The Donkey Carrying Books (حمل تورات و غفلت - الجمعة: ۵)*: The futility of knowledge without practice.
+  - 🏜 *The Desert Mirage (سراب در کویر - النور: ۳۹)*: The illusion of disbelievers' deeds on the Day of Judgment.
+- **Detailed Metaphorical Breakdown**: Allegory subject, moral lessons, and symbolic keys with 1-tap navigation to the Quran reader.
+
+### 3. Islamic Will & Spiritual Testament (وصیت‌نامه شرعی) Builder (`lib/src/features/wasiyyah/`)
+- **Structured Prophetic Wasiyyah Composer (`WasiyyahScreen` & `WasiyyahRepository`)**:
+  - 📜 *Spiritual Testimony & Creed (اقرار به توحید، نبوت و ولایت)*
+  - 🕌 *Obligatory Religious Dues (قضای نماز، روزه و خمس/زکات)*
+  - 💰 *Financial & Trust Bequests (دیون، مطالبات و امانات)*
+  - ⚖️ *One-Third Estate Bequests (ثلث مال در امور خیریه)*
+  - 🕊 *Personal Advice to Heirs (سفارش‌های اخلاقی و معنوی به فرزندان و بازماندگان)*
+- **Export & Utility**: Local SharedPreferences persistence, auto-filled Islamic templates, and formatted text export to clipboard.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -454,12 +516,16 @@ Phase 12 delivers foundational Quranic pronunciation learning, semantic theme-ba
 | **Phase 10 — Hifz, Analytics & Quiz Suite** | Hifz Mask Mode, 52-Week Heatmap & Streaks, Quranic Ayah Knowledge Quiz. | ✅ Completed |
 | **Phase 11 — Divisions, Smart Bookmarks & Reminders** | 30 Juz & Revelation Index, Tagged Folders & Backup, Daily Ayah Reminders. | ✅ Completed |
 | **Phase 12 — Tajweed, Topics & Asmaul Husna** | Color Tajweed Guide, Thematic Topics Index, 99 Names of Allah Hub. | ✅ Completed |
+| **Phase 13 — Hijri Calendar, Roots & Daily Adhkar** | Hijri & Moon Tracker, Quranic Roots Explorer, Daily Adhkar Suite. | ✅ Completed |
+| **Phase 14 — Ziyarat, Parables & Islamic Wasiyyah** | Ashura 100x & Duas, Quranic Parables, Islamic Will Composer. | ✅ Completed |
 
 ---
 
 ## 📄 Remote Repository
 
 Changes are pushed to: [github.com/alirezakavianifar/quran_mobile_app.git](https://github.com/alirezakavianifar/quran_mobile_app.git)
+
+
 
 
 

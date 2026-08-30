@@ -138,6 +138,12 @@ class AppLocalizations {
       'tajweedGuide': 'راهنمای احکام تجوید',
       'quranTopics': 'نمایه موضوعی قرآن',
       'asmaulHusna': 'اسماء الحسنی (۹۹ نام خدا)',
+      'islamicCalendar': 'تقویم اسلامی و مناسبت‌ها',
+      'quranRoots': 'ریشه‌شناسی واژگان قرآن',
+      'dailyAdhkar': 'اذکار و تعقیبات روزانه',
+      'ziyaratSanctuary': 'زیارات و ادعیه شریفه',
+      'quranParables': 'مَثَل‌های قرآن کریم',
+      'wasiyyahBuilder': 'وصیت‌نامه شرعی و معنوی',
     },
     'en': {
       'appTitle': 'Quran Exploration & RAG Platform',
@@ -263,6 +269,12 @@ class AppLocalizations {
       'tajweedGuide': 'Tajweed Rules Guide',
       'quranTopics': 'Thematic Quranic Topics',
       'asmaulHusna': 'Asmaul Husna (99 Names)',
+      'islamicCalendar': 'Islamic Calendar & Events',
+      'quranRoots': 'Quranic Root Words',
+      'dailyAdhkar': 'Daily Adhkar & Duas',
+      'ziyaratSanctuary': 'Sacred Ziyarat & Duas',
+      'quranParables': 'Quranic Parables & Metaphors',
+      'wasiyyahBuilder': 'Islamic Will & Testament',
     },
   };
 

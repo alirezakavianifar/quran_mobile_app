@@ -2,20 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/utils/persian_digit_converter.dart';
+import '../adhkar/presentation/daily_adhkar_screen.dart';
 import '../analytics/presentation/analytics_screen.dart';
 import '../asmaul_husna/presentation/asmaul_husna_screen.dart';
 import '../bookmarks/presentation/smart_bookmarks_screen.dart';
+import '../calendar/presentation/islamic_calendar_screen.dart';
 import '../divisions/presentation/quran_index_screen.dart';
 import '../duas/presentation/quranic_duas_screen.dart';
 import '../khatmah/presentation/khatmah_screen.dart';
 import '../khatmah/presentation/widgets/khatmah_home_banner.dart';
 import '../notes/presentation/notes_hub_screen.dart';
+import '../parables/presentation/quran_parables_screen.dart';
 import '../prayer_times/presentation/prayer_times_screen.dart';
 import '../quiz/presentation/quiz_screen.dart';
 import '../reminders/presentation/reminders_screen.dart';
+import '../roots/presentation/quran_roots_screen.dart';
 import '../tajweed/presentation/tajweed_guide_screen.dart';
 import '../tasbih/presentation/tasbih_screen.dart';
 import '../topics/presentation/quran_topics_screen.dart';
+import '../wasiyyah/presentation/wasiyyah_screen.dart';
+import '../ziyarat/presentation/ziyarat_hub_screen.dart';
 import 'reader_provider.dart';
 import 'verse_detail_view.dart';
 
@@ -85,6 +91,24 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
             onSelected: (val) {
               Widget? screen;
               switch (val) {
+                case 'ziyarat':
+                  screen = const ZiyaratHubScreen();
+                  break;
+                case 'parables':
+                  screen = const QuranParablesScreen();
+                  break;
+                case 'wasiyyah':
+                  screen = const WasiyyahScreen();
+                  break;
+                case 'calendar':
+                  screen = const IslamicCalendarScreen();
+                  break;
+                case 'roots':
+                  screen = const QuranRootsScreen();
+                  break;
+                case 'adhkar':
+                  screen = const DailyAdhkarScreen();
+                  break;
                 case 'tajweed':
                   screen = const TajweedGuideScreen();
                   break;
@@ -127,6 +151,66 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
               }
             },
             itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'ziyarat',
+                child: Row(
+                  children: [
+                    const Icon(Icons.mosque_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('ziyaratSanctuary')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'parables',
+                child: Row(
+                  children: [
+                    const Icon(Icons.lightbulb_outline_rounded, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('quranParables')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'wasiyyah',
+                child: Row(
+                  children: [
+                    const Icon(Icons.history_edu_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('wasiyyahBuilder')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'calendar',
+                child: Row(
+                  children: [
+                    const Icon(Icons.calendar_month_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('islamicCalendar')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'roots',
+                child: Row(
+                  children: [
+                    const Icon(Icons.auto_stories_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('quranRoots')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'adhkar',
+                child: Row(
+                  children: [
+                    const Icon(Icons.wb_twilight_outlined, size: 20),
+                    const SizedBox(width: 10),
+                    Text(loc.translate('dailyAdhkar')),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'tajweed',
                 child: Row(
