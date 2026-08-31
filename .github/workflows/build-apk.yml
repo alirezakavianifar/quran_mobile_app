@@ -62,7 +62,7 @@ jobs:
         run: |
           cd src/quran_mobile_app
           flutter clean
-          rm -rf android/.gradle android/build build
+          rm -rf android/.gradle android/build build ~/.gradle
           flutter pub get
         shell: bash
 
