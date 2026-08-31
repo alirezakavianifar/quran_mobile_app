@@ -24,14 +24,14 @@ subprojects {
         val androidExt = project.extensions.findByName("android")
         when (androidExt) {
             is com.android.build.gradle.AppExtension -> {
-                androidExt.compileSdkVersion(35)
+                androidExt.compileSdk = 35
                 androidExt.defaultConfig {
                     minSdk = 21
                     targetSdk = 35
                 }
             }
             is com.android.build.gradle.LibraryExtension -> {
-                androidExt.compileSdkVersion(35)
+                androidExt.compileSdk = 35
                 androidExt.defaultConfig {
                     minSdk = 21
                 }
