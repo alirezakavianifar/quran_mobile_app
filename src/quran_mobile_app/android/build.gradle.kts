@@ -26,15 +26,14 @@ subprojects {
             is com.android.build.gradle.AppExtension -> {
                 androidExt.compileSdkVersion(35)
                 androidExt.defaultConfig {
-                    minSdkVersion(21)
-                    targetSdkVersion(35)
+                    minSdk = 21
+                    targetSdk = 35
                 }
             }
             is com.android.build.gradle.LibraryExtension -> {
                 androidExt.compileSdkVersion(35)
                 androidExt.defaultConfig {
-                    minSdkVersion(21)
-                    targetSdkVersion(35)
+                    minSdk = 21
                 }
             }
         }
