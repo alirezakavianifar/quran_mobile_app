@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/database/app_database.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/utils/persian_digit_converter.dart';
 import '../adhkar/presentation/daily_adhkar_screen.dart';
@@ -22,6 +23,8 @@ import '../tasbih/presentation/tasbih_screen.dart';
 import '../topics/presentation/quran_topics_screen.dart';
 import '../wasiyyah/presentation/wasiyyah_screen.dart';
 import '../ziyarat/presentation/ziyarat_hub_screen.dart';
+import 'last_read_provider.dart';
+import 'models/last_read_model.dart';
 import 'reader_provider.dart';
 import 'verse_detail_view.dart';
 
@@ -361,9 +364,15 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
                       nameEn.contains(cleanQuery);
                 }).toList();
 
+          final lastRead = ref.watch(lastReadProvider);
+
           return Column(
             children: [
-              if (_filterQuery.isEmpty) const KhatmahHomeBanner(),
+              if (_filterQuery.isEmpty) ...[
+                if (lastRead != null)
+                  _buildLastReadBanner(context, loc, isPersian, lastRead, surahs),
+                const KhatmahHomeBanner(),
+              ],
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: TextField(
@@ -474,6 +483,176 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
+      ),
+    );
+  }
+
+  Widget _buildLastReadBanner(
+    BuildContext context,
+    AppLocalizations loc,
+    bool isPersian,
+    LastReadEntry lastRead,
+    List<Surah> surahs,
+  ) {
+    final surahName = isPersian
+        ? (lastRead.surahNamePersian.isNotEmpty ? lastRead.surahNamePersian : lastRead.surahNameArabic)
+        : (lastRead.surahNameEnglish.isNotEmpty ? lastRead.surahNameEnglish : lastRead.surahNameArabic);
+
+    final cleanSurahName = surahName.replaceAll(RegExp(r'\s*\([^)]*\)'), '').trim();
+    final verseNumStr = isPersian
+        ? PersianDigitConverter.toPersian('${lastRead.verseNumber}')
+        : '${lastRead.verseNumber}';
+    final pageNumStr = isPersian
+        ? PersianDigitConverter.toPersian('${lastRead.pageNumber}')
+        : '${lastRead.pageNumber}';
+    final juzNumStr = isPersian
+        ? PersianDigitConverter.toPersian('${lastRead.juzNumber}')
+        : '${lastRead.juzNumber}';
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.6),
+            Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            final targetSurah = surahs.firstWhere(
+              (s) => s.number == lastRead.surahId,
+              orElse: () => surahs.first,
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VerseDetailView(
+                  surah: targetSurah,
+                  initialVerseNumber: lastRead.verseNumber,
+                ),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.auto_stories_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                loc.translate('lastRead'),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                width: 4,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${loc.translate("page")} $pageNumStr • ${loc.translate("juz")} $juzNumStr',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '$cleanSurahName (${lastRead.surahNameArabic}) - ${isPersian ? "آیه" : "Ayah"} $verseNumStr',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FilledButton.tonalIcon(
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        final targetSurah = surahs.firstWhere(
+                          (s) => s.number == lastRead.surahId,
+                          orElse: () => surahs.first,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => VerseDetailView(
+                              surah: targetSurah,
+                              initialVerseNumber: lastRead.verseNumber,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                      label: Text(
+                        loc.translate('continueReading'),
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+                if (lastRead.verseTextPreview != null && lastRead.verseTextPreview!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    lastRead.verseTextPreview!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

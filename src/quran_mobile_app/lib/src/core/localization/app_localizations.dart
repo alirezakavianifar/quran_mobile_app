@@ -144,6 +144,11 @@ class AppLocalizations {
       'ziyaratSanctuary': 'زیارات و ادعیه شریفه',
       'quranParables': 'مَثَل‌های قرآن کریم',
       'wasiyyahBuilder': 'وصیت‌نامه شرعی و معنوی',
+      'lastRead': 'آخرین مطالعه',
+      'continueReading': 'ادامه مطالعه',
+      'resumedAtAyah': 'ادامه از آیه',
+      'lastReadVerse': 'آخرین آیه مطالعه‌شده',
+      'clearHistory': 'پاکسازی تاریخچه',
     },
     'en': {
       'appTitle': 'Quran Exploration & RAG Platform',
@@ -275,6 +280,11 @@ class AppLocalizations {
       'ziyaratSanctuary': 'Sacred Ziyarat & Duas',
       'quranParables': 'Quranic Parables & Metaphors',
       'wasiyyahBuilder': 'Islamic Will & Testament',
+      'lastRead': 'Last Read',
+      'continueReading': 'Continue Reading',
+      'resumedAtAyah': 'Resumed at Ayah',
+      'lastReadVerse': 'Last Studied Ayah',
+      'clearHistory': 'Clear History',
     },
   };
 

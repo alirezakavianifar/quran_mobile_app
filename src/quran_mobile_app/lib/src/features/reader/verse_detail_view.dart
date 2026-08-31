@@ -22,12 +22,18 @@ import '../notes/presentation/ayah_notes_provider.dart';
 import '../sajdah/models/sajdah_model.dart';
 import '../sajdah/presentation/sajdah_dialog.dart';
 import '../tafsir/tafsir_bottom_sheet.dart';
+import 'last_read_provider.dart';
 import 'reader_provider.dart';
 
 class VerseDetailView extends ConsumerStatefulWidget {
   final Surah surah;
+  final int? initialVerseNumber;
 
-  const VerseDetailView({super.key, required this.surah});
+  const VerseDetailView({
+    super.key,
+    required this.surah,
+    this.initialVerseNumber,
+  });
 
   @override
   ConsumerState<VerseDetailView> createState() => _VerseDetailViewState();
@@ -35,6 +41,7 @@ class VerseDetailView extends ConsumerStatefulWidget {
 
 class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
   final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _verseKeys = {};
   int _currentVisiblePage = 0;
   int _currentVisibleJuz = 0;
   List<VerseWithTranslation>? _lastVerses;
@@ -51,7 +58,79 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
             widget.surah.number,
             widget.surah.verseCount,
           );
+      if (widget.initialVerseNumber != null) {
+        _scrollToVerse(widget.initialVerseNumber!, animate: false);
+      } else {
+        final audioState = ref.read(audioPlayerProvider);
+        if (audioState.currentSurahId == widget.surah.number &&
+            audioState.currentVerseNumber != null &&
+            ref.read(settingsProvider).autoScrollAudio) {
+          _scrollToVerse(audioState.currentVerseNumber!, animate: false);
+        }
+      }
     });
+  }
+
+  void _scrollToVerse(int verseNumber, {bool animate = true}) {
+    if (!mounted || !_scrollController.hasClients) return;
+
+    final key = _verseKeys[verseNumber];
+    if (key?.currentContext != null) {
+      if (animate) {
+        Scrollable.ensureVisible(
+          key!.currentContext!,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOutCubic,
+          alignment: 0.25,
+        );
+      } else {
+        Scrollable.ensureVisible(
+          key!.currentContext!,
+          alignment: 0.25,
+        );
+      }
+      return;
+    }
+
+    final verses = _lastVerses;
+    if (verses == null || verses.isEmpty) return;
+
+    final verseIndex = verses.indexWhere((v) => v.verse.verseNumber == verseNumber);
+    if (verseIndex == -1) return;
+
+    final showBismillahHeader = widget.surah.number != 1 && widget.surah.number != 9;
+    final targetIndex = showBismillahHeader ? verseIndex + 1 : verseIndex;
+    final totalItems = showBismillahHeader ? verses.length + 1 : verses.length;
+
+    if (_scrollController.hasClients && _scrollController.position.hasContentDimensions) {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final estimatedOffset = (targetIndex / (totalItems > 0 ? totalItems : 1)) * maxScroll;
+      final clampedOffset = estimatedOffset.clamp(0.0, maxScroll);
+
+      if (animate) {
+        _scrollController.animateTo(
+          clampedOffset,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
+        ).then((_) {
+          if (!mounted) return;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            final updatedKey = _verseKeys[verseNumber];
+            if (updatedKey?.currentContext != null) {
+              Scrollable.ensureVisible(
+                updatedKey!.currentContext!,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                alignment: 0.25,
+              );
+            }
+          });
+        });
+      } else {
+        _scrollController.jumpTo(clampedOffset);
+      }
+    }
   }
 
   @override
@@ -81,7 +160,8 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
     const double estimatedItemHeight = 200.0;
     final offset = _scrollController.offset;
     final index = (offset / estimatedItemHeight).floor().clamp(0, verses.length - 1);
-    final verse = verses[index].verse;
+    final item = verses[index];
+    final verse = item.verse;
 
     if (verse.pageNumber != _currentVisiblePage || verse.juzNumber != _currentVisibleJuz) {
       setState(() {
@@ -89,6 +169,17 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
         _currentVisibleJuz = verse.juzNumber;
       });
     }
+
+    ref.read(lastReadProvider.notifier).recordLastRead(
+          surahId: widget.surah.number,
+          verseNumber: verse.verseNumber,
+          pageNumber: verse.pageNumber,
+          juzNumber: verse.juzNumber,
+          surahNameArabic: widget.surah.nameArabic,
+          surahNamePersian: widget.surah.namePersian,
+          surahNameEnglish: widget.surah.nameEnglish,
+          verseTextPreview: item.translation?.translationText ?? verse.textUthmani,
+        );
   }
 
   Widget _buildPageHeader(BuildContext context, AppLocalizations loc, bool isPersian, int pageNum, int juzNum) {
@@ -434,6 +525,17 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
     required AudioPlayerNotifier audioNotifier,
     required AudioPlayerState audioState,
   }) {
+    ref.read(lastReadProvider.notifier).recordLastRead(
+          surahId: surah.number,
+          verseNumber: verse.verseNumber,
+          pageNumber: verse.pageNumber,
+          juzNumber: verse.juzNumber,
+          surahNameArabic: surah.nameArabic,
+          surahNamePersian: surah.namePersian,
+          surahNameEnglish: surah.nameEnglish,
+          verseTextPreview: trans?.translationText ?? verse.textUthmani,
+        );
+
     switch (settings.defaultVerseTapAction) {
       case 'playAudio':
         audioNotifier.playVerse(surah.number, verse.verseNumber, totalVerses);
@@ -489,6 +591,39 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
             backgroundColor: Colors.red,
           ),
         );
+      }
+
+      if (next.currentSurahId == widget.surah.number && next.currentVerseNumber != null) {
+        final shouldAutoScroll = ref.read(settingsProvider).autoScrollAudio;
+        final verseChanged = next.currentVerseNumber != previous?.currentVerseNumber;
+        final playbackStarted = next.isPlaying && (previous == null || !previous.isPlaying);
+        final surahChanged = next.currentSurahId != previous?.currentSurahId;
+
+        if (shouldAutoScroll && (verseChanged || playbackStarted || surahChanged)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollToVerse(next.currentVerseNumber!);
+          });
+        }
+
+        if (verseChanged || playbackStarted) {
+          final verses = _lastVerses;
+          if (verses != null && verses.isNotEmpty) {
+            final item = verses.firstWhere(
+              (v) => v.verse.verseNumber == next.currentVerseNumber,
+              orElse: () => verses.first,
+            );
+            ref.read(lastReadProvider.notifier).recordLastRead(
+                  surahId: widget.surah.number,
+                  verseNumber: next.currentVerseNumber!,
+                  pageNumber: item.verse.pageNumber,
+                  juzNumber: item.verse.juzNumber,
+                  surahNameArabic: widget.surah.nameArabic,
+                  surahNamePersian: widget.surah.namePersian,
+                  surahNameEnglish: widget.surah.nameEnglish,
+                  verseTextPreview: item.translation?.translationText ?? item.verse.textUthmani,
+                );
+          }
+        }
       }
     });
 
@@ -644,8 +779,20 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
 
                 _lastVerses = verses;
                 if (_currentVisiblePage == 0) {
-                  _currentVisiblePage = verses.first.verse.pageNumber;
-                  _currentVisibleJuz = verses.first.verse.juzNumber;
+                  if (widget.initialVerseNumber != null) {
+                    final initial = verses.firstWhere(
+                      (v) => v.verse.verseNumber == widget.initialVerseNumber,
+                      orElse: () => verses.first,
+                    );
+                    _currentVisiblePage = initial.verse.pageNumber;
+                    _currentVisibleJuz = initial.verse.juzNumber;
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _scrollToVerse(widget.initialVerseNumber!, animate: false);
+                    });
+                  } else {
+                    _currentVisiblePage = verses.first.verse.pageNumber;
+                    _currentVisibleJuz = verses.first.verse.juzNumber;
+                  }
                 }
 
                 final showBismillahHeader = widget.surah.number != 1 && widget.surah.number != 9;
@@ -730,6 +877,7 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
               final sajdahInfo = SajdahData.getSajdahInfo(widget.surah.number, verse.verseNumber);
 
               final verseCard = Card(
+                key: _verseKeys.putIfAbsent(verse.verseNumber, () => GlobalKey()),
                 margin: const EdgeInsets.only(bottom: 16),
                 elevation: isAudioActive ? 4 : (highlightColor != null ? 2 : 1),
                 shape: RoundedRectangleBorder(
