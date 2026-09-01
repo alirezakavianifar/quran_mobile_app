@@ -12,6 +12,9 @@ on:
       - '.env*'
       - 'scripts/deploy-to-server.ps1'
       - '.github/workflows/deploy-server.yml'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       server_ip:
@@ -24,6 +27,10 @@ on:
         required: true
         default: 'root'
         type: string
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:

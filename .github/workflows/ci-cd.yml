@@ -3,8 +3,18 @@ name: Quran Platform CI/CD Pipeline
 on:
   push:
     branches: [ main, master ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   pull_request:
     branches: [ main, master ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   backend-test:
@@ -39,6 +49,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Initialize PostgreSQL Schema & Seed Data
         env:
@@ -51,7 +62,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y postgresql-client
           psql -h localhost -p 5432 -U quran_admin -d quran_db -f sql/schema_phase1.sql
-          python -m pip install psycopg2-binary
+          python -m pip install -r requirements.txt
           python scripts/ingestion/seed_postgres.py
         shell: bash
 
@@ -78,6 +89,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
 
       - name: Flutter Pub Get
         run: flutter pub get
@@ -86,4 +98,3 @@ jobs:
       - name: Run Flutter Tests
         run: flutter test
         working-directory: src/quran_mobile_app
-

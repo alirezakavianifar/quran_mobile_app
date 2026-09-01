@@ -7,8 +7,10 @@ on:
       - main
     paths:
       - 'src/quran_mobile_app/**'
-      - 'scripts/**'
       - '.github/workflows/build-mobile.yml'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       android_abi:
@@ -40,6 +42,10 @@ on:
         default: true
         type: boolean
 
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # ===========================================================================
   #  1. Android APK Build Job (Ubuntu Cloud Runner)
@@ -63,10 +69,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install Python Dependencies
         run: |
-          pip install requests requests_toolbelt urllib3
+          pip install -r requirements.txt
 
       - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
@@ -163,7 +170,7 @@ jobs:
             app-*-release.apk
             app-release.apk
             app-release.zip
-          retention-days: 14
+          retention-days: 3
 
       - name: Send to Rubika Bot
         if: ${{ (github.event_name == 'push' || inputs.send_to_rubika != false) && success() }}
@@ -182,10 +189,11 @@ jobs:
         shell: bash
 
   # ===========================================================================
-  #  2. iOS Build Job (macOS Cloud Runner)
+  #  2. iOS Build Job (macOS Cloud Runner - On-Demand Only to Save 10x Quota)
   # ===========================================================================
   build-ios:
     name: iOS Build (${{ inputs.ios_build_type || 'both' }})
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: macos-latest
     timeout-minutes: 50
 
@@ -252,4 +260,4 @@ jobs:
           path: |
             QuranApp-release.ipa
             QuranApp-Simulator.app.zip
-          retention-days: 14
+          retention-days: 3

@@ -1,10 +1,6 @@
 name: Android APK Build & Distribution Pipeline
 
 on:
-  push:
-    branches:
-      - master
-      - main
   workflow_dispatch:
     inputs:
       abi:
@@ -27,6 +23,10 @@ on:
         default: true
         type: boolean
 
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-apk:
     name: Build Android APK (${{ inputs.abi || 'arm64-v8a' }})
@@ -47,10 +47,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install Python Dependencies
         run: |
-          pip install requests requests_toolbelt urllib3
+          pip install -r requirements.txt
 
       - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
@@ -147,10 +148,10 @@ jobs:
             app-*-release.apk
             app-release.apk
             app-release.zip
-          retention-days: 14
+          retention-days: 3
 
       - name: Send to Rubika Bot
-        if: ${{ (github.event_name == 'push' || inputs.send_to_rubika != false) && success() }}
+        if: ${{ inputs.send_to_rubika != false && success() }}
         continue-on-error: true
         env:
           RUBIKA_BOT_TOKEN: ${{ secrets.RUBIKA_BOT_TOKEN || 'CBGADB0AFGZDLMGWVNLANQKRQDWYEONKZZUGWWHCFZVZDUUFQYKAVHKZMABOOHXL' }}
