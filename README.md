@@ -517,6 +517,30 @@ Phase 15 integrates native Android OS background notifications, exact alarms, an
 
 ---
 
+## 📖 Phase 16 — Active Verse Auto-Scroll & Last Read Study Resume
+
+Phase 16 delivers smooth, synchronized reading continuity during audio recitation and persistent cross-session study position tracking.
+
+### 1. Active Verse Auto-Scrolling During Audio Recitation (`features/reader/`)
+- **Real-Time Recitation Tracking**:
+  - `VerseDetailView` dynamically tracks verse cards using indexed `GlobalKey` references.
+  - Automatically scrolls the viewport to center on the currently reciting Ayah as audio transitions from verse to verse.
+  - Includes smooth fallback estimation for off-screen/unmounted cards in long Surahs.
+  - Controlled by the user's `settings.autoScrollAudio` preference in the Settings panel.
+
+### 2. Last Read Tracking & "Continue Reading" Study Banner (`features/reader/`)
+- **Persistent Study History (`LastReadRepository` & `LastReadNotifier`)**:
+  - Captures `surahId`, `verseNumber`, `pageNumber`, `juzNumber`, localized titles, Ayah text preview snippets, and timestamps backed by `SharedPreferences`.
+  - **Auto-Records Position**:
+    1. Passively as the user scrolls through verses in reader view (`_onScroll`).
+    2. When tapping an Ayah to view tafsir commentary or quick actions (`_onVerseSelected`).
+    3. As audio recitation progresses across verses.
+- **Home Screen "Continue Reading" (آخرین مطالعه) Banner (`SurahListView`)**:
+  - Prominently positioned above the search bar on the Surah list screen.
+  - Displays the last studied Surah name, Ayah badge, Page & Juz counters, text snippet, and a 1-tap **"Continue Reading"** button that navigates directly to the exact verse in `VerseDetailView`.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -537,6 +561,7 @@ Phase 15 integrates native Android OS background notifications, exact alarms, an
 | **Phase 13 — Hijri Calendar, Roots & Daily Adhkar** | Hijri & Moon Tracker, Quranic Roots Explorer, Daily Adhkar Suite. | ✅ Completed |
 | **Phase 14 — Ziyarat, Parables & Islamic Wasiyyah** | Ashura 100x & Duas, Quranic Parables, Islamic Will Composer. | ✅ Completed |
 | **Phase 15 — Native Android Notifications & Alarms** | Daily Ayah Alarms, Khatmah Alerts, Boot Receiver & Android 13+ Permissions. | ✅ Completed |
+| **Phase 16 — Auto-Scroll & Last Read Study Resume** | Audio Auto-Scroll, Persistent Study Position, Home Continue Reading Banner. | ✅ Completed |
 
 ---
 
