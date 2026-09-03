@@ -541,6 +541,35 @@ Phase 16 delivers smooth, synchronized reading continuity during audio recitatio
 
 ---
 
+## 🔁 Phase 17 — Quran Whole-Page Repeat (Hifz & Memorization Mode)
+
+Phase 17 delivers whole-page looping across all 604 standard Medina pages of the Holy Quran, empowering students and Huffaz to repeat any complete page (e.g. Page 23, containing Surah Al-Baqarah Ayahs 146 to 153) with configurable cycles for memorization.
+
+### 1. Quran Page Data & Cross-Surah Mapping (`features/audio/data/quran_page_data.dart`)
+- **604-Page Catalog & Fast Cache (`QuranPageData`)**:
+  - Resolves any page (1 to 604) to an ordered list of `PageVerseRef` objects in $O(1)$ memory lookup.
+  - Seamlessly handles both single-surah pages and the **51 multi-surah pages** that cross Surah boundaries (such as Page 604 spanning Surahs 112, 113, and 114).
+  - Generates localized page summaries (e.g., `سوره بقره • آیات ۱۴۶ تا ۱۵۳ (۸ آیه)`).
+
+### 2. Audio Engine Whole-Page Looping (`features/audio/presentation/audio_player_notifier.dart`)
+- **Configurable Repetition Cycles**:
+  - `setPageRepeat(pageNumber, loopCount)` supports 1x, 2x, 3x, 5x (recommended for memorization), 10x (intensive retention), and $\infty$ (continuous looping).
+  - Real-time page cycle tracking (`currentPageCycle`) and active verse position synchronization.
+  - Auto-advances across all verses on the page, looping back to verse 1 upon page completion until the cycle count is satisfied.
+
+### 3. Integrated In-Reader & In-Player Access (`features/audio/` & `features/reader/`)
+- **Quick 1-Tap Page Repeat from Reader (`VerseDetailView`)**:
+  - Quran page boundary dividers (`─── صفحه ۲۳ • جزء ۲ [ 🔁 تکرار صفحه ] ───`) feature an instant repeat action button that launches the dialog with that specific page preselected.
+  - Active page repetition displays a live cycle badge directly on the page divider.
+- **Enhanced `VerseRangeDialog`**:
+  - Seamlessly toggles between **"بازه آیات" (Verse Range)** and **"کل صفحه" (Entire Page)** modes.
+  - Features a page stepper, dropdown selector, page content preview card, and quick preset chips (`صفحه فعلی`, `صفحه بعد`, `صفحه قبل`).
+- **`AudioPlayerBottomBar` Status & Controls**:
+  - Dedicated top banner displays active page and cycle progress (`صفحه فعال: صفحه ۲۳ • دور ۱ از ۵`) with an instant cancel button.
+  - Repeat button reflects active page loop state and current page number.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -562,6 +591,7 @@ Phase 16 delivers smooth, synchronized reading continuity during audio recitatio
 | **Phase 14 — Ziyarat, Parables & Islamic Wasiyyah** | Ashura 100x & Duas, Quranic Parables, Islamic Will Composer. | ✅ Completed |
 | **Phase 15 — Native Android Notifications & Alarms** | Daily Ayah Alarms, Khatmah Alerts, Boot Receiver & Android 13+ Permissions. | ✅ Completed |
 | **Phase 16 — Auto-Scroll & Last Read Study Resume** | Audio Auto-Scroll, Persistent Study Position, Home Continue Reading Banner. | ✅ Completed |
+| **Phase 17 — Quran Whole-Page Repeat (Hifz)** | 604-Page Looping, Multi-Surah Pages, In-Reader Repeat Badge & Dialog Tabs. | ✅ Completed |
 
 ---
 

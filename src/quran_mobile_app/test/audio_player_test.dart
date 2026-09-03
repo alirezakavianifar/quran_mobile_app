@@ -173,6 +173,27 @@ void main() {
       expect(notifier.currentState.rangeStartVerse, null);
       expect(notifier.currentState.rangeEndVerse, null);
     });
+
+    test('Configures whole page repeat and clears it', () async {
+      expect(notifier.currentState.isPageRepeatActive, false);
+
+      await notifier.setPageRepeat(
+        pageNumber: 23,
+        loopCount: 5,
+        startPlaying: false,
+      );
+
+      expect(notifier.currentState.isPageRepeatActive, true);
+      expect(notifier.currentState.repeatPageNumber, 23);
+      expect(notifier.currentState.pageLoopCount, 5);
+      expect(notifier.currentState.currentPageCycle, 1);
+      expect(notifier.currentState.pageVerses?.length, 8);
+
+      notifier.clearPageRepeat();
+      expect(notifier.currentState.isPageRepeatActive, false);
+      expect(notifier.currentState.repeatPageNumber, null);
+      expect(notifier.currentState.pageVerses, null);
+    });
   });
 }
 

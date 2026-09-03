@@ -12,6 +12,7 @@ import '../audio/presentation/audio_download_notifier.dart';
 import '../audio/presentation/audio_player_bottom_bar.dart';
 import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
+import '../audio/presentation/verse_range_dialog.dart';
 import '../analytics/presentation/reading_analytics_provider.dart';
 import '../bookmarks/bookmarks_provider.dart';
 import '../card_generator/presentation/ayah_card_generator_screen.dart';
@@ -190,6 +191,9 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
         ? PersianDigitConverter.toPersian('$juzNum')
         : '$juzNum';
 
+    final audioState = ref.watch(audioPlayerProvider);
+    final isThisPageRepeating = audioState.isPageRepeatActive && audioState.repeatPageNumber == pageNum;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
@@ -201,35 +205,113 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.menu_book_rounded,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${loc.translate("page")} $pageText • ${loc.translate("juz")} $juzText',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Page and Juz Badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isThisPageRepeating
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                     ),
                   ),
-                ],
-              ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.menu_book_rounded,
+                        size: 15,
+                        color: isThisPageRepeating
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${loc.translate("page")} $pageText • ${loc.translate("juz")} $juzText',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.bold,
+                          color: isThisPageRepeating
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                      if (isThisPageRepeating) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '${loc.translate("cycle")} ${isPersian ? PersianDigitConverter.toPersian("${audioState.currentPageCycle}") : "${audioState.currentPageCycle}"}',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+
+                // Quick Repeat Page Button
+                InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => VerseRangeDialog(
+                        surahId: widget.surah.number,
+                        totalVerses: widget.surah.verseCount,
+                        initialPageNumber: pageNum,
+                        initialIsPageMode: true,
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isThisPageRepeating
+                          ? Theme.of(context).colorScheme.primaryContainer
+                          : Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.repeat_rounded,
+                          size: 15,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          loc.translate('pageRepeat'),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(

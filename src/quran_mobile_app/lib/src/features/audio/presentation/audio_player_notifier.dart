@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../data/audio_repository.dart';
 import '../data/audio_storage_service.dart';
+import '../data/quran_page_data.dart';
 
 class AudioPlayerState {
   final Reciter? currentReciter;
@@ -23,6 +24,11 @@ class AudioPlayerState {
   final int? rangeEndVerse;
   final int rangeLoopCount; // 1, 2, 3, 5, 10, -1 (infinite)
   final int currentRangeCycle; // 1-indexed count of how many times range has looped
+  final int? repeatPageNumber; // 1 to 604
+  final List<PageVerseRef>? pageVerses; // all verses on the repeat page
+  final int currentPageVerseIndex; // 0-indexed position within pageVerses
+  final int pageLoopCount; // 1, 2, 3, 5, 10, -1 (infinite)
+  final int currentPageCycle; // 1-indexed count of how many times page has looped
   final Duration? sleepTimerRemaining;
   final bool isEndOfSurahSleepTimer;
   final String? errorMessage;
@@ -45,6 +51,11 @@ class AudioPlayerState {
     this.rangeEndVerse,
     this.rangeLoopCount = 1,
     this.currentRangeCycle = 1,
+    this.repeatPageNumber,
+    this.pageVerses,
+    this.currentPageVerseIndex = 0,
+    this.pageLoopCount = 1,
+    this.currentPageCycle = 1,
     this.sleepTimerRemaining,
     this.isEndOfSurahSleepTimer = false,
     this.errorMessage,
@@ -58,6 +69,11 @@ class AudioPlayerState {
       rangeStartVerse != null &&
       rangeEndVerse != null &&
       rangeStartVerse! <= rangeEndVerse!;
+
+  bool get isPageRepeatActive =>
+      repeatPageNumber != null &&
+      pageVerses != null &&
+      pageVerses!.isNotEmpty;
 
   bool get isSleepTimerActive =>
       sleepTimerRemaining != null || isEndOfSurahSleepTimer;
@@ -82,6 +98,11 @@ class AudioPlayerState {
     Object? rangeEndVerse = _sentinel,
     int? rangeLoopCount,
     int? currentRangeCycle,
+    Object? repeatPageNumber = _sentinel,
+    Object? pageVerses = _sentinel,
+    int? currentPageVerseIndex,
+    int? pageLoopCount,
+    int? currentPageCycle,
     Object? sleepTimerRemaining = _sentinel,
     bool? isEndOfSurahSleepTimer,
     String? errorMessage,
@@ -104,6 +125,11 @@ class AudioPlayerState {
       rangeEndVerse: rangeEndVerse == _sentinel ? this.rangeEndVerse : rangeEndVerse as int?,
       rangeLoopCount: rangeLoopCount ?? this.rangeLoopCount,
       currentRangeCycle: currentRangeCycle ?? this.currentRangeCycle,
+      repeatPageNumber: repeatPageNumber == _sentinel ? this.repeatPageNumber : repeatPageNumber as int?,
+      pageVerses: pageVerses == _sentinel ? this.pageVerses : pageVerses as List<PageVerseRef>?,
+      currentPageVerseIndex: currentPageVerseIndex ?? this.currentPageVerseIndex,
+      pageLoopCount: pageLoopCount ?? this.pageLoopCount,
+      currentPageCycle: currentPageCycle ?? this.currentPageCycle,
       sleepTimerRemaining: sleepTimerRemaining == _sentinel
           ? this.sleepTimerRemaining
           : sleepTimerRemaining as Duration?,
@@ -218,6 +244,11 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       rangeLoopCount: loopCount,
       currentRangeCycle: 1,
       currentVersePlayCount: 1,
+      repeatPageNumber: null,
+      pageVerses: null,
+      currentPageVerseIndex: 0,
+      pageLoopCount: 1,
+      currentPageCycle: 1,
     );
 
     if (startPlaying) {
@@ -231,6 +262,43 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       rangeEndVerse: null,
       rangeLoopCount: 1,
       currentRangeCycle: 1,
+    );
+  }
+
+  Future<void> setPageRepeat({
+    required int pageNumber,
+    int loopCount = 1,
+    bool startPlaying = true,
+  }) async {
+    final verses = QuranPageData.getVersesForPage(pageNumber);
+    if (verses.isEmpty) return;
+
+    state = state.copyWith(
+      repeatPageNumber: pageNumber,
+      pageVerses: verses,
+      currentPageVerseIndex: 0,
+      pageLoopCount: loopCount,
+      currentPageCycle: 1,
+      currentVersePlayCount: 1,
+      rangeStartVerse: null,
+      rangeEndVerse: null,
+      rangeLoopCount: 1,
+      currentRangeCycle: 1,
+    );
+
+    if (startPlaying) {
+      final first = verses.first;
+      await playVerse(first.surahId, first.verseNumber, first.totalVersesInSurah);
+    }
+  }
+
+  void clearPageRepeat() {
+    state = state.copyWith(
+      repeatPageNumber: null,
+      pageVerses: null,
+      currentPageVerseIndex: 0,
+      pageLoopCount: 1,
+      currentPageCycle: 1,
     );
   }
 
@@ -255,12 +323,23 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       return;
     }
 
+    int? updatedPageIndex;
+    if (state.isPageRepeatActive && state.pageVerses != null) {
+      final idx = state.pageVerses!.indexWhere(
+        (v) => v.surahId == surahId && v.verseNumber == verseNumber,
+      );
+      if (idx != -1) {
+        updatedPageIndex = idx;
+      }
+    }
+
     state = state.copyWith(
       isLoading: true,
       currentSurahId: surahId,
       currentVerseNumber: verseNumber,
       totalVersesInSurah: totalVerses,
       currentVersePlayCount: isReplay ? state.currentVersePlayCount : 1,
+      currentPageVerseIndex: updatedPageIndex ?? state.currentPageVerseIndex,
       position: Duration.zero,
       duration: Duration.zero,
     );
@@ -370,7 +449,50 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     // Finished repeats for this verse
     state = state.copyWith(currentVersePlayCount: 1);
 
-    // 2. Check Range Repeat logic
+    // 2. Check Page Repeat logic
+    if (state.isPageRepeatActive) {
+      final pageVerses = state.pageVerses!;
+      final currentIndex = state.currentPageVerseIndex;
+
+      if (currentIndex + 1 < pageVerses.length) {
+        final nextIndex = currentIndex + 1;
+        final nextItem = pageVerses[nextIndex];
+        state = state.copyWith(
+          currentPageVerseIndex: nextIndex,
+          currentSurahId: null,
+          currentVerseNumber: null,
+        );
+        await playVerse(nextItem.surahId, nextItem.verseNumber, nextItem.totalVersesInSurah);
+      } else {
+        // Reached end of page
+        if (state.pageLoopCount == -1) {
+          // Infinite page loop
+          final firstItem = pageVerses.first;
+          state = state.copyWith(
+            currentPageCycle: state.currentPageCycle + 1,
+            currentPageVerseIndex: 0,
+            currentSurahId: null,
+            currentVerseNumber: null,
+          );
+          await playVerse(firstItem.surahId, firstItem.verseNumber, firstItem.totalVersesInSurah);
+        } else if (state.currentPageCycle < state.pageLoopCount) {
+          final firstItem = pageVerses.first;
+          state = state.copyWith(
+            currentPageCycle: state.currentPageCycle + 1,
+            currentPageVerseIndex: 0,
+            currentSurahId: null,
+            currentVerseNumber: null,
+          );
+          await playVerse(firstItem.surahId, firstItem.verseNumber, firstItem.totalVersesInSurah);
+        } else {
+          // Finished all page cycles
+          await stop();
+        }
+      }
+      return;
+    }
+
+    // 3. Check Range Repeat logic
     if (state.isRangeRepeatActive) {
       final rangeStart = state.rangeStartVerse!;
       final rangeEnd = state.rangeEndVerse!;

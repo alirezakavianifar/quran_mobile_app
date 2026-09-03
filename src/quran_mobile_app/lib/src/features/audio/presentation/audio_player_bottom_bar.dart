@@ -49,6 +49,18 @@ class AudioPlayerBottomBar extends ConsumerWidget {
         ? (state.position.inMilliseconds / state.duration.inMilliseconds).clamp(0.0, 1.0)
         : 0.0;
 
+    final isAnyLoopActive = state.isRangeRepeatActive || state.isPageRepeatActive;
+    final loopButtonText = state.isPageRepeatActive
+        ? (isPersian
+            ? 'تکرار ص ${PersianDigitConverter.toPersian("${state.repeatPageNumber}")}'
+            : 'Page ${state.repeatPageNumber} Loop')
+        : state.isRangeRepeatActive
+            ? (isPersian ? 'تکرار بازه‌ای' : 'Range Loop')
+            : (isPersian ? 'تکرار (حفظ)' : 'Hifz Loop');
+    final loopIcon = state.isPageRepeatActive
+        ? Icons.menu_book_rounded
+        : Icons.repeat_rounded;
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
@@ -68,8 +80,50 @@ class AudioPlayerBottomBar extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Active Whole-Page Repeat Header (if active)
+              if (state.isPageRepeatActive)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 6.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.menu_book_rounded,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          isPersian
+                              ? 'صفحه فعال: صفحه ${PersianDigitConverter.toPersian("${state.repeatPageNumber}")} • دور ${PersianDigitConverter.toPersian("${state.currentPageCycle}")}${state.pageLoopCount > 0 ? " از ${PersianDigitConverter.toPersian('${state.pageLoopCount}')}" : " (بی‌نهایت)"}'
+                              : 'Active Page: Page ${state.repeatPageNumber} • Cycle ${state.currentPageCycle}${state.pageLoopCount > 0 ? "/${state.pageLoopCount}" : " (∞)"}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => notifier.clearPageRepeat(),
+                        child: Icon(
+                          Icons.close,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               // Active Verse-Range Repeat Header (if active)
-              if (state.isRangeRepeatActive)
+              else if (state.isRangeRepeatActive)
                 Container(
                   margin: const EdgeInsets.only(bottom: 6.0),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -383,23 +437,25 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
 
-                    // 3. Verse-Range Repeat (Hifz) Dialog Button
+                    // 3. Verse-Range & Whole-Page Repeat (Hifz) Dialog Button
                     InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () {
                         showDialog(
                           context: context,
                           builder: (_) => VerseRangeDialog(
-                            surahId: state.currentSurahId!,
-                            totalVerses: state.totalVersesInSurah ?? state.currentVerseNumber!,
+                            surahId: state.currentSurahId ?? 1,
+                            totalVerses: state.totalVersesInSurah ?? state.currentVerseNumber ?? 7,
                             currentVerse: state.currentVerseNumber,
+                            initialPageNumber: state.repeatPageNumber,
+                            initialIsPageMode: state.isPageRepeatActive,
                           ),
                         );
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: state.isRangeRepeatActive
+                          color: isAnyLoopActive
                               ? Theme.of(context).colorScheme.primaryContainer
                               : Theme.of(context).colorScheme.surface,
                           border: Border.all(
@@ -411,21 +467,21 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.repeat_rounded,
+                              loopIcon,
                               size: 13,
-                              color: state.isRangeRepeatActive
+                              color: isAnyLoopActive
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              isPersian ? 'تکرار بازه‌ای (حفظ)' : 'Range Loop',
+                              loopButtonText,
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: state.isRangeRepeatActive
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: isAnyLoopActive
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
