@@ -8,9 +8,7 @@ on:
     paths:
       - 'src/quran_mobile_app/**'
       - '.github/workflows/build-mobile.yml'
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - '!src/quran_mobile_app/**/*.md'
   workflow_dispatch:
     inputs:
       android_abi:
@@ -51,7 +49,7 @@ jobs:
   #  1. Android APK Build Job (Ubuntu Cloud Runner)
   # ===========================================================================
   build-android:
-    name: Android APK (${{ inputs.android_abi || 'arm64-v8a' }})
+    name: Android APK Build
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -192,7 +190,7 @@ jobs:
   #  2. iOS Build Job (macOS Cloud Runner - On-Demand Only to Save 10x Quota)
   # ===========================================================================
   build-ios:
-    name: iOS Build (${{ inputs.ios_build_type || 'both' }})
+    name: iOS Build
     if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: macos-latest
     timeout-minutes: 50

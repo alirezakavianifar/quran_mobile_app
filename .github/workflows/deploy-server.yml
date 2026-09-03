@@ -12,9 +12,6 @@ on:
       - '.env*'
       - 'scripts/deploy-to-server.ps1'
       - '.github/workflows/deploy-server.yml'
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
   workflow_dispatch:
     inputs:
       server_ip:
