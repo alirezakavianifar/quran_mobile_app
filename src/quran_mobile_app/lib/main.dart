@@ -45,7 +45,7 @@ class QuranMobileApp extends ConsumerWidget {
     }
 
     return MaterialApp(
-      title: 'Quran Platform Mobile',
+      title: 'Quran',
       debugShowCheckedModeBanner: false,
       locale: locale,
       supportedLocales: const [

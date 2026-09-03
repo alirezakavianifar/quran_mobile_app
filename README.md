@@ -570,6 +570,36 @@ Phase 17 delivers whole-page looping across all 604 standard Medina pages of the
 
 ---
 
+## ⚡ Phase 18 — Quick Quran Page Jump (پرش سریع به صفحه قرآن)
+
+Phase 18 implements comprehensive, instant page navigation across all 604 standard Medina Quran pages from anywhere in the application.
+
+### 1. Smart Search Bar Page Detection (`features/reader/surah_list_view.dart`)
+- **Real-Time Query Parsing**:
+  - Automatically detects when a search query represents a Quran page number ($1 \le P \le 604$).
+  - Supports English (`456`, `page 456`, `p 456`, `p:456`) and Persian/Arabic (`۴۵۶`, `صفحه ۴۵۶`, `ص ۴۵۶`).
+- **Dynamic "Go to Page" Hero Card**:
+  - Displays a high-visibility, elevated gradient card above search results.
+  - Shows page metadata in real-time using `QuranPageData.getPageSummary`: Surah name, Ayah range, verse count, and Juz number.
+  - Tapping anywhere on the card or submitting the search field immediately opens `VerseDetailView` navigated to that page's first verse.
+
+### 2. Dedicated Quick Page Jump Dialog (`features/reader/quick_page_jump_dialog.dart`)
+- Accessible via:
+  - Dedicated AppBar action button (`find_in_page_rounded`) in `SurahListView`.
+  - Dedicated AppBar action button or tapping the Page/Juz header badge (`صفحه ۲۳ • جزء ۲`) in `VerseDetailView`.
+- **Features**:
+  - Large typography number input with instant validation (1 to 604) supporting Persian & English digits.
+  - Live dynamic preview card showing Surah names, Ayah range, and Juz.
+  - Quick navigation chips: `[ص ۱: فاتحه]`, `[ص ۱۰۰]`, `[ص ۲۰۰]`, `[ص ۳۰۰]`, `[ص ۴۰۰]`, `[ص ۵۰۰]`, `[ص ۶۰۴: ناس]`, `[صفحه تصادفی 🎲]`.
+  - Fine-tuning stepper buttons (`-10`, `-1`, `+1`, `+10`).
+  - Primary "Go to Page" action button.
+
+### 3. In-Reader Smooth Scrolling & Cross-Surah Navigation (`features/reader/verse_detail_view.dart`)
+- **Intra-Surah Jump**: If the selected page belongs to the currently open Surah, it smoothly scrolls directly to that verse using `_scrollToVerse()`.
+- **Inter-Surah Transition**: If the selected page belongs to a different Surah, it seamlessly switches to that Surah at the exact page's opening verse using `Navigator.pushReplacement()`.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -592,12 +622,14 @@ Phase 17 delivers whole-page looping across all 604 standard Medina pages of the
 | **Phase 15 — Native Android Notifications & Alarms** | Daily Ayah Alarms, Khatmah Alerts, Boot Receiver & Android 13+ Permissions. | ✅ Completed |
 | **Phase 16 — Auto-Scroll & Last Read Study Resume** | Audio Auto-Scroll, Persistent Study Position, Home Continue Reading Banner. | ✅ Completed |
 | **Phase 17 — Quran Whole-Page Repeat (Hifz)** | 604-Page Looping, Multi-Surah Pages, In-Reader Repeat Badge & Dialog Tabs. | ✅ Completed |
+| **Phase 18 — Quick Quran Page Jump** | Smart Search Page Parser (e.g. 456 / ص ۴۵۶), Hero Card, Dedicated Modal & Steppers. | ✅ Completed |
 
 ---
 
 ## 📄 Remote Repository
 
 Changes are pushed to: [github.com/alirezakavianifar/quran_mobile_app.git](https://github.com/alirezakavianifar/quran_mobile_app.git)
+
 
 
 

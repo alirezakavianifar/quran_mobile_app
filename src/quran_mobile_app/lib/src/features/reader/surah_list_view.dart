@@ -23,8 +23,10 @@ import '../tasbih/presentation/tasbih_screen.dart';
 import '../topics/presentation/quran_topics_screen.dart';
 import '../wasiyyah/presentation/wasiyyah_screen.dart';
 import '../ziyarat/presentation/ziyarat_hub_screen.dart';
+import '../audio/data/quran_page_data.dart';
 import 'last_read_provider.dart';
 import 'models/last_read_model.dart';
+import 'quick_page_jump_dialog.dart';
 import 'reader_provider.dart';
 import 'verse_detail_view.dart';
 
@@ -58,6 +60,171 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
         .trim();
   }
 
+  int? _tryParsePageNumber(String query) {
+    if (query.trim().isEmpty) return null;
+
+    final clean = query
+        .toLowerCase()
+        .replaceAll('صفحه', '')
+        .replaceAll('صفحة', '')
+        .replaceAll('page', '')
+        .replaceAll('p', '')
+        .replaceAll('ص', '')
+        .replaceAll('#', '')
+        .replaceAll(':', '')
+        .trim();
+
+    final englishDigits = PersianDigitConverter.toEnglish(clean);
+    final parsed = int.tryParse(englishDigits);
+    if (parsed != null && parsed >= 1 && parsed <= QuranPageData.totalPages) {
+      return parsed;
+    }
+    return null;
+  }
+
+  void _navigateToPage(BuildContext context, int pageNumber, List<Surah> surahs) {
+    final pageVerses = QuranPageData.getVersesForPage(pageNumber);
+    if (pageVerses.isEmpty) return;
+
+    final firstVerse = pageVerses.first;
+    final targetSurah = surahs.firstWhere(
+      (s) => s.number == firstVerse.surahId,
+      orElse: () => surahs.first,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => VerseDetailView(
+          surah: targetSurah,
+          initialVerseNumber: firstVerse.verseNumber,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickPageJumpCard(
+    BuildContext context,
+    AppLocalizations loc,
+    bool isPersian,
+    int pageNumber,
+    List<Surah> surahs,
+  ) {
+    final pageStr = isPersian
+        ? PersianDigitConverter.toPersian('$pageNumber')
+        : '$pageNumber';
+    final pageSummary = QuranPageData.getPageSummary(pageNumber, isPersian: isPersian);
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.primaryContainer,
+            Theme.of(context).colorScheme.surfaceContainerHighest,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => _navigateToPage(context, pageNumber, surahs),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.auto_stories_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '${loc.translate("jumpDirectlyToPage")} $pageStr',
+                            style: TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              isPersian ? 'صفحه قرآن' : 'Quran Page',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        pageSummary,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.tonalIcon(
+                  onPressed: () => _navigateToPage(context, pageNumber, surahs),
+                  icon: const Icon(Icons.arrow_forward_rounded, size: 16),
+                  label: Text(loc.translate('goToPage')),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -68,6 +235,20 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
       appBar: AppBar(
         title: Text(loc.translate('surahs')),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.find_in_page_rounded),
+            tooltip: loc.translate('quickPageJump'),
+            onPressed: () {
+              final surahs = surahsAsync.valueOrNull ?? [];
+              QuickPageJumpDialog.show(
+                context,
+                onPageSelected: (pageNum) {
+                  Navigator.pop(context);
+                  _navigateToPage(context, pageNum, surahs);
+                },
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.view_list_rounded),
             tooltip: loc.translate('quranIndex'),
@@ -406,8 +587,22 @@ class _SurahListViewState extends ConsumerState<SurahListView> {
                       _filterQuery = value;
                     });
                   },
+                  onSubmitted: (value) {
+                    final targetPage = _tryParsePageNumber(value);
+                    if (targetPage != null) {
+                      _navigateToPage(context, targetPage, surahs);
+                    }
+                  },
                 ),
               ),
+              if (_tryParsePageNumber(_filterQuery) != null)
+                _buildQuickPageJumpCard(
+                  context,
+                  loc,
+                  isPersian,
+                  _tryParsePageNumber(_filterQuery)!,
+                  surahs,
+                ),
               Expanded(
                 child: filteredSurahs.isEmpty
                     ? Center(

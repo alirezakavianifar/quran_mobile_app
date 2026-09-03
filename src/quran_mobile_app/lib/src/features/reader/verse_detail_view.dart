@@ -8,11 +8,13 @@ import '../../core/settings/models/user_settings.dart';
 import '../../core/settings/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/persian_digit_converter.dart';
+import '../audio/data/quran_page_data.dart';
 import '../audio/presentation/audio_download_notifier.dart';
 import '../audio/presentation/audio_player_bottom_bar.dart';
 import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
 import '../audio/presentation/verse_range_dialog.dart';
+import 'quick_page_jump_dialog.dart';
 import '../analytics/presentation/reading_analytics_provider.dart';
 import '../bookmarks/bookmarks_provider.dart';
 import '../card_generator/presentation/ayah_card_generator_screen.dart';
@@ -649,6 +651,43 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
     }
   }
 
+  void _jumpToPage(int targetPage) {
+    final pageVerses = QuranPageData.getVersesForPage(targetPage);
+    if (pageVerses.isEmpty) return;
+
+    final firstVerse = pageVerses.first;
+    if (firstVerse.surahId == widget.surah.number) {
+      _scrollToVerse(firstVerse.verseNumber);
+    } else {
+      final surahsAsync = ref.read(surahListProvider);
+      final surahs = surahsAsync.valueOrNull ?? [];
+      final targetSurah = surahs.firstWhere(
+        (s) => s.number == firstVerse.surahId,
+        orElse: () => widget.surah,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VerseDetailView(
+            surah: targetSurah,
+            initialVerseNumber: firstVerse.verseNumber,
+          ),
+        ),
+      );
+    }
+  }
+
+  void _openQuickPageJump() {
+    QuickPageJumpDialog.show(
+      context,
+      initialPage: _currentVisiblePage > 0 ? _currentVisiblePage : null,
+      onPageSelected: (page) {
+        Navigator.pop(context);
+        _jumpToPage(page);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -725,12 +764,30 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
             Text('${widget.surah.nameArabic} - $surahTitle', style: const TextStyle(fontSize: 17)),
             if (_currentVisiblePage > 0) ...[
               const SizedBox(height: 2),
-              Text(
-                '${loc.translate("page")} $activePageStr • ${loc.translate("juz")} $activeJuzStr',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.primary,
+              InkWell(
+                borderRadius: BorderRadius.circular(6),
+                onTap: _openQuickPageJump,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${loc.translate("page")} $activePageStr • ${loc.translate("juz")} $activeJuzStr',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.edit_note_rounded,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -844,6 +901,11 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
                 builder: (_) => const ReciterSelectorDialog(),
               );
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.find_in_page_outlined),
+            tooltip: loc.translate('quickPageJump'),
+            onPressed: _openQuickPageJump,
           ),
         ],
       ),
