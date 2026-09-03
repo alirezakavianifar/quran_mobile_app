@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.quranplatform.quran_mobile_app"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.quranplatform.quran_mobile_app"
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -39,9 +39,5 @@ kotlin {
 
 flutter {
     source = "../.."
-}
-
-tasks.matching { it.name.contains("AarMetadata") }.configureEach {
-    enabled = false
 }
 
