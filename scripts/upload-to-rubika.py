@@ -24,6 +24,21 @@ KEY_PATH = os.environ.get("DEPLOY_KEY_PATH", r"C:\Users\Administrator\.ssh\id_rs
 SOCKS_PORT = int(os.environ.get("RUBIKA_SOCKS_PORT", "10808"))
 
 
+def is_ci_environment():
+    return os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+
+
+def can_reach_rubika_direct(timeout=2.0):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        res = sock.connect_ex(('botapi.rubika.ir', 443))
+        sock.close()
+        return res == 0
+    except Exception:
+        return False
+
+
 def is_port_open(port=SOCKS_PORT):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(1.0)
@@ -83,6 +98,10 @@ def get_active_chats(session):
 
 
 def send_test_message(text=None):
+    if is_ci_environment() and not can_reach_rubika_direct(2.0) and not is_port_open(SOCKS_PORT) and not os.path.exists(KEY_PATH):
+        print("  [INFO] Detected CI environment without Iranian domestic network access. Skipping Rubika test.")
+        return
+
     session = requests.Session()
     # Test direct access first, fallback to proxy if needed
     try:
@@ -314,6 +333,14 @@ def upload_to_rubika(target_path=None):
     file_name = os.path.basename(file_path)
     file_size = os.path.getsize(file_path)
     print(f">> Preparing Rubika delivery for '{file_name}' ({file_size / (1024*1024):.2f} MB)...")
+
+    # In CI/Cloud environments, check if Rubika API is reachable without stalling runner minutes
+    if is_ci_environment():
+        print(">> Detected CI environment. Testing reachability to Rubika API...")
+        if not can_reach_rubika_direct(2.0) and not is_port_open(SOCKS_PORT) and not os.path.exists(KEY_PATH):
+            print("  [INFO] Rubika Bot API is unreachable from international CI runner (geo-filtering active).")
+            print("  [INFO] Skipping Rubika upload in CI. Release APK is safely preserved in GitHub Actions Artifacts.")
+            return True
 
     # Primary method: Direct high-speed domestic upload
     try:

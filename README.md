@@ -621,6 +621,70 @@ Resolved audio desynchronization and Bismillah playback issues in Surah Ghafir (
 
 ---
 
+## 🤖 Phase 20 — GitHub Actions Cloud APK Build & Script Automation Pipeline
+
+Phase 20 provides end-to-end automated compilation, packaging, and distribution of the release Android APK using GitHub Actions cloud infrastructure combined with 1-click local scripts.
+
+### 1. Dedicated GitHub Actions Workflow (`.github/workflows/build-apk.yml`)
+- **Trigger**: `workflow_dispatch` (on-demand manual or scripted dispatch).
+- **Inputs**:
+  - `abi`: Target Architecture (`arm64-v8a` [default], `universal`, `all`).
+  - `target_url`: Backend API endpoint (default: `http://localhost:5000`).
+  - `send_to_rubika`: Rubika Bot package delivery flag (default: `true`).
+- **Pipeline Highlights**:
+  - Sets up Java JDK 17 (Temurin), Python 3.11, and Flutter SDK (stable).
+  - Performs clean Gradle dependency resolution with `--android-skip-build-dependency-validation`.
+  - Compiles optimized release binaries (`flutter build apk --release --dart-define=API_BASE_URL=$API_URL --no-tree-shake-icons`).
+  - Packages both `app-release.apk` and `app-release.zip` with root-relative paths.
+  - Automatically uploads build artifacts to GitHub Actions (`actions/upload-artifact@v4`) under `quran-android-build-<abi>` (retention: 3 days).
+  - Executes distribution via `scripts/upload-to-rubika.py`.
+
+### 2. Local Script Cloud Dispatch (`scripts/build-apk.ps1`)
+- **1-Click Cloud Execution**:
+  ```powershell
+  # Trigger GitHub Actions cloud build via PowerShell
+  .\scripts\build-apk.ps1 -Cloud
+  
+  # Or with custom ABI
+  .\scripts\build-apk.ps1 -Cloud -Abi universal
+  ```
+- **Dual Mode Operation**:
+  - Without `-Cloud`: Launches backend API, starts Ngrok public tunnel, and compiles the APK locally on Windows.
+  - With `-Cloud`: Validates branch, formats parameters, dispatches via GitHub REST API if `$env:GITHUB_TOKEN` is present, and displays live workflow links.
+
+### 3. CI-Optimized Distribution (`scripts/upload-to-rubika.py`)
+- Detects cloud CI runner environment (`CI=true` or `GITHUB_ACTIONS=true`).
+- Performs non-blocking socket pre-flight checks against Iranian domestic CDN endpoints.
+- If running on international cloud runners where domestic endpoints are geo-filtered and no SSH tunnel is present, gracefully skips within seconds (`exit code: 0`) while safeguarding the compiled APK in GitHub Actions Artifacts, preventing runner timeouts and wasted CI minutes.
+
+---
+
+## 🚀 Phase 21 — Parallel CI/CD & Automated GitHub Releases
+
+Phase 21 introduces concurrent post-build distribution and automated GitHub Releases for every major change or release tag landing on `master`.
+
+### 1. Concurrency Model: Parallel Post-Build Distribution
+- In both [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml) and [`.github/workflows/build-mobile.yml`](.github/workflows/build-mobile.yml), compilation and distribution are decoupled into independent jobs:
+  - **`build-apk` / `build-android`**: Compiles release binaries and uploads build artifacts.
+  - **`publish-release` / `publish-github-release`**: Downloads artifacts, auto-generates release notes from git history, and publishes permanent release assets to GitHub Releases.
+  - **`send-to-rubika`**: Runs concurrently in parallel (`needs: build-apk`) to stream packages to Rubika Bot.
+- **Benefits**: Neither distribution channel blocks the other. If Rubika experiences network delays or geo-filtering, the official GitHub Release is published instantly.
+
+### 2. Major Change & Release Tag Automation
+- **Push Trigger on `master`**:
+  - Automatically scans commit messages for Conventional Commit breaking change indicators:
+    - `BREAKING`, `feat!:`, `fix!:`, `refactor!:`, `major:`, `release:`, `Phase [0-9]+`.
+  - Automatically matches git release tags (`v*`, e.g. `v1.2.0`).
+- **1-Click Script Trigger (`scripts/build-apk.ps1`)**:
+  ```powershell
+  # Build APK on cloud and publish an official GitHub Release
+  .\scripts\build-apk.ps1 -Cloud -Release -Version "v1.2.0" -Title "Quran Mobile App v1.2.0"
+  ```
+- **Permanent Download Hub**:
+  - Releases are published directly to [github.com/alirezakavianifar/quran_mobile_app/releases](https://github.com/alirezakavianifar/quran_mobile_app/releases) with permanent asset download links that do not expire like temporary CI artifacts.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -645,6 +709,8 @@ Resolved audio desynchronization and Bismillah playback issues in Surah Ghafir (
 | **Phase 17 — Quran Whole-Page Repeat (Hifz)** | 604-Page Looping, Multi-Surah Pages, In-Reader Repeat Badge & Dialog Tabs. | ✅ Completed |
 | **Phase 18 — Quick Quran Page Jump** | Smart Search Page Parser (e.g. 456 / ص ۴۵۶), Hero Card, Dedicated Modal & Steppers. | ✅ Completed |
 | **Phase 19 — Surah Audio Recitation & Bismillah Sync** | Interactive Bismillah Banner, Ayah 0 Routing, Hawamim Short-Verse Scroll Smoothing. | ✅ Completed |
+| **Phase 20 — Cloud APK Build & Script CI** | GitHub Actions 1-Click Cloud APK Build, Artifact Publishing & PowerShell Dispatch. | ✅ Completed |
+| **Phase 21 — Parallel CI/CD & Automated Releases** | Parallel Release & Rubika Jobs, Conventional Commit Detection & GitHub Releases. | ✅ Completed |
 
 ---
 

@@ -5,6 +5,8 @@ on:
     branches:
       - master
       - main
+    tags:
+      - 'v*'
     paths:
       - 'src/quran_mobile_app/**'
       - '.github/workflows/build-mobile.yml'
@@ -34,11 +36,24 @@ on:
         required: true
         default: 'http://localhost:5000'
         type: string
+      create_release:
+        description: 'Create an official GitHub Release with APK assets'
+        required: false
+        default: false
+        type: boolean
+      release_tag:
+        description: 'Release Version Tag (e.g. v1.2.0, or leave empty for auto-detection)'
+        required: false
+        default: ''
+        type: string
       send_to_rubika:
         description: 'Send packaged builds to Rubika Bot'
         required: false
         default: true
         type: boolean
+
+permissions:
+  contents: write
 
 concurrency:
   group: mobile-${{ github.ref }}
@@ -52,10 +67,46 @@ jobs:
     name: Android APK Build
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    outputs:
+      artifact_name: quran-android-build-${{ inputs.android_abi || 'arm64-v8a' }}
+      is_major: ${{ steps.release_detector.outputs.is_major }}
+      release_tag: ${{ steps.release_detector.outputs.release_tag }}
+      release_title: ${{ steps.release_detector.outputs.release_title }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Major Change or Release Tag
+        id: release_detector
+        run: |
+          PUB_VER=$(grep '^version:' src/quran_mobile_app/pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          CUSTOM_TAG="${{ inputs.release_tag }}"
+          CREATE_REL="${{ inputs.create_release }}"
+          IS_MAJOR="false"
+          TAG="v${PUB_VER}-build.${GITHUB_RUN_NUMBER}"
+          
+          if [ -n "$CUSTOM_TAG" ]; then
+            TAG="$CUSTOM_TAG"
+            IS_MAJOR="true"
+          elif [ "$CREATE_REL" = "true" ]; then
+            IS_MAJOR="true"
+          elif [[ "$GITHUB_REF" =~ ^refs/tags/v ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+            IS_MAJOR="true"
+          elif [[ "$COMMIT_MSG" =~ (BREAKING|breaking|feat!|fix!|major|release:|Release:|Phase\ [0-9]+) ]]; then
+            IS_MAJOR="true"
+          fi
+          
+          TITLE="Quran Mobile App $TAG"
+          echo "is_major=$IS_MAJOR" >> $GITHUB_OUTPUT
+          echo "release_tag=$TAG" >> $GITHUB_OUTPUT
+          echo "release_title=$TITLE" >> $GITHUB_OUTPUT
+          echo "Major Change Detected: $IS_MAJOR | Tag: $TAG"
+        shell: bash
 
       - name: Setup Java JDK 17
         uses: actions/setup-java@v4
@@ -93,7 +144,7 @@ jobs:
           ABI="${{ inputs.android_abi || 'arm64-v8a' }}"
           API_URL="${{ inputs.target_url || 'http://localhost:5000' }}"
           
-          echo "Building Android APK for Quran Mobile App (ABI: $ABI) with API: $API_URL"
+          echo "Building Quran Mobile App release APK (ABI: $ABI) with API: $API_URL"
           
           BUILD_ARGS=(
             "build" "apk"
@@ -168,10 +219,72 @@ jobs:
             app-*-release.apk
             app-release.apk
             app-release.zip
-          retention-days: 3
+          retention-days: 7
 
-      - name: Send to Rubika Bot
-        if: ${{ (github.event_name == 'push' || inputs.send_to_rubika != false) && success() }}
+  # ===========================================================================
+  #  2. Parallel Distribution: Official GitHub Release
+  # ===========================================================================
+  publish-github-release:
+    name: Publish Official GitHub Release
+    needs: build-android
+    if: ${{ needs.build-android.outputs.is_major == 'true' || startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-android.outputs.artifact_name }}
+
+      - name: Create GitHub Release & Upload APK Packages
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build-android.outputs.release_tag }}
+          name: ${{ needs.build-android.outputs.release_title }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            app-release.apk
+            app-release.zip
+            app-*-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ===========================================================================
+  #  3. Parallel Distribution: Rubika Bot Messenger
+  # ===========================================================================
+  send-to-rubika:
+    name: Distribute to Rubika Bot
+    needs: build-android
+    if: ${{ (github.event_name == 'push' || inputs.send_to_rubika != false) && !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-android.outputs.artifact_name }}
+
+      - name: Send Package to Rubika Bot
         continue-on-error: true
         env:
           RUBIKA_BOT_TOKEN: ${{ secrets.RUBIKA_BOT_TOKEN || 'CBGADB0AFGZDLMGWVNLANQKRQDWYEONKZZUGWWHCFZVZDUUFQYKAVHKZMABOOHXL' }}
@@ -187,7 +300,7 @@ jobs:
         shell: bash
 
   # ===========================================================================
-  #  2. iOS Build Job (macOS Cloud Runner - On-Demand Only to Save 10x Quota)
+  #  4. iOS Build Job (macOS Cloud Runner - On-Demand Only to Save 10x Quota)
   # ===========================================================================
   build-ios:
     name: iOS Build
@@ -258,4 +371,4 @@ jobs:
           path: |
             QuranApp-release.ipa
             QuranApp-Simulator.app.zip
-          retention-days: 3
+          retention-days: 7

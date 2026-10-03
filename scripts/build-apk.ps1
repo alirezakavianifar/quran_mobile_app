@@ -4,7 +4,14 @@
 # =============================================================================
 
 param (
-    [string]$TargetUrl = ""
+    [string]$TargetUrl = "",
+    [switch]$Cloud,
+    [switch]$GitHubActions,
+    [string]$Abi = "arm64-v8a",
+    [switch]$Release,
+    [string]$Version = "",
+    [string]$Title = "",
+    [switch]$SendToRubika = $true
 )
 
 $ErrorActionPreference = "Continue"
@@ -44,6 +51,76 @@ function Write-Info([string]$msg) {
 
 # -- Logic --------------------------------------------------------------------
 Write-Header
+
+# -- Cloud / GitHub Actions Mode ----------------------------------------------
+if ($Cloud -or $GitHubActions) {
+    Write-Step "Initializing Cloud APK Build via GitHub Actions..."
+    $branch = $(git rev-parse --abbrev-ref HEAD 2>$null)
+    if ([string]::IsNullOrWhiteSpace($branch)) { $branch = "master" }
+    
+    $createRelease = $Release.IsPresent -or (-not [string]::IsNullOrWhiteSpace($Version))
+    
+    Write-Info "Branch: $branch | Target Architecture (ABI): $Abi"
+    Write-Info "Pipeline: .github/workflows/build-apk.yml"
+    if ($createRelease) {
+        Write-Ok "GitHub Release requested: $(if ($Version) { $Version } else { 'Auto-computed tag' })"
+    }
+    
+    $workflowUrl = "https://github.com/alirezakavianifar/quran_mobile_app/actions/workflows/build-apk.yml"
+    $runsUrl = "https://github.com/alirezakavianifar/quran_mobile_app/actions"
+    $releasesUrl = "https://github.com/alirezakavianifar/quran_mobile_app/releases"
+    
+    $token = $env:GITHUB_TOKEN
+    if (-not [string]::IsNullOrWhiteSpace($token)) {
+        Write-Step "Dispatching workflow_dispatch event to GitHub REST API..."
+        $apiUrl = "https://api.github.com/repos/alirezakavianifar/quran_mobile_app/actions/workflows/build-apk.yml/dispatches"
+        $targetApi = if ($TargetUrl) { $TargetUrl } else { "http://localhost:5000" }
+        $body = @{
+            ref = $branch
+            inputs = @{
+                abi = $Abi
+                target_url = $targetApi
+                create_release = $createRelease
+                release_tag = $Version
+                release_title = $Title
+                send_to_rubika = $SendToRubika.IsPresent
+            }
+        } | ConvertTo-Json
+        
+        try {
+            $resp = Invoke-RestMethod -Uri $apiUrl -Method Post -Headers @{
+                "Authorization" = "Bearer $token"
+                "Accept" = "application/vnd.github+json"
+                "User-Agent" = "PowerShell-Quran-Build-Agent"
+            } -Body $body
+            Write-Ok "GitHub Actions APK Build successfully triggered!"
+        } catch {
+            Write-Err "Could not trigger workflow via REST API: $_"
+        }
+    } else {
+        Write-Info "No GITHUB_TOKEN environment variable detected for direct REST dispatch."
+    }
+    
+    Write-Host ""
+    Write-Host "  =======================================================" -ForegroundColor Cyan
+    Write-Host "  GitHub Actions Cloud Pipeline Active" -ForegroundColor Cyan
+    Write-Host "  Workflow URL : $workflowUrl" -ForegroundColor Yellow
+    Write-Host "  Recent Runs  : $runsUrl" -ForegroundColor Yellow
+    Write-Host "  Releases Hub : $releasesUrl" -ForegroundColor Magenta
+    Write-Host "  Branch       : $branch" -ForegroundColor Gray
+    Write-Host "  Target ABI   : $Abi" -ForegroundColor Gray
+    if ($createRelease) {
+        Write-Host "  Create Rel   : True ($(if ($Version) { $Version } else { 'Auto' }))" -ForegroundColor Green
+    }
+    Write-Host "  =======================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  Parallel Post-Build Distribution:" -ForegroundColor Yellow
+    Write-Host "    1. GitHub Releases : Permanent APK & ZIP assets at $releasesUrl" -ForegroundColor Gray
+    Write-Host "    2. Rubika Messenger : Concurrent package streaming" -ForegroundColor Gray
+    Write-Host "    3. Actions Artifacts: Downloadable under 'quran-android-build-$Abi'" -ForegroundColor Gray
+    Write-Host ""
+    return
+}
 
 $apiBaseUrl = ""
 

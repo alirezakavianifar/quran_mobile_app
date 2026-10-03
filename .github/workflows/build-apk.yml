@@ -17,25 +17,87 @@ on:
         required: true
         default: 'http://localhost:5000'
         type: string
+      create_release:
+        description: 'Create an official GitHub Release with APK assets'
+        required: false
+        default: false
+        type: boolean
+      release_tag:
+        description: 'Release Version Tag (e.g. v1.2.0, or leave empty for auto-tag)'
+        required: false
+        default: ''
+        type: string
+      release_title:
+        description: 'Release Title (e.g. Quran Mobile App v1.2.0)'
+        required: false
+        default: ''
+        type: string
       send_to_rubika:
         description: 'Send packaged build to Rubika Bot'
         required: false
         default: true
         type: boolean
 
+permissions:
+  contents: write
+
 concurrency:
   group: build-apk-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # ===========================================================================
+  #  1. Android APK Build Job (Ubuntu Cloud Runner)
+  # ===========================================================================
   build-apk:
     name: Build Android APK (${{ inputs.abi || 'arm64-v8a' }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    outputs:
+      artifact_name: quran-android-build-${{ inputs.abi || 'arm64-v8a' }}
+      release_tag: ${{ steps.version_info.outputs.tag }}
+      release_title: ${{ steps.version_info.outputs.title }}
+      should_release: ${{ steps.version_info.outputs.should_release }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Version & Release Metadata
+        id: version_info
+        run: |
+          PUB_VER=$(grep '^version:' src/quran_mobile_app/pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
+          CUSTOM_TAG="${{ inputs.release_tag }}"
+          CREATE_REL="${{ inputs.create_release }}"
+          
+          if [ -n "$CUSTOM_TAG" ]; then
+            TAG="$CUSTOM_TAG"
+            SHOULD_RELEASE="true"
+          elif [ "$CREATE_REL" = "true" ]; then
+            TAG="v${PUB_VER}-build.${GITHUB_RUN_NUMBER}"
+            SHOULD_RELEASE="true"
+          elif [[ "$GITHUB_REF" =~ ^refs/tags/v ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+            SHOULD_RELEASE="true"
+          else
+            TAG="v${PUB_VER}-build.${GITHUB_RUN_NUMBER}"
+            SHOULD_RELEASE="false"
+          fi
+          
+          CUSTOM_TITLE="${{ inputs.release_title }}"
+          if [ -n "$CUSTOM_TITLE" ]; then
+            TITLE="$CUSTOM_TITLE"
+          else
+            TITLE="Quran Mobile App $TAG"
+          fi
+          
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+          echo "should_release=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
+          echo "Resolved Tag: $TAG | Release: $SHOULD_RELEASE"
+        shell: bash
 
       - name: Setup Java JDK 17
         uses: actions/setup-java@v4
@@ -148,10 +210,72 @@ jobs:
             app-*-release.apk
             app-release.apk
             app-release.zip
-          retention-days: 3
+          retention-days: 7
+
+  # ===========================================================================
+  #  2. Parallel Distribution: GitHub Official Release
+  # ===========================================================================
+  publish-release:
+    name: Publish Official GitHub Release
+    needs: build-apk
+    if: ${{ needs.build-apk.outputs.should_release == 'true' || startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-apk.outputs.artifact_name }}
+
+      - name: Create GitHub Release & Upload APK Packages
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build-apk.outputs.release_tag }}
+          name: ${{ needs.build-apk.outputs.release_title }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            app-release.apk
+            app-release.zip
+            app-*-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ===========================================================================
+  #  3. Parallel Distribution: Rubika Bot Messenger
+  # ===========================================================================
+  send-to-rubika:
+    name: Distribute to Rubika Bot
+    needs: build-apk
+    if: ${{ inputs.send_to_rubika != false && !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-apk.outputs.artifact_name }}
 
       - name: Send to Rubika Bot
-        if: ${{ inputs.send_to_rubika != false && success() }}
         continue-on-error: true
         env:
           RUBIKA_BOT_TOKEN: ${{ secrets.RUBIKA_BOT_TOKEN || 'CBGADB0AFGZDLMGWVNLANQKRQDWYEONKZZUGWWHCFZVZDUUFQYKAVHKZMABOOHXL' }}
