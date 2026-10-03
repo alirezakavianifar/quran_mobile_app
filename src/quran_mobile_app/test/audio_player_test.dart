@@ -271,6 +271,38 @@ void main() {
       expect(notifier.currentState.currentReciter?.id, 'parhizgar');
       expect(notifier.currentState.currentVerseNumber, 1);
     });
+
+    test('togglePlayPause toggles playback state', () async {
+      await notifier.loadReciters();
+      await notifier.playVerse(1, 1, 7);
+      expect(notifier.currentState.isPlaying, true);
+
+      await notifier.togglePlayPause();
+      expect(notifier.currentState.isPlaying, false);
+
+      await notifier.togglePlayPause();
+      expect(notifier.currentState.isPlaying, true);
+    });
+
+    test('playNextVerse advances verse within current Surah', () async {
+      await notifier.loadReciters();
+      await notifier.playVerse(1, 2, 7);
+      expect(notifier.currentState.currentVerseNumber, 2);
+
+      await notifier.playNextVerse();
+      expect(notifier.currentState.currentVerseNumber, 3);
+      expect(notifier.currentState.currentSurahId, 1);
+    });
+
+    test('playPreviousVerse steps back to preceding verse', () async {
+      await notifier.loadReciters();
+      await notifier.playVerse(1, 3, 7);
+      expect(notifier.currentState.currentVerseNumber, 3);
+
+      await notifier.playPreviousVerse();
+      expect(notifier.currentState.currentVerseNumber, 2);
+      expect(notifier.currentState.currentSurahId, 1);
+    });
   });
 }
 

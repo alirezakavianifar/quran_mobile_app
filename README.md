@@ -683,6 +683,30 @@ Phase 21 introduces concurrent post-build distribution and automated GitHub Rele
 - **Permanent Download Hub**:
   - Releases are published directly to [github.com/alirezakavianifar/quran_mobile_app/releases](https://github.com/alirezakavianifar/quran_mobile_app/releases) with permanent asset download links that do not expire like temporary CI artifacts.
 
+## 🎧 Phase 22 — Background Audio Recitation & Notification Shade Controller
+
+Phase 22 ensures that the Quran Mobile App continues reciting audio uninterrupted in the background when the app is minimized, the screen is locked, or other applications are active, while displaying a persistent, interactive media controller card in the Android notification drawer / shade (with an explicit **Exit** button directly in the window):
+
+### 1. Uninterrupted Background Recitation Engine (`features/audio/`)
+- **CPU Wake Lock & Audio Context**:
+  - Configures `AudioContextAndroid` with `stayAwake: true`, `usageType: AndroidUsageType.media`, and `audioFocus: AndroidAudioFocus.gain`.
+  - Holds CPU wakefulness during playback and seamless verse transitions, preventing Android OS Doze mode from killing audio recitation when minimized.
+  - Automatically advances to subsequent verses (and respects page loops / range repeats) while running in the background.
+
+### 2. Persistent Notification Drawer Media Card (`core/notifications/`)
+- **Low-Importance Silent Channel (`quran_audio_playback_channel`)**:
+  - Configured with `Importance.low`, `playSound: false`, and `enableVibration: false`, ensuring silent, seamless Ayah transitions without annoying notification chimes or vibrations every few seconds.
+  - Marked with `ongoing: true`, `category: AndroidNotificationCategory.transport`, and `visibility: NotificationVisibility.public` to remain visible on the lock screen and notification shade drawer.
+  - Dynamically updates Surah title, Ayah position (`سوره غافر • آیه ۲ از ۸۵`), and reciter name in real time.
+
+### 3. In-Notification Interactive Controls & Immediate Exit
+- **Four Integrated Notification Action Buttons**:
+  - **`قبلی` (Previous)**: Skips back to the preceding verse.
+  - **`توقف` / `پخش` (Pause / Play)**: Toggles playback state in real time.
+  - **`بعدی` (Next)**: Advances to the next verse.
+  - **`خروج` (Exit)**: Instantly halts audio recitation, releases CPU wake lock, and dismisses/removes the notification card completely from the drawer window.
+- **Tap-to-Resume Navigation**: Tapping the body of the notification card returns the user directly to the active verse reader.
+
 ---
 
 ## 🔮 Roadmap & Milestone Status
@@ -711,6 +735,7 @@ Phase 21 introduces concurrent post-build distribution and automated GitHub Rele
 | **Phase 19 — Surah Audio Recitation & Bismillah Sync** | Interactive Bismillah Banner, Ayah 0 Routing, Hawamim Short-Verse Scroll Smoothing. | ✅ Completed |
 | **Phase 20 — Cloud APK Build & Script CI** | GitHub Actions 1-Click Cloud APK Build, Artifact Publishing & PowerShell Dispatch. | ✅ Completed |
 | **Phase 21 — Parallel CI/CD & Automated Releases** | Parallel Release & Rubika Jobs, Conventional Commit Detection & GitHub Releases. | ✅ Completed |
+| **Phase 22 — Background Audio & Notification Drawer** | Uninterrupted Background Recitation, In-Drawer Media Card & Immediate Exit. | ✅ Completed |
 
 ---
 

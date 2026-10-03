@@ -20,7 +20,7 @@ on:
       create_release:
         description: 'Create an official GitHub Release with APK assets'
         required: false
-        default: false
+        default: true
         type: boolean
       release_tag:
         description: 'Release Version Tag (e.g. v1.2.0, or leave empty for auto-tag)'

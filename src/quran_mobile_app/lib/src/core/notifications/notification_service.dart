@@ -1,8 +1,14 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  NotificationService.instance.handleNotificationResponse(notificationResponse);
+}
 
 class NotificationService {
   static final NotificationService instance = NotificationService._internal();
@@ -15,6 +21,7 @@ class NotificationService {
   static const String channelAdhan = 'adhan_prayer_channel';
   static const String channelDailyAyah = 'daily_ayah_channel';
   static const String channelKhatmah = 'khatmah_reminder_channel';
+  static const String channelAudioPlayback = 'quran_audio_playback_channel';
 
   // Notification IDs
   static const int idDailyAyah = 1001;
@@ -25,9 +32,59 @@ class NotificationService {
   static const int idAsr = 2003;
   static const int idMaghrib = 2004;
   static const int idIsha = 2005;
+  static const int idAudioPlayback = 3001;
+
+  // Audio Playback Action IDs
+  static const String actionPrev = 'ACTION_PREV';
+  static const String actionPlayPause = 'ACTION_PLAY_PAUSE';
+  static const String actionNext = 'ACTION_NEXT';
+  static const String actionExit = 'ACTION_EXIT';
+
+  Function(String?)? _onSelectNotification;
+  VoidCallback? _onPlayPauseAction;
+  VoidCallback? _onNextVerseAction;
+  VoidCallback? _onPreviousVerseAction;
+  VoidCallback? _onExitAction;
+
+  void registerAudioActionCallbacks({
+    VoidCallback? onPlayPause,
+    VoidCallback? onNextVerse,
+    VoidCallback? onPreviousVerse,
+    VoidCallback? onExit,
+  }) {
+    _onPlayPauseAction = onPlayPause;
+    _onNextVerseAction = onNextVerse;
+    _onPreviousVerseAction = onPreviousVerse;
+    _onExitAction = onExit;
+  }
+
+  void handleNotificationResponse(NotificationResponse details) {
+    if (details.actionId != null && details.actionId!.isNotEmpty) {
+      switch (details.actionId) {
+        case actionPrev:
+          _onPreviousVerseAction?.call();
+          break;
+        case actionPlayPause:
+          _onPlayPauseAction?.call();
+          break;
+        case actionNext:
+          _onNextVerseAction?.call();
+          break;
+        case actionExit:
+          _onExitAction?.call();
+          break;
+      }
+    } else {
+      if (_onSelectNotification != null) {
+        _onSelectNotification!(details.payload);
+      }
+    }
+  }
 
   Future<void> initialize({Function(String?)? onSelectNotification}) async {
     if (_isInitialized) return;
+
+    _onSelectNotification = onSelectNotification;
 
     // 1. Initialize Timezone database
     tz.initializeTimeZones();
@@ -50,10 +107,9 @@ class NotificationService {
     await _notificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
-        if (onSelectNotification != null) {
-          onSelectNotification(details.payload);
-        }
+        handleNotificationResponse(details);
       },
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
     // 4. Create Android Notification Channels
@@ -62,6 +118,18 @@ class NotificationService {
           _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
       if (androidImplementation != null) {
+        await androidImplementation.createNotificationChannel(
+          const AndroidNotificationChannel(
+            channelAudioPlayback,
+            'پخش صوتی قرآن (Audio Playback)',
+            description: 'کنترل و وضعیت پخش صوت قرآن در نوار اعلان‌ها',
+            importance: Importance.low,
+            playSound: false,
+            enableVibration: false,
+            showBadge: false,
+          ),
+        );
+
         await androidImplementation.createNotificationChannel(
           const AndroidNotificationChannel(
             channelAdhan,
@@ -245,6 +313,93 @@ class NotificationService {
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       payload: payload,
     );
+  }
+
+  Future<void> updateAudioPlaybackNotification({
+    required int surahId,
+    required String surahName,
+    required int verseNumber,
+    required int totalVerses,
+    required String reciterName,
+    required bool isPlaying,
+  }) async {
+    if (kIsWeb) return;
+
+    try {
+      final verseText = verseNumber == 0
+          ? 'بسم‌الله الرحمن الرحیم'
+          : 'آیه $verseNumber از $totalVerses';
+
+      final title = 'سوره $surahName • $verseText';
+      final body = 'قاری: $reciterName • ${isPlaying ? "در حال پخش" : "متوقف شده"}';
+
+      final androidDetails = AndroidNotificationDetails(
+        channelAudioPlayback,
+        'پخش صوتی قرآن (Audio Playback)',
+        channelDescription: 'کنترل و وضعیت پخش صوت قرآن در نوار اعلان‌ها',
+        importance: Importance.low,
+        priority: Priority.low,
+        icon: '@mipmap/ic_launcher',
+        ongoing: isPlaying,
+        autoCancel: false,
+        showWhen: false,
+        category: AndroidNotificationCategory.transport,
+        visibility: NotificationVisibility.public,
+        color: const Color(0xFF1B4332),
+        actions: <AndroidNotificationAction>[
+          const AndroidNotificationAction(
+            actionPrev,
+            'قبلی',
+            showsUserInterface: false,
+            cancelNotification: false,
+          ),
+          AndroidNotificationAction(
+            actionPlayPause,
+            isPlaying ? 'توقف' : 'پخش',
+            showsUserInterface: false,
+            cancelNotification: false,
+          ),
+          const AndroidNotificationAction(
+            actionNext,
+            'بعدی',
+            showsUserInterface: false,
+            cancelNotification: false,
+          ),
+          const AndroidNotificationAction(
+            actionExit,
+            'خروج',
+            showsUserInterface: false,
+            cancelNotification: true,
+          ),
+        ],
+      );
+
+      const darwinDetails = DarwinNotificationDetails(
+        presentAlert: false,
+        presentBadge: false,
+        presentSound: false,
+      );
+
+      final details = NotificationDetails(
+        android: androidDetails,
+        iOS: darwinDetails,
+      );
+
+      await _notificationsPlugin.show(
+        idAudioPlayback,
+        title,
+        body,
+        details,
+        payload: '$surahId:$verseNumber',
+      );
+    } catch (_) {}
+  }
+
+  Future<void> cancelAudioPlaybackNotification() async {
+    if (kIsWeb) return;
+    try {
+      await _notificationsPlugin.cancel(idAudioPlayback);
+    } catch (_) {}
   }
 
   Future<void> cancelNotification(int id) async {

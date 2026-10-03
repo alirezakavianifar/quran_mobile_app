@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/database/surah_seed_data.dart';
+import '../../../core/notifications/notification_service.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../data/audio_repository.dart';
 import '../data/audio_storage_service.dart';
@@ -168,6 +170,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
         )) {
     _initAudioContext();
     _initPlayerListeners();
+    _initNotificationActions();
     loadReciters();
   }
 
@@ -175,23 +178,61 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
   void _initAudioContext() {
     try {
-      AudioPlayer.global.setAudioContext(
-        AudioContext(
-          android: const AudioContextAndroid(
-            stayAwake: true,
-            contentType: AndroidContentType.music,
-            usageType: AndroidUsageType.media,
-            audioFocus: AndroidAudioFocus.gain,
-          ),
-          iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.playback,
-            options: const {
-              AVAudioSessionOptions.defaultToSpeaker,
-            },
-          ),
+      final context = AudioContext(
+        android: const AudioContextAndroid(
+          isSpeakerphoneOn: false,
+          stayAwake: true,
+          contentType: AndroidContentType.music,
+          usageType: AndroidUsageType.media,
+          audioFocus: AndroidAudioFocus.gain,
+        ),
+        iOS: AudioContextIOS(
+          category: AVAudioSessionCategory.playback,
+          options: const {
+            AVAudioSessionOptions.defaultToSpeaker,
+          },
         ),
       );
+      AudioPlayer.global.setAudioContext(context);
+      _player.setAudioContext(context);
     } catch (_) {}
+  }
+
+  void _initNotificationActions() {
+    NotificationService.instance.registerAudioActionCallbacks(
+      onPlayPause: () => togglePlayPause(),
+      onNextVerse: () => playNextVerse(),
+      onPreviousVerse: () => playPreviousVerse(),
+      onExit: () => stop(),
+    );
+  }
+
+  String _getSurahName(int surahId) {
+    if (surahId >= 1 && surahId <= initialSurahsList.length) {
+      return initialSurahsList[surahId - 1].nameArabic.value;
+    }
+    return '$surahId';
+  }
+
+  void _syncNotification({required bool isPlaying}) {
+    final sId = state.currentSurahId;
+    final vNum = state.currentVerseNumber;
+    if (sId == null || vNum == null) return;
+
+    final total = state.totalVersesInSurah ?? 1;
+    final surahName = _getSurahName(sId);
+    final reciterName = state.currentReciter?.nameArabic.isNotEmpty == true
+        ? state.currentReciter!.nameArabic
+        : (state.currentReciter?.nameEnglish ?? 'مشاری العفاسی');
+
+    NotificationService.instance.updateAudioPlaybackNotification(
+      surahId: sId,
+      surahName: surahName,
+      verseNumber: vNum,
+      totalVerses: total,
+      reciterName: reciterName,
+      isPlaying: isPlaying,
+    );
   }
 
   void _initPlayerListeners() {
@@ -408,6 +449,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
         await _player.setPlaybackRate(state.playbackSpeed);
       } catch (_) {}
       state = state.copyWith(isLoading: false, isPlaying: true);
+      _syncNotification(isPlaying: true);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -420,11 +462,13 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   Future<void> pause() async {
     await _player.pause();
     state = state.copyWith(isPlaying: false);
+    _syncNotification(isPlaying: false);
   }
 
   Future<void> resume() async {
     await _player.resume();
     state = state.copyWith(isPlaying: true);
+    _syncNotification(isPlaying: true);
   }
 
   Future<void> stop() async {
@@ -438,6 +482,50 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       position: Duration.zero,
       duration: Duration.zero,
     );
+    NotificationService.instance.cancelAudioPlaybackNotification();
+  }
+
+  Future<void> togglePlayPause() async {
+    if (state.isPlaying) {
+      await pause();
+    } else {
+      await resume();
+    }
+  }
+
+  Future<void> playNextVerse() async {
+    final sId = state.currentSurahId;
+    final vNum = state.currentVerseNumber;
+    final total = state.totalVersesInSurah ?? 1;
+
+    if (sId == null || vNum == null) return;
+
+    if (vNum == 0) {
+      await playVerse(sId, 1, total);
+    } else if (vNum < total) {
+      await playVerse(sId, vNum + 1, total);
+    } else if (sId < 114) {
+      final nextSurahId = sId + 1;
+      final nextSurahMeta = initialSurahsList.length >= nextSurahId
+          ? initialSurahsList[nextSurahId - 1]
+          : null;
+      final nextTotal = nextSurahMeta?.verseCount.value ?? 1;
+      await playVerse(nextSurahId, 1, nextTotal, isSurahStart: true);
+    }
+  }
+
+  Future<void> playPreviousVerse() async {
+    final sId = state.currentSurahId;
+    final vNum = state.currentVerseNumber;
+    final total = state.totalVersesInSurah ?? 1;
+
+    if (sId == null || vNum == null) return;
+
+    if (vNum > 1) {
+      await playVerse(sId, vNum - 1, total);
+    } else if (vNum == 1) {
+      await playVerse(sId, 1, total, isReplay: true);
+    }
   }
 
   Future<void> seek(Duration newPosition) async {
@@ -673,6 +761,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
         await _player.setPlaybackRate(state.playbackSpeed);
       } catch (_) {}
       state = state.copyWith(isLoading: false, isPlaying: true);
+      _syncNotification(isPlaying: true);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -684,6 +773,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
   @override
   void dispose() {
+    NotificationService.instance.cancelAudioPlaybackNotification();
     _sleepTimer?.cancel();
     _durationSubscription?.cancel();
     _positionSubscription?.cancel();

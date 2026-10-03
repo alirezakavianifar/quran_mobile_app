@@ -97,7 +97,9 @@ jobs:
           elif [[ "$GITHUB_REF" =~ ^refs/tags/v ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
             IS_MAJOR="true"
-          elif [[ "$COMMIT_MSG" =~ (BREAKING|breaking|feat!|fix!|major|release:|Release:|Phase\ [0-9]+) ]]; then
+          elif [[ "$GITHUB_REF" == "refs/heads/master" || "$GITHUB_REF" == "refs/heads/main" ]]; then
+            IS_MAJOR="true"
+          elif [[ "$COMMIT_MSG" =~ (feat|fix|refactor|perf|BREAKING|breaking|major|release|Release|Phase) ]]; then
             IS_MAJOR="true"
           fi
           
