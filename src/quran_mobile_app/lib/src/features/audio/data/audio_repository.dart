@@ -8,6 +8,7 @@ class Reciter {
   final String nameEnglish;
   final String style;
   final String baseUrl;
+  final bool hasSeparateBismillahAudio;
 
   Reciter({
     required this.id,
@@ -16,16 +17,23 @@ class Reciter {
     required this.nameEnglish,
     required this.style,
     required this.baseUrl,
+    this.hasSeparateBismillahAudio = false,
   });
 
   factory Reciter.fromJson(Map<String, dynamic> json) {
+    final id = (json['id'] ?? '').toString();
+    final idLower = id.toLowerCase();
+    final bool separateBismillah = json['hasSeparateBismillahAudio'] ??
+        (idLower.contains('alafasy') || idLower.contains('abdulbasit'));
+
     return Reciter(
-      id: json['id'] ?? '',
+      id: id,
       nameArabic: json['nameArabic'] ?? '',
       namePersian: json['namePersian'] ?? '',
       nameEnglish: json['nameEnglish'] ?? '',
       style: json['style'] ?? '',
       baseUrl: json['baseUrl'] ?? '',
+      hasSeparateBismillahAudio: separateBismillah,
     );
   }
 }
@@ -68,6 +76,7 @@ class AudioRepository {
         nameEnglish: 'Shahriar Parhizgar',
         style: 'Tartil',
         baseUrl: 'https://everyayah.com/data/Parhizgar_48kbps/',
+        hasSeparateBismillahAudio: false,
       ),
       Reciter(
         id: 'alafasy',
@@ -76,6 +85,7 @@ class AudioRepository {
         nameEnglish: 'Mishary Rashid Alafasy',
         style: 'Murattal',
         baseUrl: 'https://everyayah.com/data/Alafasy_128kbps/',
+        hasSeparateBismillahAudio: true,
       ),
       Reciter(
         id: 'husary',
@@ -84,6 +94,7 @@ class AudioRepository {
         nameEnglish: 'Mahmoud Khalil Al-Husary',
         style: 'Murattal',
         baseUrl: 'https://everyayah.com/data/Husary_128kbps/',
+        hasSeparateBismillahAudio: false,
       ),
     ];
   }

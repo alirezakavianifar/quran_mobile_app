@@ -111,6 +111,26 @@ class AudioDownloadNotifier extends StateNotifier<Map<String, SurahDownloadState
     };
 
     try {
+      // If reciter has separate Bismillah audio and not Surah 1 or 9, download Ayah 0 (000.mp3) first
+      final idLower = reciterId.toLowerCase();
+      final hasSeparateBismillah = idLower.contains('alafasy') || idLower.contains('abdulbasit');
+      if (hasSeparateBismillah && surahId != 1 && surahId != 9 && !cancelToken.isCancelled) {
+        final existing0 = await _storageService.getLocalAyahAudioPath(reciterId, surahId, 0);
+        if (existing0 == null) {
+          final audioUrl0 = await _repository.getAyahAudioUrl(reciterId, surahId, 0);
+          if (audioUrl0.isNotEmpty) {
+            final targetFile0 = await _storageService.getAyahFile(reciterId, surahId, 0);
+            try {
+              await _dio.download(
+                audioUrl0,
+                targetFile0.path,
+                cancelToken: cancelToken,
+              );
+            } catch (_) {}
+          }
+        }
+      }
+
       for (int v = 1; v <= totalVerses; v++) {
         if (cancelToken.isCancelled) {
           state = {

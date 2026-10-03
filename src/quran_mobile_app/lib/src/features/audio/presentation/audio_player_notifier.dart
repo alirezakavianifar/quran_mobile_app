@@ -65,6 +65,12 @@ class AudioPlayerState {
     return currentSurahId == surahId && currentVerseNumber == verseNumber;
   }
 
+  bool isBismillahActive(int surahId) {
+    return currentSurahId == surahId && currentVerseNumber == 0;
+  }
+
+  bool get isBismillahPlaying => currentVerseNumber == 0 && isPlaying;
+
   bool get isRangeRepeatActive =>
       rangeStartVerse != null &&
       rangeEndVerse != null &&
@@ -302,7 +308,36 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     );
   }
 
-  Future<void> playVerse(int surahId, int verseNumber, int totalVerses, {bool isReplay = false}) async {
+  Future<void> playBismillah(int surahId, int totalVerses) async {
+    if (state.currentReciter == null) {
+      await loadReciters();
+    }
+    final reciter = state.currentReciter;
+    if (reciter == null) return;
+
+    if (state.isBismillahActive(surahId)) {
+      if (state.isPlaying) {
+        await pause();
+      } else {
+        await resume();
+      }
+      return;
+    }
+
+    if (reciter.hasSeparateBismillahAudio) {
+      await playVerse(surahId, 0, totalVerses);
+    } else {
+      await playVerse(surahId, 1, totalVerses);
+    }
+  }
+
+  Future<void> playVerse(
+    int surahId,
+    int verseNumber,
+    int totalVerses, {
+    bool isReplay = false,
+    bool isSurahStart = false,
+  }) async {
     if (state.currentReciter == null) {
       await loadReciters();
     }
@@ -310,6 +345,12 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     final reciter = state.currentReciter;
     if (reciter == null) {
       state = state.copyWith(errorMessage: 'No reciters available.');
+      return;
+    }
+
+    // If starting Surah from beginning and reciter has separate Bismillah audio (excluding Surah 1 & 9)
+    if (isSurahStart && verseNumber == 1 && surahId != 1 && surahId != 9 && reciter.hasSeparateBismillahAudio) {
+      await playVerse(surahId, 0, totalVerses);
       return;
     }
 
@@ -412,11 +453,12 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       final sId = state.currentSurahId!;
       final vNum = state.currentVerseNumber!;
       final totalV = state.totalVersesInSurah ?? vNum;
+      final targetVerse = (vNum == 0 && !reciter.hasSeparateBismillahAudio) ? 1 : vNum;
       
       // Stop active player state completely before switching
       await _player.stop();
       state = state.copyWith(currentSurahId: null, currentVerseNumber: null);
-      await playVerse(sId, vNum, totalV);
+      await playVerse(sId, targetVerse, totalV);
     }
   }
 
@@ -433,6 +475,13 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     final surahId = state.currentSurahId!;
     final verseNum = state.currentVerseNumber!;
     final totalVerses = state.totalVersesInSurah ?? verseNum;
+
+    // 0. If finished reciting opening Bismillah (verse 0), seamlessly advance to verse 1
+    if (verseNum == 0) {
+      state = state.copyWith(currentSurahId: null, currentVerseNumber: null);
+      await playVerse(surahId, 1, totalVerses);
+      return;
+    }
 
     // 1. Check per-verse repeat logic
     if (state.verseRepeatCount == -1) {

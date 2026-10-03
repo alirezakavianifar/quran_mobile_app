@@ -600,6 +600,27 @@ Phase 18 implements comprehensive, instant page navigation across all 604 standa
 
 ---
 
+## 🎧 Phase 19 — Surah Audio Recitation & Bismillah Synchronization
+
+Resolved audio desynchronization and Bismillah playback issues in Surah Ghafir (Surah 40) and similar chapters (the Hawamim family Surahs 40–46 and Muqatta'at verses):
+
+1. **Interactive Bismillah Banner**:
+   - Upgraded the top Bismillah banner in `VerseDetailView` from a static card to an interactive component with its own Play/Pause button and active audio listening state (`isAudioActive`).
+   - Tapping it or starting the Surah plays the opening Basmalah with live theme highlighting.
+2. **Ayah 0 Support & Reciter Intelligence**:
+   - Added `hasSeparateBismillahAudio` flag to `Reciter` (`alafasy: true`, `abdulbasit: true`, `parhizgar: false`, `husary: false`).
+   - For reciters with isolated Bismillah tracks (`alafasy`, `abdulbasit`), track `000` is queued and smoothly transitions to Verse 1 (`001`).
+   - For reciters with integrated Bismillah (`parhizgar`), Verse 1 plays with synchronized visual feedback.
+   - Surah 9 (At-Tawbah) strictly skips Bismillah, and Surah 1 (Al-Fatihah) plays Verse 1 directly.
+3. **Smooth Scroll Easing for Short Verses**:
+   - Implemented in-viewport visibility checks before triggering scroll animations, eliminating jitter when rapidly advancing from short 2-second verses (like `"حم"`) to Verse 2.
+4. **Offline Downloader Integration**:
+   - `AudioDownloadNotifier` automatically downloads track `000` (`040000.mp3`) during full-surah offline downloads when supported.
+5. **Bottom Player Bar Respectful Formatting**:
+   - Displays `"بسم‌الله الرحمن الرحیم"` instead of `"آیه ۰"` when Bismillah is active.
+
+---
+
 ## 🔮 Roadmap & Milestone Status
 
 | Phase | Description | Status |
@@ -623,6 +644,7 @@ Phase 18 implements comprehensive, instant page navigation across all 604 standa
 | **Phase 16 — Auto-Scroll & Last Read Study Resume** | Audio Auto-Scroll, Persistent Study Position, Home Continue Reading Banner. | ✅ Completed |
 | **Phase 17 — Quran Whole-Page Repeat (Hifz)** | 604-Page Looping, Multi-Surah Pages, In-Reader Repeat Badge & Dialog Tabs. | ✅ Completed |
 | **Phase 18 — Quick Quran Page Jump** | Smart Search Page Parser (e.g. 456 / ص ۴۵۶), Hero Card, Dedicated Modal & Steppers. | ✅ Completed |
+| **Phase 19 — Surah Audio Recitation & Bismillah Sync** | Interactive Bismillah Banner, Ayah 0 Routing, Hawamim Short-Verse Scroll Smoothing. | ✅ Completed |
 
 ---
 

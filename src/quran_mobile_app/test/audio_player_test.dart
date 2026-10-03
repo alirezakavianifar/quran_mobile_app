@@ -19,6 +19,16 @@ class FakeAudioPlayer implements AudioPlayer {
   Stream<void> get onPlayerComplete => const Stream.empty();
 
   @override
+  Future<void> play(
+    Source source, {
+    double? volume,
+    double? balance,
+    AudioContext? ctx,
+    Duration? position,
+    PlayerMode? mode,
+  }) async {}
+
+  @override
   Future<void> stop() async {}
 
   @override
@@ -51,6 +61,7 @@ class FakeAudioRepository implements AudioRepository {
       nameEnglish: 'Shahriar Parhizgar',
       style: 'Tartil',
       baseUrl: 'https://everyayah.com/data/Parhizgar_48kbps/',
+      hasSeparateBismillahAudio: false,
     ),
     Reciter(
       id: 'alafasy',
@@ -59,6 +70,7 @@ class FakeAudioRepository implements AudioRepository {
       nameEnglish: 'Mishary Rashid Alafasy',
       style: 'Murattal',
       baseUrl: 'https://everyayah.com/data/Alafasy_128kbps/',
+      hasSeparateBismillahAudio: true,
     ),
     Reciter(
       id: 'husary',
@@ -67,6 +79,7 @@ class FakeAudioRepository implements AudioRepository {
       nameEnglish: 'Mahmoud Khalil Al-Husary',
       style: 'Murattal',
       baseUrl: 'https://everyayah.com/data/Husary_128kbps/',
+      hasSeparateBismillahAudio: false,
     ),
   ];
 
@@ -193,6 +206,70 @@ void main() {
       expect(notifier.currentState.isPageRepeatActive, false);
       expect(notifier.currentState.repeatPageNumber, null);
       expect(notifier.currentState.pageVerses, null);
+    });
+
+    test('playBismillah for reciter with separate Bismillah (Alafasy) plays verse 0', () async {
+      await notifier.loadReciters();
+      final alafasy = notifier.currentState.availableReciters.firstWhere((r) => r.id == 'alafasy');
+      await notifier.selectReciter(alafasy);
+
+      await notifier.playBismillah(40, 85);
+
+      expect(notifier.currentState.currentSurahId, 40);
+      expect(notifier.currentState.currentVerseNumber, 0);
+      expect(notifier.currentState.isBismillahActive(40), true);
+      expect(notifier.currentState.isPlaying, true);
+    });
+
+    test('playBismillah for reciter with integrated Bismillah (Parhizgar) plays verse 1', () async {
+      await notifier.loadReciters();
+      final parhizgar = notifier.currentState.availableReciters.firstWhere((r) => r.id == 'parhizgar');
+      await notifier.selectReciter(parhizgar);
+
+      await notifier.playBismillah(40, 85);
+
+      expect(notifier.currentState.currentSurahId, 40);
+      expect(notifier.currentState.currentVerseNumber, 1);
+      expect(notifier.currentState.isBismillahActive(40), false);
+      expect(notifier.currentState.isPlaying, true);
+    });
+
+    test('Starting Surah 40 with isSurahStart=true with Alafasy plays verse 0 (Bismillah)', () async {
+      await notifier.loadReciters();
+      final alafasy = notifier.currentState.availableReciters.firstWhere((r) => r.id == 'alafasy');
+      await notifier.selectReciter(alafasy);
+
+      await notifier.playVerse(40, 1, 85, isSurahStart: true);
+
+      expect(notifier.currentState.currentSurahId, 40);
+      expect(notifier.currentState.currentVerseNumber, 0);
+      expect(notifier.currentState.isBismillahActive(40), true);
+    });
+
+    test('Surah 9 (At-Tawbah) never plays verse 0 even with isSurahStart=true', () async {
+      await notifier.loadReciters();
+      final alafasy = notifier.currentState.availableReciters.firstWhere((r) => r.id == 'alafasy');
+      await notifier.selectReciter(alafasy);
+
+      await notifier.playVerse(9, 1, 129, isSurahStart: true);
+
+      expect(notifier.currentState.currentSurahId, 9);
+      expect(notifier.currentState.currentVerseNumber, 1);
+      expect(notifier.currentState.isBismillahActive(9), false);
+    });
+
+    test('Switching reciter from Alafasy to Parhizgar while Bismillah is active falls back safely to verse 1', () async {
+      await notifier.loadReciters();
+      final alafasy = notifier.currentState.availableReciters.firstWhere((r) => r.id == 'alafasy');
+      final parhizgar = notifier.currentState.availableReciters.firstWhere((r) => r.id == 'parhizgar');
+      await notifier.selectReciter(alafasy);
+
+      await notifier.playBismillah(40, 85);
+      expect(notifier.currentState.currentVerseNumber, 0);
+
+      await notifier.selectReciter(parhizgar);
+      expect(notifier.currentState.currentReciter?.id, 'parhizgar');
+      expect(notifier.currentState.currentVerseNumber, 1);
     });
   });
 }

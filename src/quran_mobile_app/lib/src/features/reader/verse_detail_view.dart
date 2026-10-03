@@ -15,7 +15,6 @@ import '../audio/presentation/audio_player_notifier.dart';
 import '../audio/presentation/reciter_selector_dialog.dart';
 import '../audio/presentation/verse_range_dialog.dart';
 import 'quick_page_jump_dialog.dart';
-import '../analytics/presentation/reading_analytics_provider.dart';
 import '../bookmarks/bookmarks_provider.dart';
 import '../card_generator/presentation/ayah_card_generator_screen.dart';
 import '../hifz/models/hifz_mode_model.dart';
@@ -77,18 +76,43 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
   void _scrollToVerse(int verseNumber, {bool animate = true}) {
     if (!mounted || !_scrollController.hasClients) return;
 
+    if (verseNumber == 0) {
+      if (animate) {
+        _scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
+        );
+      } else {
+        _scrollController.jumpTo(0.0);
+      }
+      return;
+    }
+
     final key = _verseKeys[verseNumber];
     if (key?.currentContext != null) {
+      // Check if already comfortably visible to avoid jarring scroll on short verses (e.g. Hawamim "حم")
+      final renderBox = key!.currentContext!.findRenderObject() as RenderBox?;
+      if (renderBox != null && renderBox.hasSize && _scrollController.hasClients) {
+        try {
+          final position = renderBox.localToGlobal(Offset.zero);
+          final screenHeight = MediaQuery.of(context).size.height;
+          if (position.dy >= 80 && position.dy <= screenHeight - 120) {
+            return;
+          }
+        } catch (_) {}
+      }
+
       if (animate) {
         Scrollable.ensureVisible(
-          key!.currentContext!,
+          key.currentContext!,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOutCubic,
           alignment: 0.25,
         );
       } else {
         Scrollable.ensureVisible(
-          key!.currentContext!,
+          key.currentContext!,
           alignment: 0.25,
         );
       }
@@ -948,27 +972,76 @@ class _VerseDetailViewState extends ConsumerState<VerseDetailView> {
             itemCount: totalCount,
             itemBuilder: (context, index) {
               if (showBismillahHeader && index == 0) {
-                return Container(
+                final isBismillahActive = audioState.isBismillahActive(widget.surah.number);
+                final isBismillahPlaying = isBismillahActive && audioState.isPlaying;
+                final isBismillahLoading = isBismillahActive && audioState.isLoading;
+
+                return Card(
+                  key: _verseKeys.putIfAbsent(0, () => GlobalKey()),
                   margin: const EdgeInsets.only(bottom: 20),
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                  elevation: isBismillahActive ? 3 : 0,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                    side: BorderSide(
+                      color: isBismillahActive
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                      width: isBismillahActive ? 2 : 1,
                     ),
                   ),
-                  child: Center(
-                    child: Text(
-                      'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                      textAlign: TextAlign.center,
-                      textDirection: TextDirection.rtl,
-                      style: AppTheme.getArabicQuranTextStyle(
-                        fontSize: settings.arabicFontSize + 2,
-                        fontFamily: settings.arabicFontFamily,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ).copyWith(
-                        fontWeight: FontWeight.bold,
+                  color: isBismillahActive
+                      ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.25)
+                      : Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.15),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () {
+                      audioNotifier.playBismillah(widget.surah.number, verses.length);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      child: Row(
+                        children: [
+                          isBismillahLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(4.0),
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  ),
+                                )
+                              : IconButton(
+                                  icon: Icon(
+                                    isBismillahPlaying
+                                        ? Icons.pause_circle_filled
+                                        : Icons.play_circle_outline,
+                                    color: isBismillahActive
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                                  ),
+                                  tooltip: isPersian ? 'پخش تلاوت بسم‌الله' : 'Recite Bismillah',
+                                  onPressed: () {
+                                    audioNotifier.playBismillah(widget.surah.number, verses.length);
+                                  },
+                                ),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                                textAlign: TextAlign.center,
+                                textDirection: TextDirection.rtl,
+                                style: AppTheme.getArabicQuranTextStyle(
+                                  fontSize: settings.arabicFontSize + 2,
+                                  fontFamily: settings.arabicFontFamily,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                                ).copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 48), // Balance the icon button on the left
+                        ],
                       ),
                     ),
                   ),

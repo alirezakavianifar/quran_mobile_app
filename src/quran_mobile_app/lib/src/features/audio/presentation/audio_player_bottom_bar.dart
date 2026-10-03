@@ -41,9 +41,11 @@ class AudioPlayerBottomBar extends ConsumerWidget {
                 : state.currentReciter!.nameArabic))
         : '';
 
-    final surahVerseText = isPersian
-        ? 'سوره ${PersianDigitConverter.toPersian(state.currentSurahId.toString())} - آیه ${PersianDigitConverter.toPersian(state.currentVerseNumber.toString())}'
-        : 'Surah ${state.currentSurahId} - Ayah ${state.currentVerseNumber}';
+    final surahVerseText = state.currentVerseNumber == 0
+        ? (isPersian ? 'بسم‌الله الرحمن الرحیم' : 'Bismillah ir-Rahman ir-Rahim')
+        : (isPersian
+            ? 'سوره ${PersianDigitConverter.toPersian(state.currentSurahId.toString())} - آیه ${PersianDigitConverter.toPersian(state.currentVerseNumber.toString())}'
+            : 'Surah ${state.currentSurahId} - Ayah ${state.currentVerseNumber}');
 
     final double progressRatio = (state.duration.inMilliseconds > 0)
         ? (state.position.inMilliseconds / state.duration.inMilliseconds).clamp(0.0, 1.0)
