@@ -281,6 +281,11 @@ The Web Admin Dashboard is hosted natively by ASP.NET Core Static Files:
 - **Recitation Sleep Timer & Gentle Fade-Out Engine (`features/audio/`)**:
   * Sleep timer presets (15m, 30m, 45m, 60m, end-of-surah, or custom minutes).
   * Gentle 15-second volume fade-out before pausing, and live countdown badge (`💤 ۱۴:۵۹`) on the reader player bar.
+- **Background Audio & Interactive Notification Drawer Controller (`features/audio/` & `core/notifications/`)**:
+  * Continues Quran recitation uninterrupted in the background when the app is minimized or the screen is locked.
+  * Native `ActionBroadcastReceiver` and inter-isolate communication (`IsolateNameServer`) enabling real-time playback control without launching UI.
+  * Android `MediaStyle` notification drawer card with 4 interactive controls: **قبلی (Prev)**, **پخش / توقف (Play / Pause)**, **بعدی (Next)**, and **خروج (Exit)** to immediately stop audio, cancel wake locks, and dismiss the notification.
+  * Silent verse progression on `Importance.defaultImportance` channel (`playSound: false`, `enableVibration: false`) preventing audio interruptions or chimes when advancing verses.
 - **Ayah Story & Image Card Generator (`features/card_generator/`)**:
   * Export beautiful, high-resolution PNG images of Quranic verses at $3.0\times$ pixel ratio.
   * Formats: **1:1 Square (Post)** and **9:16 Vertical (Story / Status)**.

@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -7,6 +9,14 @@ import 'package:timezone/timezone.dart' as tz;
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
+  final actionId = notificationResponse.actionId;
+  if (actionId != null && actionId.isNotEmpty) {
+    final sendPort = IsolateNameServer.lookupPortByName(NotificationService.actionPortName);
+    if (sendPort != null) {
+      sendPort.send(actionId);
+      return;
+    }
+  }
   NotificationService.instance.handleNotificationResponse(notificationResponse);
 }
 
@@ -21,7 +31,9 @@ class NotificationService {
   static const String channelAdhan = 'adhan_prayer_channel';
   static const String channelDailyAyah = 'daily_ayah_channel';
   static const String channelKhatmah = 'khatmah_reminder_channel';
-  static const String channelAudioPlayback = 'quran_audio_playback_channel';
+  static const String channelAudioPlayback = 'quran_audio_playback_channel_v2';
+  static const String obsoleteChannelAudioPlayback = 'quran_audio_playback_channel';
+  static const String actionPortName = 'quran_audio_playback_action_port';
 
   // Notification IDs
   static const int idDailyAyah = 1001;
@@ -45,6 +57,7 @@ class NotificationService {
   VoidCallback? _onNextVerseAction;
   VoidCallback? _onPreviousVerseAction;
   VoidCallback? _onExitAction;
+  ReceivePort? _actionReceivePort;
 
   void registerAudioActionCallbacks({
     VoidCallback? onPlayPause,
@@ -58,22 +71,26 @@ class NotificationService {
     _onExitAction = onExit;
   }
 
+  void handleActionId(String actionId) {
+    switch (actionId) {
+      case actionPrev:
+        _onPreviousVerseAction?.call();
+        break;
+      case actionPlayPause:
+        _onPlayPauseAction?.call();
+        break;
+      case actionNext:
+        _onNextVerseAction?.call();
+        break;
+      case actionExit:
+        _onExitAction?.call();
+        break;
+    }
+  }
+
   void handleNotificationResponse(NotificationResponse details) {
     if (details.actionId != null && details.actionId!.isNotEmpty) {
-      switch (details.actionId) {
-        case actionPrev:
-          _onPreviousVerseAction?.call();
-          break;
-        case actionPlayPause:
-          _onPlayPauseAction?.call();
-          break;
-        case actionNext:
-          _onNextVerseAction?.call();
-          break;
-        case actionExit:
-          _onExitAction?.call();
-          break;
-      }
+      handleActionId(details.actionId!);
     } else {
       if (_onSelectNotification != null) {
         _onSelectNotification!(details.payload);
@@ -89,7 +106,17 @@ class NotificationService {
     // 1. Initialize Timezone database
     tz.initializeTimeZones();
 
-    // 2. Android Initialization Settings
+    // 2. Setup Inter-Isolate Communication for notification actions
+    IsolateNameServer.removePortNameMapping(actionPortName);
+    _actionReceivePort = ReceivePort();
+    IsolateNameServer.registerPortWithName(_actionReceivePort!.sendPort, actionPortName);
+    _actionReceivePort!.listen((dynamic data) {
+      if (data is String) {
+        handleActionId(data);
+      }
+    });
+
+    // 3. Android Initialization Settings
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const darwinSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -103,7 +130,7 @@ class NotificationService {
       macOS: darwinSettings,
     );
 
-    // 3. Initialize plugin
+    // 4. Initialize plugin
     await _notificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
@@ -112,18 +139,23 @@ class NotificationService {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
-    // 4. Create Android Notification Channels
+    // 5. Create Android Notification Channels
     if (!kIsWeb && Platform.isAndroid) {
       final androidImplementation =
           _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
       if (androidImplementation != null) {
+        // Clean up legacy low-importance channel if present on device
+        try {
+          await androidImplementation.deleteNotificationChannel(obsoleteChannelAudioPlayback);
+        } catch (_) {}
+
         await androidImplementation.createNotificationChannel(
           const AndroidNotificationChannel(
             channelAudioPlayback,
             'پخش صوتی قرآن (Audio Playback)',
             description: 'کنترل و وضعیت پخش صوت قرآن در نوار اعلان‌ها',
-            importance: Importance.low,
+            importance: Importance.defaultImportance,
             playSound: false,
             enableVibration: false,
             showBadge: false,
@@ -337,8 +369,8 @@ class NotificationService {
         channelAudioPlayback,
         'پخش صوتی قرآن (Audio Playback)',
         channelDescription: 'کنترل و وضعیت پخش صوت قرآن در نوار اعلان‌ها',
-        importance: Importance.low,
-        priority: Priority.low,
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
         icon: '@mipmap/ic_launcher',
         ongoing: isPlaying,
         autoCancel: false,
@@ -346,6 +378,7 @@ class NotificationService {
         category: AndroidNotificationCategory.transport,
         visibility: NotificationVisibility.public,
         color: const Color(0xFF1B4332),
+        styleInformation: const MediaStyleInformation(),
         actions: <AndroidNotificationAction>[
           const AndroidNotificationAction(
             actionPrev,
@@ -408,5 +441,11 @@ class NotificationService {
 
   Future<void> cancelAll() async {
     await _notificationsPlugin.cancelAll();
+  }
+
+  void dispose() {
+    IsolateNameServer.removePortNameMapping(actionPortName);
+    _actionReceivePort?.close();
+    _actionReceivePort = null;
   }
 }
